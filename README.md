@@ -1,7 +1,7 @@
 # ryva
 
-Robots y Vehículos Autónomos (ryva)
+Robots y Vehiculos Autonomos (ryva)
 =====================================
 
-Tambien podr�a llamarse VYRA (vehículos y robots autónomo
+Tambien podria llamarse VYRA (vehiculos y robots autonomos)
 
