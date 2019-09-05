@@ -1,6 +1,7 @@
 
 /*
- * Medir la cantidad de frames por segundo
+ * Utilitario con funciones para medir el tiempo de ejecucion de 
+ * diferentes partes del codigo
  *
  * rafa@fi.uncoma.edu.ar
  *
