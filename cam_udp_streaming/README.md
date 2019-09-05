@@ -1,5 +1,5 @@
-Video Data Aquisition from Cameras and Streaming via UDP
-=======================================================
+Video Data Acquisition from Cameras and Streaming via UDP
+=========================================================
 
 Hay 3 programas en este proyecto.
 
