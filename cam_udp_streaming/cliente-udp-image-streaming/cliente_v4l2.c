@@ -4,7 +4,7 @@
  *                  en tiempo real.
  * Changelog:
  *      2017: Version inicial por Rodolfo del Castillo
- *            utilizando codigo fuente  de ejemplo de Video For Linux 2
+ *            utilizando codigo fuente de ejemplo de Video For Linux 2
  *      2019: Rafael Ignacio Zurita (rafa@fi.uncoma.edu.ar), tomando
  *            codigo desde:
  *            https://www.linuxtv.org/downloads/v4l-dvb-apis-new/media.pdf
@@ -32,7 +32,6 @@ long unsigned int YUYVtoJPEG(unsigned char * img, int width, int height, int jpe
 int init_socket(char *hostname, int portno);
 void send_frame(unsigned char * frame, int len);
 
-static int debug = 0;
 
 static char *dev_name                   = "/dev/video0";
 static int fd                           = -1;
@@ -53,7 +52,6 @@ struct buffer {
         size_t  length;
 };
 
-// static enum io_method   io = IO_METHOD_MMAP;
 struct buffer          *buffers;
 static unsigned int     n_buffers;
 static int              force_format;
@@ -87,123 +85,74 @@ static void send_YUV(unsigned char *p, int size)
 {
 	int size2;
 
-cronometro_start();
-  // size = YUYVtoJPEG(buffer_start, fmt.fmt.pix.width, fmt.fmt.pix.height, ENCODE_QUALITY, jpegbuffer_start);
-  size2 = YUYVtoJPEG(p, fmt.fmt.pix.width, fmt.fmt.pix.height, ENCODE_QUALITY, jpegbuffer_start);
-	if (debug) {
-		printf("send_YUV: size %d\n", size);
-	}
-printf("Convertir: ");
-cronometro_stop();
+	cronometro_start();
 
+	size2 = YUYVtoJPEG(p, fmt.fmt.pix.width, fmt.fmt.pix.height, ENCODE_QUALITY, jpegbuffer_start);
 
-cronometro_start();
-  send_frame(jpegbuffer_start, size2);
-printf("Enviar: ");
-cronometro_stop();
+	printf("Convertir: ");
+	cronometro_stop();
+
+	cronometro_start();
+	send_frame(jpegbuffer_start, size2);
+	printf("Enviar: ");
+	cronometro_stop();
 
 }
 
 static void send_MJPEG()
 {
-
-	if (debug) {
-		printf("send_MJPEG\n");
-	}
-
-    send_frame(buffer_start, size);
-
+	cronometro_start();
+	send_frame(buffer_start, size);
+	printf("Enviar: ");
+	cronometro_stop();
 }
 
 static int read_frame()
 {
 	struct v4l2_buffer buf;
 
-/*
-	memset(&buf, 0, sizeof(buf));
+
+	CLEAR(buf);
+
 	buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	buf.memory = V4L2_MEMORY_MMAP;
 
-	cronometro_start();
-	if (ioctl(fd, VIDIOC_DQBUF, &buf) == -1) {
-		printf("ioctl dqbuf is wrong !!!\n");
+	if (-1 == xioctl(fd, VIDIOC_DQBUF, &buf)) {
 		switch (errno) {
-			case EAGAIN:
-				return 0;
-			case EIO:
-*/
-				/* Could ignore EIO, see spec. */
-				/* fall through */
-/*
-			default:
-				errno_exit("VIDIOC_DQBUF");
+		case EAGAIN:
+			return 0;
+
+		case EIO:
+			/* Could ignore EIO, see spec. */
+			/* fall through */
+
+		default:
+			errno_exit("VIDIOC_DQBUF");
 		}
 	}
-	printf("Leer frame: ");
-	cronometro_stop();
 
-*/
+	assert(buf.index < n_buffers);
 
-                CLEAR(buf);
-
-                buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                buf.memory = V4L2_MEMORY_MMAP;
-
-                if (-1 == xioctl(fd, VIDIOC_DQBUF, &buf)) {
-                        switch (errno) {
-                        case EAGAIN:
-                                return 0;
-
-                        case EIO:
-                                /* Could ignore EIO, see spec. */
-
-                                /* fall through */
-
-                        default:
-                                errno_exit("VIDIOC_DQBUF");
-                        }
-                }
-
-                assert(buf.index < n_buffers);
-
-//                process_image(buffers[buf.index].start, buf.bytesused);
 	buffer_start = buffers[buf.index].start;
 	size = buf.bytesused;
 
 
-
-	cronometro_start();
-		printf("222222222222 mPEGGGGG ");
 	if (fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUYV) {
 
-		printf("YUYVVVVVV ");
-    		// send_YUV();
     		send_YUV(buffers[buf.index].start, buf.bytesused);
 
 	} else if (fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG) {
-		printf("mPEGGGGG ");
 
     		send_MJPEG();
   	}
-	printf("Enviar frame: ");
-	cronometro_stop();
 
-                if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
-                        errno_exit("VIDIOC_QBUF");
-
-
-/*
-	buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	buf.memory = V4L2_MEMORY_MMAP;
-
-	if (ioctl(fd, VIDIOC_QBUF, &buf) == -1)
+        if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
 		errno_exit("VIDIOC_QBUF");
-*/
 
 	return 0;
 }
 
-int fps = 0;
+int total_frames = 0;
 
 static void mainloop(void)
 {
@@ -238,15 +187,16 @@ static void mainloop(void)
       /* exit(EXIT_FAILURE); */
       continue;
     }
-	printf("Espera por datos disponibles en /dev/video0: ");
+
+	printf("\rEspera en /dev/video0: ");
 	cronometro_stop();
 
     if (read_frame())
-      break;
-    // EAGAIN - continue select loop.
+        break;
+    	// EAGAIN - continue select loop.
 
-    fps++;
-    printf(" Total frames:%i ",fps);
+    total_frames++;
+    printf(" Total frames:%i ",total_frames);
   }
 }
 
@@ -259,40 +209,25 @@ static void stop_capturing(void)
 
 static void start_capturing(void)
 {
-       unsigned int i;
-        enum v4l2_buf_type type;
+	unsigned int i;
+	enum v4l2_buf_type type;
 
-                for (i = 0; i < n_buffers; ++i) {
-                        struct v4l2_buffer buf;
+	for (i = 0; i < n_buffers; ++i) {
+		struct v4l2_buffer buf;
 
-                        CLEAR(buf);
-                        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                        buf.memory = V4L2_MEMORY_MMAP;
-                        buf.index = i;
+		CLEAR(buf);
+		buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		buf.memory = V4L2_MEMORY_MMAP;
+		buf.index = i;
 
-                        if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
-                                errno_exit("VIDIOC_QBUF");
-                }
-                type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                if (-1 == xioctl(fd, VIDIOC_STREAMON, &type))
-                        errno_exit("VIDIOC_STREAMON");
+		if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
+			errno_exit("VIDIOC_QBUF");
+	}
 
-//  struct v4l2_buffer buf;
-//  enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	if (-1 == xioctl(fd, VIDIOC_STREAMON, &type))
+		errno_exit("VIDIOC_STREAMON");
 
-
-/*
-  memset(&buf, 0, sizeof(buf));
-  buf.type = type;
-  buf.memory = V4L2_MEMORY_MMAP;
-  buf.index = 0;
-
-  if (ioctl(fd, VIDIOC_QBUF, &buf) == -1)
-    errno_exit("VIDIOC_QBUF ... !!!");
-
-  if (ioctl(fd, VIDIOC_STREAMON, &type) == -1)
-    errno_exit("VIDIOC_STREAMON");
-*/
 }
 
 static void uninit_device(void)
@@ -455,8 +390,6 @@ static void init_device(void)
         if (fmt.fmt.pix.sizeimage < min)
                 fmt.fmt.pix.sizeimage = min;
 
-
-
 	init_mmap();
 }
 
@@ -551,7 +484,6 @@ int main(int argc, char **argv)
   printf("port: %d\n", portno);
 
   init_socket(hostname, portno);
-
 
   open_device();
   init_device();
