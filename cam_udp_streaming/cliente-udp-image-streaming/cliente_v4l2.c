@@ -3,7 +3,7 @@
  *                  Puede utilizarse para streaming o procesamiento 
  *                  en tiempo real. 
  *                  Esta pensado para sistemas embebidos,
- *                  por lo que no utiliza ninguna biblioteca externa.
+ *                  por lo que no utiliza bibliotecas externas. 
  *                  
  * Changelog:
  *      2017: Version inicial por Rodolfo del Castillo
