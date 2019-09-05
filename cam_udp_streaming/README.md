@@ -6,11 +6,17 @@ Hay 3 programas en este proyecto.
 cliente-udp-image-streaming 
 ---------------------------
 Es el programa principal de captura.
-   Controla una camara YUYV o MJPEG via system calls al driver de video for
-   linux que controla la cámara. Captura cada framee cuando el sensor indica
-   que está disponible y lo envía por red via UDP.
+
+   Captura frames (imágenes) a través de system calls ioctl al driver 
+   de video for linux que controla la cámara YUYV o MJPEG. Cuando la cámara 
+   indica que existe un frame disponible se desencola el buffer de lectura
+ y se envía el frame por red via UDP.
    Este programa debería ser compilado y ejecutado en el sistema embebido
    que tendrá la cámara conectada.
+
+   Está escrito unicamente en C sin intervenció o uso de ninguna biblioteca.
+
+   
 
 python-servidor-udp-image-streaming 
 -----------------------------------
