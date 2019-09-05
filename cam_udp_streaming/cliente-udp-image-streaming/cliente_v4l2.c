@@ -1,3 +1,16 @@
+/* 
+ * cliente_v4l2.c : Programa que captura imagenes y envia las mismas via UDP
+ *                  Puede utilizarse para streaming o procesamiento 
+ *                  en tiempo real.
+ * Changelog:
+ *      2017: Version inicial por Rodolfo del Castillo
+ *            utilizando codigo fuente  de ejemplo de Video For Linux 2
+ *      2019: Rafael Ignacio Zurita (rafa@fi.uncoma.edu.ar), tomando
+ *            codigo desde:
+ *            https://www.linuxtv.org/downloads/v4l-dvb-apis-new/media.pdf
+ *            y desde mplayer
+ */       
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,7 +28,7 @@
 #include "config.h"
 #include "tiempos.h"
 
-long unsigned int YUYVtoJPEG(unsigned char* img, int width, int height, int jpegQuality, unsigned char* buf);
+long unsigned int YUYVtoJPEG(unsigned char * img, int width, int height, int jpegQuality, unsigned char* buf);
 int init_socket(char *hostname, int portno);
 void send_frame(unsigned char * frame, int len);
 
@@ -24,7 +37,6 @@ static int debug = 0;
 static char *dev_name                   = "/dev/video0";
 static int fd                           = -1;
 static void *buffer_start               = NULL;
-static size_t length                    = 0;
 static unsigned char *jpegbuffer_start  = NULL;
 static int portno                       = 8000;
 // static char *hostname                   = "127.0.0.1";
@@ -44,9 +56,7 @@ struct buffer {
 // static enum io_method   io = IO_METHOD_MMAP;
 struct buffer          *buffers;
 static unsigned int     n_buffers;
-static int              out_buf;
 static int              force_format;
-static int              frame_count = 70;
 
 
 static int xioctl(int fh, int request, void *arg)
@@ -73,16 +83,15 @@ static void errno_exit(const char *s)
   exit(EXIT_FAILURE);
 }
 int size; 
-static void send_YUV(const void *p, int size)
+static void send_YUV(unsigned char *p, int size)
 {
-//	long unsigned int size;
-int size2;
+	int size2;
 
 cronometro_start();
   // size = YUYVtoJPEG(buffer_start, fmt.fmt.pix.width, fmt.fmt.pix.height, ENCODE_QUALITY, jpegbuffer_start);
   size2 = YUYVtoJPEG(p, fmt.fmt.pix.width, fmt.fmt.pix.height, ENCODE_QUALITY, jpegbuffer_start);
 	if (debug) {
-		printf("send_YUV: size %ld\n", size);
+		printf("send_YUV: size %d\n", size);
 	}
 printf("Convertir: ");
 cronometro_stop();
@@ -95,31 +104,12 @@ cronometro_stop();
 
 }
 
-static int jpegsize()
-{
-    int size, i;
-
-    unsigned char * buf = buffer_start;
-
-    for (i = length-1; i >= 0; i--) {
-        if ((buf[i] << 8 | buf[i+1]) == 0xFFD9)
-            break;
-    }
-
-    size = i+2;
-
-    return size;
-}
-
 static void send_MJPEG()
 {
-//    int size;
 
 	if (debug) {
 		printf("send_MJPEG\n");
 	}
-
- //   size = jpegsize();
 
     send_frame(buffer_start, size);
 
@@ -128,9 +118,6 @@ static void send_MJPEG()
 static int read_frame()
 {
 	struct v4l2_buffer buf;
-
-	unsigned int i;
-
 
 /*
 	memset(&buf, 0, sizeof(buf));
@@ -182,7 +169,6 @@ static int read_frame()
 //                process_image(buffers[buf.index].start, buf.bytesused);
 	buffer_start = buffers[buf.index].start;
 	size = buf.bytesused;
-	printf ("ultimo byte:%X-", buffer_start+(size-1));
 
 
 
@@ -260,9 +246,7 @@ static void mainloop(void)
     // EAGAIN - continue select loop.
 
     fps++;
-    printf(" FPS:%i ",fps);
-    // frame_end();
-    // frame_start();
+    printf(" Total frames:%i ",fps);
   }
 }
 
@@ -313,22 +297,19 @@ static void start_capturing(void)
 
 static void uninit_device(void)
 {
-  unsigned int i;
+	unsigned int i;
 
-                for (i = 0; i < n_buffers; ++i)
-                        if (-1 == munmap(buffers[i].start, buffers[i].length))
-                                errno_exit("munmap");
-   free(buffers);
-
-//  if (munmap(buffer_start, length) == -1)
-//    errno_exit("munmap");
-
+	for (i = 0; i < n_buffers; ++i)
+		if (-1 == munmap(buffers[i].start, buffers[i].length))
+			errno_exit("munmap");
+	free(buffers);
 }
+
 
 static void init_mmap(void)
 {
 
-       struct v4l2_requestbuffers req;
+        struct v4l2_requestbuffers req;
 
         CLEAR(req);
 
@@ -383,68 +364,13 @@ static void init_mmap(void)
                 if (MAP_FAILED == buffers[n_buffers].start)
                         errno_exit("mmap");
         }
-
-
-
-
-
-/*
-  struct v4l2_requestbuffers req;
-  memset(&req, 0, sizeof(req));
-  req.count  = 1;
-  req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  req.memory = V4L2_MEMORY_MMAP;
-
-  if (ioctl(fd, VIDIOC_REQBUFS, &req) == -1)
-    errno_exit("VIDIOC_REQBUFS");
-
-  struct v4l2_buffer buf;
-  memset(&buf, 0, sizeof(buf));
-  buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  buf.memory = V4L2_MEMORY_MMAP;
-  buf.index = 0;
-
-  if (ioctl(fd, VIDIOC_QUERYBUF, &buf) == -1)
-    errno_exit("VIDIOC_QUERYBUF");
-
-  length = buf.length;
-  buffer_start = mmap(NULL /* start anywhere */   //,
-//                      length,
-//                      PROT_READ | PROT_WRITE /* required */,
-//                      MAP_SHARED /* recommended */,
-//                      fd, buf.m.offset);
-//
-//  if (buffer_start == MAP_FAILED)
-//    errno_exit("mmap");
-
-
 }
 
-static void get_pixelformat()
-{
-  struct v4l2_fmtdesc desc;
-  memset(&desc, 0, sizeof(desc));
-  desc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-
-  // iterate over all formats, and prefer MJPEG when available
-  while (ioctl(fd, VIDIOC_ENUM_FMT, &desc) == 0) {
-    desc.index++;
-
-    if (desc.pixelformat == V4L2_PIX_FMT_MJPEG) {
-      fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
-      printf("Using: MJPEG\n");
-      return;
-    }
-  }
-
-  // printf("Using: YUYV\n");
-  printf("Using: MJPEG\n");
-}
 
 static void init_device(void)
 {
 
-       struct v4l2_capability cap;
+        struct v4l2_capability cap;
         struct v4l2_cropcap cropcap;
         struct v4l2_crop crop;
         // RAFA struct v4l2_format fmt;
@@ -504,11 +430,10 @@ static void init_device(void)
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	force_format = 1;
         if (force_format) {
-                fmt.fmt.pix.width       = 640;
-                fmt.fmt.pix.height      = 480;
-                // fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
-                // RAFA fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
+                fmt.fmt.pix.width       = 320;
+		fmt.fmt.pix.height      = 240;
+		fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+                // fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
                 fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
 
                 if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
@@ -532,47 +457,7 @@ static void init_device(void)
 
 
 
-                init_mmap();
-
-
-
-
-
-
-/*
-  struct v4l2_capability cap;
-
-  memset(&cap, 0, sizeof(cap));
-  if (ioctl(fd, VIDIOC_QUERYCAP, &cap) == -1)
-    errno_exit("VIDIOC_QUERYCAP");
-
-  if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
-    fprintf(stderr, "%s is no video capture device\n", dev_name);
-    exit(EXIT_FAILURE);
-  }
-
-  if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
-    fprintf(stderr, "%s does not support streaming i/o\n", dev_name);
-    exit(EXIT_FAILURE);
-  }
-
-  // Default to YUYV o MJPEG? :)
-  memset(&fmt, 0, sizeof(fmt));
-  fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  // RAFA fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-  fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
-  get_pixelformat();
-
-  // it'll adjust to the bigger screen available in the driver
-  fmt.fmt.pix.width  = FRAME_WIDTH;
-  fmt.fmt.pix.height = FRAME_HEIGHT;
-
-  if (ioctl(fd, VIDIOC_S_FMT, &fmt) == -1)
-  	errno_exit("VIDIOC_S_FMT");
-
-  init_mmap ();
-
-*/
+	init_mmap();
 }
 
 static void close_device(void)
