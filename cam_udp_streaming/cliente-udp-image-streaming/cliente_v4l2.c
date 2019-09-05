@@ -5,10 +5,10 @@
  * Changelog:
  *      2017: Version inicial por Rodolfo del Castillo
  *            utilizando codigo fuente de ejemplo de Video For Linux 2
- *      2019: Rafael Ignacio Zurita (rafa@fi.uncoma.edu.ar), tomando
- *            codigo desde:
- *            https://www.linuxtv.org/downloads/v4l-dvb-apis-new/media.pdf
- *            y desde mplayer
+ *      2019: Rafael Ignacio Zurita (rafa@fi.uncoma.edu.ar), mejoras
+ *            en la performance general, utilizando codigo desde:
+ *            https://www.linuxtv.org/downloads/v4l-dvb-apis-new/media.pdf,
+ *            mplayer, y modificaciones locales.
  */       
 
 #include <stdio.h>
