@@ -11,19 +11,19 @@
  *            mplayer, y modificaciones locales.
  */       
 
+#include <assert.h>
+#include <errno.h>
+#include <fcntl.h>              /* low-level i/o */
+#include <getopt.h>
+#include <linux/videodev2.h>
+#include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
-#include <fcntl.h>              /* low-level i/o */
-#include <unistd.h>
-#include <errno.h>
-#include <malloc.h>
-#include <sys/types.h>
-#include <sys/mman.h>
 #include <sys/ioctl.h>
-#include <linux/videodev2.h>
-#include <getopt.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "config.h"
 #include "tiempos.h"
@@ -43,6 +43,12 @@ static char *hostname                   = "10.0.40.42";
 //static char *hostname                   = "10.0.40.99";
 static struct v4l2_format fmt;
 
+/* Variable global que almacena la cantidad de bytes obtenidos desde la camara */
+int size; 
+
+/* Variable global que almacena la cantidad total de frames obtenidos */
+int total_frames = 0;
+
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
@@ -57,8 +63,7 @@ static unsigned int     n_buffers;
 static int              force_format;
 
 
-static int xioctl(int fh, int request, void *arg)
-{
+static int xioctl(int fh, int request, void *arg) {
         int r;
 
         do {
@@ -75,20 +80,20 @@ static int xioctl(int fh, int request, void *arg)
 // necessary to silent clang warning
 static void errno_exit(const char *s) __attribute__((noreturn));
 
-static void errno_exit(const char *s) 
-{
+
+static void errno_exit(const char *s) {
+
   fprintf(stderr, "%s error %d, %s\n", s, errno, strerror(errno));
   exit(EXIT_FAILURE);
 }
-int size; 
-static void send_YUV(unsigned char *p, int size)
-{
+
+
+static void send_YUV(unsigned char *p, int size) {
+
 	int size2;
 
 	cronometro_start();
-
 	size2 = YUYVtoJPEG(p, fmt.fmt.pix.width, fmt.fmt.pix.height, ENCODE_QUALITY, jpegbuffer_start);
-
 	printf("Convertir: ");
 	cronometro_stop();
 
@@ -99,18 +104,19 @@ static void send_YUV(unsigned char *p, int size)
 
 }
 
-static void send_MJPEG()
-{
+
+static void send_MJPEG() {
+
 	cronometro_start();
 	send_frame(buffer_start, size);
 	printf("Enviar: ");
 	cronometro_stop();
 }
 
-static int read_frame()
-{
-	struct v4l2_buffer buf;
 
+static int read_frame() {
+
+	struct v4l2_buffer buf;
 
 	CLEAR(buf);
 
@@ -132,10 +138,8 @@ static int read_frame()
 	}
 
 	assert(buf.index < n_buffers);
-
 	buffer_start = buffers[buf.index].start;
 	size = buf.bytesused;
-
 
 	if (fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUYV) {
 
@@ -152,17 +156,16 @@ static int read_frame()
 	return 0;
 }
 
-int total_frames = 0;
 
-static void mainloop(void)
-{
+static void mainloop(void) {
+
   for (;;) {
 
     fd_set fds;
     struct timeval tv;
     int r;
 
-	cronometro_start();
+    cronometro_start();
 
     FD_ZERO(&fds);
     FD_SET(fd, &fds);
@@ -188,8 +191,8 @@ static void mainloop(void)
       continue;
     }
 
-	printf("\rEspera en /dev/video0: ");
-	cronometro_stop();
+    printf("\rEspera en /dev/video0: ");
+    cronometro_stop();
 
     if (read_frame())
         break;
@@ -200,15 +203,17 @@ static void mainloop(void)
   }
 }
 
-static void stop_capturing(void)
-{
+
+static void stop_capturing(void) {
+
   enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   if (ioctl(fd, VIDIOC_STREAMOFF, &type) == -1)
     errno_exit("VIDIOC_STREAMOFF");
 }
 
-static void start_capturing(void)
-{
+
+static void start_capturing(void) {
+
 	unsigned int i;
 	enum v4l2_buf_type type;
 
@@ -227,11 +232,11 @@ static void start_capturing(void)
 	type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	if (-1 == xioctl(fd, VIDIOC_STREAMON, &type))
 		errno_exit("VIDIOC_STREAMON");
-
 }
 
-static void uninit_device(void)
-{
+
+static void uninit_device(void) {
+
 	unsigned int i;
 
 	for (i = 0; i < n_buffers; ++i)
@@ -241,8 +246,7 @@ static void uninit_device(void)
 }
 
 
-static void init_mmap(void)
-{
+static void init_mmap(void) {
 
         struct v4l2_requestbuffers req;
 
@@ -302,8 +306,7 @@ static void init_mmap(void)
 }
 
 
-static void init_device(void)
-{
+static void init_device(void) {
 
         struct v4l2_capability cap;
         struct v4l2_cropcap cropcap;
@@ -393,14 +396,16 @@ static void init_device(void)
 	init_mmap();
 }
 
-static void close_device(void)
-{
+
+static void close_device(void) {
+
   if (close (fd) == -1)
     errno_exit("close");
 }
 
-static void open_device(void)
-{
+
+static void open_device(void) {
+
   if ((fd = open(dev_name, O_RDWR)) == -1) {
     fprintf(stderr, "Cannot open '%s': %d, %s\n", dev_name, errno,
             strerror (errno));
@@ -412,8 +417,8 @@ static void open_device(void)
 /*
   print usage information
 */
-static void usage(FILE* fp, int argc, char** argv)
-{
+static void usage(FILE* fp, int argc, char** argv) {
+
   fprintf (fp,
     "Usage: %s [options]\n\n"
     "Options:\n"
@@ -437,9 +442,7 @@ long_options [] = {
 };
 
 
-
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 
   for (;;) {
     int index, c = 0;
