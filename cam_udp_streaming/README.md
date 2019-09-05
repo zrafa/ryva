@@ -14,7 +14,7 @@ Es el programa principal de captura.
    Este programa debería ser compilado y ejecutado en el sistema embebido
    que tendrá la cámara conectada.
 
-   Está escrito unicamente en C sin intervenció o uso de ninguna biblioteca.
+   Está escrito unicamente en C y no utiliza ninguna biblioteca (utiliza la biblioteca lipjpeg, pero la hemos empotrado como parte de la aplicación).
 
 ```
 # Compilar con:
