@@ -1,5 +1,3 @@
-# ryva
-
 
 Instalacion de Debian oficial en Raspberry pi 3 model B
 -------------------------------------------------------
