@@ -16,6 +16,20 @@ Es el programa principal de captura.
 
    Está escrito unicamente en C sin intervenció o uso de ninguna biblioteca.
 
+```
+# Compilar con:
+cd cliente-udp-image-streaming/jpeg-9c
+make
+cd ..
+make
+
+# Ejecutar:
+./cliente_v4l2
+
+# Ejecutar especificando servidor y puerto:
+./cliente_v4l2 -d /dev/video4 -s 10.0.40.99 -p 8002
+```
+
    
 
 python-servidor-udp-image-streaming 
