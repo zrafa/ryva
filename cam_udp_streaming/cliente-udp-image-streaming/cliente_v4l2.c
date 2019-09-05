@@ -1,7 +1,10 @@
 /* 
- * cliente_v4l2.c : Programa que captura imagenes y envia las mismas via UDP
+ * cliente_v4l2.c : Programa que captura imagenes y envia las mismas via UDP.
  *                  Puede utilizarse para streaming o procesamiento 
- *                  en tiempo real.
+ *                  en tiempo real. 
+ *                  Esta pensado para sistemas embebidos,
+ *                  por lo que no utiliza ninguna biblioteca externa.
+ *                  
  * Changelog:
  *      2017: Version inicial por Rodolfo del Castillo
  *            utilizando codigo fuente de ejemplo de Video For Linux 2
