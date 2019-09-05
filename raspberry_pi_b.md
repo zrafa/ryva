@@ -1,6 +1,6 @@
 
 Instalacion de Debian oficial en Raspberry pi 3 model B
--------------------------------------------------------
+=======================================================
 
 ```
 wget https://people.debian.org/~gwolf/raspberrypi/20190628/20190628_raspberry-pi-3_buster_PREVIEW.img.xz
@@ -11,6 +11,10 @@ unxz 20190628_raspberry-pi-3_buster_PREVIEW.img.xz
 cat 20190628_raspberry-pi-3_buster_PREVIEW.img | dd of=/dev/sde bs=4K status=progress
 
 ```
+
+Los comandos anteriores instalarán una versión básica de Debian, sin 
+desktop o aplicaciones gráficas, las cuales no son necesarias
+en nuestro proyecto embebido de caja para captura de señales.
 
 Encendemos y realizamos ssh a la raspberry. Si queremos conocer la IP podemos
 hacer lo siguiente:
