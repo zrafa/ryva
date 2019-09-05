@@ -120,14 +120,18 @@ int main(int argc, char * argv[]) {
  
             Mat rawData = Mat(1, PACK_SIZE * total_pack, CV_8UC1, longbuf);
             Mat frame = imdecode(rawData, CV_LOAD_IMAGE_COLOR);
-            if (frame.size().width == 0) {
+            if ((frame.size().width == 0) || (frame.size().height == 0)) {
                 if (debug) {
                     cout << "decode failure!" << endl;
                     continue;
                 }
             }
-            cv::resize(frame, frame, cv::Size(0, 0), scale, scale);
-            imshow("recv", frame);
+	    try  {
+            	cv::resize(frame, frame, cv::Size(0, 0), scale, scale);
+            	imshow("recv", frame);
+            }
+	    catch  {
+            }
 
 	    /* RAFA */
 	    frame_end();
