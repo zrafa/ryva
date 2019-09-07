@@ -52,6 +52,8 @@ int size;
 /* Variable global que almacena la cantidad total de frames obtenidos */
 int total_frames = 0;
 
+int jpeg = 0;
+int resolucion = 0;
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
@@ -63,7 +65,6 @@ struct buffer {
 
 struct buffer          *buffers;
 static unsigned int     n_buffers;
-static int              force_format;
 
 
 static int xioctl(int fh, int request, void *arg) {
@@ -159,52 +160,6 @@ static int read_frame() {
 	return 0;
 }
 
-
-static void mainloop(void) {
-
-  for (;;) {
-
-    fd_set fds;
-    struct timeval tv;
-    int r;
-
-    cronometro_start();
-
-    FD_ZERO(&fds);
-    FD_SET(fd, &fds);
-
-    tv.tv_sec = 6;
-    tv.tv_usec = 0;
-
-    r = select(fd + 1, &fds, NULL, NULL, &tv);
-
-    if (-1 == r)
-    {
-      if (EINTR == errno)
-        continue;
-
-      errno_exit("select");
-    }
-
-    if (0 == r)
-    {
-      fprintf(stderr, "select timeout\n");
-      /* RAFA: en mplayer no falla, vuelve a reintentar con continue */
-      /* exit(EXIT_FAILURE); */
-      continue;
-    }
-
-    printf("\rEspera en /dev/video0: ");
-    cronometro_stop();
-
-    if (read_frame())
-        break;
-    	// EAGAIN - continue select loop.
-
-    total_frames++;
-    printf(" Total frames:%i ",total_frames);
-  }
-}
 
 
 static void stop_capturing(void) {
@@ -369,24 +324,39 @@ static void init_device(void) {
         CLEAR(fmt);
 
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	force_format = 1;
-        if (force_format) {
-                fmt.fmt.pix.width       = 320;
+	if (jpeg)
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
+	else
+                fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+
+	
+	fmt.fmt.pix.width       = 160;
+	fmt.fmt.pix.height      = 120;
+
+	switch (resolucion) {
+	  case 3:
+		fmt.fmt.pix.width       = 320;
 		fmt.fmt.pix.height      = 240;
-		fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-                // fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
-                fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
+		break;
+	  case 6:
+		fmt.fmt.pix.width       = 640;
+		fmt.fmt.pix.height      = 480;
+		break;
+	  case 7:
+		fmt.fmt.pix.width       = 1280;
+		fmt.fmt.pix.height      = 720;
+		break;
+	  case 9:
+		fmt.fmt.pix.width       = 1920;
+		fmt.fmt.pix.height      = 1080;
+		break;
+	};
+	  
 
-                if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
-                        errno_exit("VIDIOC_S_FMT");
+	fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
 
-                /* Note VIDIOC_S_FMT may change width and height. */
-
-        } else {
-                /* Preserve original settings as set by v4l2-ctl for example */
-                if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
-                        errno_exit("VIDIOC_G_FMT");
-        }
+        if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
+		errno_exit("VIDIOC_S_FMT");
 
         /* Buggy driver paranoia. */
         min = fmt.fmt.pix.width * 2;
@@ -416,6 +386,64 @@ static void open_device(void) {
   }
 }
 
+static void mainloop(void) {
+
+  int nro_timeouts = 0;
+
+  for (;;) {
+
+    fd_set fds;
+    struct timeval tv;
+    int r;
+
+    cronometro_start();
+
+    FD_ZERO(&fds);
+    FD_SET(fd, &fds);
+
+    tv.tv_sec = 6;
+    tv.tv_usec = 0;
+
+    r = select(fd + 1, &fds, NULL, NULL, &tv);
+
+    if (-1 == r)
+    {
+      if (EINTR == errno)
+        continue;
+
+      errno_exit("select");
+    }
+
+    if (0 == r)
+    {
+      fprintf(stderr, "select timeout\n");
+      /* RAFA: en mplayer no falla, vuelve a reintentar con continue */
+      /* RAFA: igualmente reinicio la captura, como prueba */
+      /* exit(EXIT_FAILURE); */
+
+	nro_timeouts++;
+	if (nro_timeouts == 3) {
+		nro_timeouts = 0;
+
+		stop_capturing();
+		start_capturing();
+
+	}
+	continue;
+    }
+
+    printf("\rEspera en /dev/video0: ");
+    cronometro_stop();
+
+    if (read_frame())
+        break;
+    	// EAGAIN - continue select loop.
+
+    total_frames++;
+    printf(" Total frames:%i ",total_frames);
+  }
+}
+
 
 /*
   print usage information
@@ -429,11 +457,22 @@ static void usage(FILE* fp, int argc, char** argv) {
     "-h | --help              Print this message\n"
     "-s | --server address    Server [ip address/hostname]\n"
     "-p | --port port number  Port [8888]\n"
+    "-j | --jpeg 	      formato MJPEG (predeterminado YUYV)\n"
+    "                     (solo para la captura, el envio es siempre en formato JPEG).\n"
+    "--320 	      res: 160x120 (predeterminado: 160x120)\n"
+    "--640 	      res: 160x120 (predeterminado: 160x120\n"
+    "--720 	      res: 1280x720 (predeterminado: 160x120\n"
+    "--1080 	      res: 1920x1080 (predeterminado: 160x120\n"
    "",
     argv[0]);
 }
 
-static const char short_options [] = "d:h:s:p:";
+#define M320  1000
+#define M640  1001
+#define M720  1002
+#define M1080  1003
+
+static const char short_options [] = "d:h:s:p:j:NULL:NULL:NULL:NULL:";
 
 static const struct option
 long_options [] = {
@@ -441,7 +480,12 @@ long_options [] = {
         { "help",       no_argument,            NULL,           'h' },
         { "server",     required_argument,      NULL,           's' },
         { "port",       required_argument,      NULL,           'p' },
-       { 0, 0, 0, 0 }
+        { "jpeg",       no_argument, 	        NULL,           'j' },
+        { "320",       no_argument, 	        NULL,           M320 },
+        { "640",       no_argument, 	        NULL,           M640 },
+        { "720",       no_argument, 	        NULL,           M720 },
+        { "1080",       no_argument, 	        NULL,           M1080 },
+	{NULL, 0, NULL, 0}
 };
 
 
@@ -476,6 +520,27 @@ int main(int argc, char **argv) {
       case 'p':
         // port number
         portno = atoi(optarg);
+        break;
+
+      case 'j':
+        // jpeg (default yuyv)
+        jpeg = 1;
+        break;
+
+      case M320:
+        resolucion = 3;
+        break;
+
+      case M640:
+        resolucion = 6;
+        break;
+
+      case M720:
+        resolucion = 7;
+        break;
+
+      case M1080:
+        resolucion = 9;
         break;
 
 
