@@ -62,6 +62,8 @@ void frame_end() {
 
   elapsedTime= ELAPSED;
              
+  printf("%s ", str);
+  printf("%s ", str);
   sprintf(str, "Frames per second: %2.0f", 1.0/elapsedTime);
   printf("%s \r", str);
   fflush(0);
@@ -70,21 +72,12 @@ void frame_end() {
 
 /* FIN DE RAFA: para incluir frames por segundo */
 
+int scale = 1;
+unsigned short servPort;
 
-int main(int argc, char * argv[]) {
-    int scale = 1;
-
-    if (argc != 3) { // Test for correct number of parameters
-        cerr << "Usage: " << argv[0] << " <Server Port>" << " <Scale> " << endl;
-        exit(1);
-    }
-
-    scale = atoi(argv[2]);
-
-    unsigned short servPort = atoi(argv[1]); // First arg:  local port
-
+void reproducir()  {
     namedWindow("recv", CV_WINDOW_AUTOSIZE);
-    try {
+    //try {
         UDPSocket sock(servPort);
 
         int recvMsgSize; // Size of received message
@@ -126,11 +119,18 @@ int main(int argc, char * argv[]) {
                     continue;
                 }
             }
+             cout << "tamanio!" << frame.size().width ;
+             // cout << "empty!" << frame.empty() << endl;
+		
+  // sprintf(str, "tamanio: %i", frame.empty());
 	    try  {
             	cv::resize(frame, frame, cv::Size(0, 0), scale, scale);
             	imshow("recv", frame);
             }
-	    catch  {
+    		catch  (cv::Exception & e) {
+			
+                    cout << "hubo un catch !" << endl;
+	//		continue;
             }
 
 	    /* RAFA */
@@ -141,10 +141,27 @@ int main(int argc, char * argv[]) {
 
             waitKey(1);
         }
-    } catch (SocketException & e) {
-        cerr << e.what() << endl;
+//    } catch (SocketException & e) {
+ //       cerr << e.what() << endl;
+  //      exit(1);
+   // }
+
+}
+
+int main(int argc, char * argv[]) {
+    // int scale = 1;
+
+    if (argc != 3) { // Test for correct number of parameters
+        cerr << "Usage: " << argv[0] << " <Server Port>" << " <Scale> " << endl;
         exit(1);
     }
+
+    scale = atoi(argv[2]);
+
+    //unsigned short servPort = atoi(argv[1]); // First arg:  local port
+    servPort = atoi(argv[1]); // First arg:  local port
+    for (;;)
+     reproducir();
 
     return 0;
 }
