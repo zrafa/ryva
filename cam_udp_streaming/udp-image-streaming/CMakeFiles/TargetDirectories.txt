@@ -1,4 +1,0 @@
-/home/lechnerm/rafa/programacion/gv/udp_streaming_jul30_105904_2017/udp-image-streaming/CMakeFiles/edit_cache.dir
-/home/lechnerm/rafa/programacion/gv/udp_streaming_jul30_105904_2017/udp-image-streaming/CMakeFiles/rebuild_cache.dir
-/home/lechnerm/rafa/programacion/gv/udp_streaming_jul30_105904_2017/udp-image-streaming/CMakeFiles/server.dir
-/home/lechnerm/rafa/programacion/gv/udp_streaming_jul30_105904_2017/udp-image-streaming/CMakeFiles/client.dir
