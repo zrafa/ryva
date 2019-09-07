@@ -65,7 +65,6 @@ struct buffer {
 
 struct buffer          *buffers;
 static unsigned int     n_buffers;
-static int              force_format;
 
 
 static int xioctl(int fh, int request, void *arg) {
@@ -161,52 +160,6 @@ static int read_frame() {
 	return 0;
 }
 
-
-static void mainloop(void) {
-
-  for (;;) {
-
-    fd_set fds;
-    struct timeval tv;
-    int r;
-
-    cronometro_start();
-
-    FD_ZERO(&fds);
-    FD_SET(fd, &fds);
-
-    tv.tv_sec = 6;
-    tv.tv_usec = 0;
-
-    r = select(fd + 1, &fds, NULL, NULL, &tv);
-
-    if (-1 == r)
-    {
-      if (EINTR == errno)
-        continue;
-
-      errno_exit("select");
-    }
-
-    if (0 == r)
-    {
-      fprintf(stderr, "select timeout\n");
-      /* RAFA: en mplayer no falla, vuelve a reintentar con continue */
-      /* exit(EXIT_FAILURE); */
-      continue;
-    }
-
-    printf("\rEspera en /dev/video0: ");
-    cronometro_stop();
-
-    if (read_frame())
-        break;
-    	// EAGAIN - continue select loop.
-
-    total_frames++;
-    printf(" Total frames:%i ",total_frames);
-  }
-}
 
 
 static void stop_capturing(void) {
@@ -402,25 +355,8 @@ static void init_device(void) {
 
 	fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
 
-//	force_format = 1;
- //       if (force_format) {
-  //              fmt.fmt.pix.width       = 320;
-//		fmt.fmt.pix.height      = 240;
-//		fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
- //               // fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
-  //              fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
-//
-
-                if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
-                        errno_exit("VIDIOC_S_FMT");
-
-                /* Note VIDIOC_S_FMT may change width and height. */
-
-//        } else {
- //               /* Preserve original settings as set by v4l2-ctl for example */
-  //              if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
-   //                     errno_exit("VIDIOC_G_FMT");
-    //    }
+        if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
+		errno_exit("VIDIOC_S_FMT");
 
         /* Buggy driver paranoia. */
         min = fmt.fmt.pix.width * 2;
@@ -450,6 +386,71 @@ static void open_device(void) {
   }
 }
 
+static void mainloop(void) {
+
+  int nro_timeouts = 0;
+
+  for (;;) {
+
+    fd_set fds;
+    struct timeval tv;
+    int r;
+
+    cronometro_start();
+
+    FD_ZERO(&fds);
+    FD_SET(fd, &fds);
+
+    tv.tv_sec = 6;
+    tv.tv_usec = 0;
+
+    r = select(fd + 1, &fds, NULL, NULL, &tv);
+
+    if (-1 == r)
+    {
+      if (EINTR == errno)
+        continue;
+
+      errno_exit("select");
+    }
+
+    if (0 == r)
+    {
+      fprintf(stderr, "select timeout\n");
+      /* RAFA: en mplayer no falla, vuelve a reintentar con continue */
+      /* RAFA: igualmente reinicio el dispositivo, como prueba */
+      /* exit(EXIT_FAILURE); */
+
+	nro_timeouts++;
+	if (nro_timeouts == 3) {
+		nro_timeouts = 0;
+
+		stop_capturing();
+		uninit_device();
+		close_device();
+		free(jpegbuffer_start);
+
+		open_device();
+		init_device();
+		jpegbuffer_start = (unsigned char *)malloc(fmt.fmt.pix.width*fmt.fmt.pix.height*3);	
+		start_capturing();
+
+	}
+	continue;
+    }
+
+    printf("\rEspera en /dev/video0: ");
+    cronometro_stop();
+
+    if (read_frame())
+        break;
+    	// EAGAIN - continue select loop.
+
+    total_frames++;
+    printf(" Total frames:%i ",total_frames);
+  }
+}
+
 
 /*
   print usage information
@@ -464,7 +465,7 @@ static void usage(FILE* fp, int argc, char** argv) {
     "-s | --server address    Server [ip address/hostname]\n"
     "-p | --port port number  Port [8888]\n"
     "-j | --jpeg 	      formato MJPEG (predeterminado YUYV)\n"
-    "                         (solo para la captura, el envio es siempre en formato JPEG).\n"
+    "                     (solo para la captura, el envio es siempre en formato JPEG).\n"
     "--320 	      res: 160x120 (predeterminado: 160x120)\n"
     "--640 	      res: 160x120 (predeterminado: 160x120\n"
     "--720 	      res: 1280x720 (predeterminado: 160x120\n"
