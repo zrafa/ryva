@@ -418,7 +418,7 @@ static void mainloop(void) {
     {
       fprintf(stderr, "select timeout\n");
       /* RAFA: en mplayer no falla, vuelve a reintentar con continue */
-      /* RAFA: igualmente reinicio el dispositivo, como prueba */
+      /* RAFA: igualmente reinicio la captura, como prueba */
       /* exit(EXIT_FAILURE); */
 
 	nro_timeouts++;
@@ -426,13 +426,6 @@ static void mainloop(void) {
 		nro_timeouts = 0;
 
 		stop_capturing();
-		uninit_device();
-		close_device();
-		free(jpegbuffer_start);
-
-		open_device();
-		init_device();
-		jpegbuffer_start = (unsigned char *)malloc(fmt.fmt.pix.width*fmt.fmt.pix.height*3);	
 		start_capturing();
 
 	}
