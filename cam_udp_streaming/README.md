@@ -32,14 +32,42 @@ make
 
    
 
-python-servidor-udp-image-streaming 
------------------------------------
-Este es un servidor sencillo en python
-    que captura una imagen que venga por la red via UDP y la guarda a disco.
-
 udp-image-streaming
 -------------------
 Es un servidor y visualizador de un streaming de video
     que venga por red via UDP.
     Este programa debería ser utilizado en PC, para visualizar la captura
     proveniente de los sistemas embebidos que ejecutan cliente-udp-streaming.
+
+```
+# Compilar con:
+cd udp-image-streaming/
+cmake .
+make
+
+# Ejecutar
+./server 8000 2
+
+# El comando anterior escucha en el puerto 8000 y escala el video a 2X
+```
+
+Obtener el streaming y enviarlo a disco en formato mp4
+------------------------------------------------------
+
+```
+# El siguiente comando escucha en el puerto 8004 y envía los frames
+# jpg a disco en formato de video MP4
+
+nc -l -u 8004 |  ffmpeg -framerate ntsc -f image2pipe -c:v mjpeg -i - -pix_fmt yuv420p output.mp4
+
+# En el sistema embebido habría que ejecutar cliente-udp-image-streaming,
+# y especificar que envíe el video al sistema
+# que escucha en el puerto 8004 a través del comando anterior
+```
+
+
+python-servidor-udp-image-streaming 
+-----------------------------------
+Este es un servidor sencillo en python
+    que captura una imagen que venga por la red via UDP y la guarda a disco.
+
