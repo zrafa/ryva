@@ -84,3 +84,51 @@ Cantidad de frames procesados:
 
 ```
 
+
+Compilación de ORB-SLAM2 en Raspbery pi con Debian
+==================================================
+
+Si se utiliza Debian buster entonces casi todas las dependencias
+están en los repositorios de Debian. Así que no es complicada la cosa
+
+```
+# INSTALAMOS dependencias
+apt-get install build-essential cmake
+apt-get install git pkg-config libjpeg-dev libtiff5-dev  libpng-dev libtbb-dev
+apt-get install libopencv-core3.2  libopencv-dev libeigen3-dev
+apt-get install libblas-dev liblapack-dev libglew-dev
+
+# Luego instalamos pangolin que no viene empaquetado para DEBIAN
+git clone https://github.com/stevenlovegrove/Pangolin
+cd Pangolin
+mkdir build
+cd build
+cmake ..
+make 
+make install
+
+# Crear un archivo de swap de 1G por las dudas. Y activarlo
+
+# Luego, compilamos ORB-SLAM2 :
+
+git clone https://github.com/raulmur/ORB_SLAM2.git ORB_SLAM2
+cd ORB_SLAM2/
+chmod a+x build.sh 
+
+# Editar build.sh y cambiar make -j por simplemente make
+# (esto evitará usar los 4 cores para make, que en raspberry produce
+# sigalarms porque se queda sin memoria).
+
+# Buscar todos los fuentes que tengan la funcion usleep
+egrep -r usleep .
+
+# Editar cada fuente y agregar:
+#include <unisted.h>
+
+# (eso evitará que de error el compilador por usleep. Igualmente usleep
+# es obsoleto, así que la gente de orb-slam2 debería actualizar el código).
+
+# Luego compilamos
+./build.sh 
+
+```
