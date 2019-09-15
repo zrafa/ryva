@@ -131,4 +131,9 @@ egrep -r usleep .
 # Luego compilamos
 ./build.sh 
 
+# se anuló la visualizacion (viewer) llamando a system
+# con false desde mono_tum.cc
+# Luego se recompiló
+
+# probar slam, ver instrucciones
 ```
