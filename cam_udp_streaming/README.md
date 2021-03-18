@@ -23,11 +23,17 @@ make
 cd ..
 make
 
+# agregar (una unica vez) el usuario al grupo video. Ejemplo:
+usermod -a -G video rafa
+
 # Ejecutar:
 ./cliente_v4l2
 
 # Ejecutar especificando servidor y puerto:
 ./cliente_v4l2 -d /dev/video4 -s 10.0.40.99 -p 8002
+
+# otro ejemplo en banana pi
+./cliente_v4l2 -d /dev/video0 -s 10.0.40.95 -p 8002
 ```
 
    
