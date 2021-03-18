@@ -21,6 +21,8 @@
 #include "PracticalSocket.h"      // For UDPSocket and SocketException
 #include <iostream>               // For cout and cerr
 #include <cstdlib>                // For atoi()
+#include <opencv2/highgui/highgui_c.h>
+//#include <opencv2/imgcodecs/imgcodecs_c.h>
 
 using namespace std;
 
@@ -58,7 +60,9 @@ int main(int argc, char * argv[]) {
             if(frame.size().width==0)continue;//simple integrity check; skip erroneous data...
             resize(frame, send, Size(FRAME_WIDTH, FRAME_HEIGHT), 0, 0, INTER_LINEAR);
             vector < int > compression_params;
-            compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+            //compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+            compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+
             compression_params.push_back(jpegqual);
 
             imencode(".jpg", send, encoded, compression_params);

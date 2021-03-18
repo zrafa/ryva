@@ -40,6 +40,9 @@ Es un servidor y visualizador de un streaming de video
     proveniente de los sistemas embebidos que ejecutan cliente-udp-streaming.
 
 ```
+# hay que tener instalado las cabeceras de desarrollo de opencv
+# ejemplo: apt-get install libopencv-dev
+
 # Compilar con:
 cd udp-image-streaming/
 cmake .

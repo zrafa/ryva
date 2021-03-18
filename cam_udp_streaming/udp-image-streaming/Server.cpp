@@ -22,6 +22,8 @@
 #include <iostream>          // For cout and cerr
 #include <cstdlib>           // For atoi()
 #include <iomanip>           // For setfill()
+#include <opencv2/highgui/highgui_c.h>
+
 
 
 
@@ -112,7 +114,8 @@ void reproducir()  {
             }
  
             Mat rawData = Mat(1, PACK_SIZE * total_pack, CV_8UC1, longbuf);
-            Mat frame = imdecode(rawData, CV_LOAD_IMAGE_COLOR);
+            //Mat frame = imdecode(rawData, CV_LOAD_IMAGE_COLOR);
+            Mat frame = imdecode(rawData, cv::IMREAD_COLOR);
             if ((frame.size().width == 0) || (frame.size().height == 0)) {
                 if (debug) {
                     cout << "decode failure!" << endl;
