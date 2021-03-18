@@ -1,0 +1,20 @@
+
+Compilar con 
+
+make
+
+Ejecutar con permisos de root, o colocar el usuario al grupo dialout
+
+# ej: agregamos el usuario rafa al grupo dialout
+usermod -a -G dialout rafa
+
+
+El gps ublox tira la información así:
+$GNRMC,133410.00,A,3851.95703,S,06802.21139,W,0.048,,180321,,,A*63
+
+
+Si queremos ver en google maps directamente una ubicación sería así:
+- vamos a maps.google.com
+- en la ventanita de "busqueda" colocamos (segun dato de ublox anterior):
+
+-38 51.95703, -68 02.21139
