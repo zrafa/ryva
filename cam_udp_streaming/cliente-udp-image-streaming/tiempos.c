@@ -47,7 +47,7 @@ long long int average_time()
 	t2_usec = ((long long int) t2.tv_sec) * 
 			1000000ll + (long long int) t2.tv_usec;
 
-	return (long long int) (t1_usec+t2_usec/2);
+	return (long long int) ((t1_usec+t2_usec)/2);
 }
 
 
