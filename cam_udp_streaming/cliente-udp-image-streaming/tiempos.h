@@ -25,6 +25,7 @@ void frame_end();
 void cronometro_start();
 void cronometro_stop();
 void msleep(long m);
+long long int average_time();
 
 
 #endif /* TIEMPOS_H */

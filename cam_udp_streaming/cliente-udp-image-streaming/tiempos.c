@@ -38,6 +38,19 @@ void frame_end() {
 
 struct timeval t1, t2;
 
+long long int average_time()
+{
+
+	long long int t1_usec, t2_usec;
+	t1_usec = ((long long int) t1.tv_sec) * 
+			1000000ll + (long long int) t1.tv_usec;
+	t2_usec = ((long long int) t2.tv_sec) * 
+			1000000ll + (long long int) t2.tv_usec;
+
+	return (long long int) (t1_usec+t2_usec/2);
+}
+
+
 void cronometro_start() {
 	gettimeofday(&t1, NULL);
 }

@@ -11,6 +11,7 @@ INCS=-I. -I$(SRCS) -I./jpeg-9c
 OBJS =  $(PROG).o \
         $(SRCS)/YUYVtoJPEG.o \
         $(SRCS)/socket.o \
+        $(SRCS)/save_file.o \
 	tiempos.o
 
 .PHONY: all clean

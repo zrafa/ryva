@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "tiempos.h"
+#include "utils/save_file.h"
 
 long unsigned int YUYVtoJPEG(unsigned char * img, int width, int height, int jpegQuality, unsigned char* buf);
 int init_socket(char *hostname, int portno);
@@ -43,6 +44,7 @@ static unsigned char *jpegbuffer_start  = NULL;
 static int portno                       = 8000;
 // static char *hostname                   = "127.0.0.1";
 static char *hostname                   = "10.0.40.42";
+char *dir_name                   = "/mnt/disk";
 //static char *hostname                   = "10.0.40.99";
 static struct v4l2_format fmt;
 
@@ -53,10 +55,12 @@ int size;
 int total_frames = 0;
 
 int jpeg = 0;
+int save = 0;
 int resolucion = 0;
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
+long long int average_us;
 
 struct buffer {
         void   *start;
@@ -102,6 +106,8 @@ static void send_YUV(unsigned char *p, int size) {
 	cronometro_stop();
 
 	cronometro_start();
+	if (save)
+		save_to_file(jpegbuffer_start, size2);
 	send_frame(jpegbuffer_start, size2);
 	printf("Enviar: ");
 	cronometro_stop();
@@ -112,6 +118,8 @@ static void send_YUV(unsigned char *p, int size) {
 static void send_MJPEG() {
 
 	cronometro_start();
+	if (save)
+		save_to_file(buffer_start, size);
 	send_frame(buffer_start, size);
 	printf("Enviar: ");
 	cronometro_stop();
@@ -122,6 +130,7 @@ static int read_frame() {
 
 	struct v4l2_buffer buf;
 
+	cronometro_start();
 	CLEAR(buf);
 
 	buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -144,6 +153,9 @@ static int read_frame() {
 	assert(buf.index < n_buffers);
 	buffer_start = buffers[buf.index].start;
 	size = buf.bytesused;
+
+	cronometro_stop();
+	average_us = average_time();
 
 	if (fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUYV) {
 
@@ -457,12 +469,13 @@ static void usage(FILE* fp, int argc, char** argv) {
     "-h | --help              Print this message\n"
     "-s | --server address    Server [ip address/hostname]\n"
     "-p | --port port number  Port [8888]\n"
+    "-w | --save dir 	      Save photos to disk (dir name)\n"
     "-j | --jpeg 	      formato MJPEG (predeterminado YUYV)\n"
     "                     (solo para la captura, el envio es siempre en formato JPEG).\n"
     "--320 	      res: 160x120 (predeterminado: 160x120)\n"
     "--640 	      res: 160x120 (predeterminado: 160x120\n"
-    "--720 	      res: 1280x720 (predeterminado: 160x120\n"
-    "--1080 	      res: 1920x1080 (predeterminado: 160x120\n"
+    "--720 	      res: 1280x720 (predeterminado: 160x120)\n"
+    "--1080 	      res: 1920x1080 (predeterminado: 160x120)\n"
    "",
     argv[0]);
 }
@@ -480,6 +493,7 @@ long_options [] = {
         { "help",       no_argument,            NULL,           'h' },
         { "server",     required_argument,      NULL,           's' },
         { "port",       required_argument,      NULL,           'p' },
+        { "save",       required_argument,      NULL,           'w' },
         { "jpeg",       no_argument, 	        NULL,           'j' },
         { "320",       no_argument, 	        NULL,           M320 },
         { "640",       no_argument, 	        NULL,           M640 },
@@ -520,6 +534,11 @@ int main(int argc, char **argv) {
       case 'p':
         // port number
         portno = atoi(optarg);
+        break;
+
+      case 'w':
+        dir_name = optarg;
+	save = 1;
         break;
 
       case 'j':
