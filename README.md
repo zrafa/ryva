@@ -1,4 +1,3 @@
-Hola
 # ryva
 
 Robots y Vehiculos Autonomos (ryva)
