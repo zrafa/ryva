@@ -3,7 +3,9 @@ Instalacion de Debian oficial en Raspberry pi 3 model B
 =======================================================
 
 ```
-wget https://people.debian.org/~gwolf/raspberrypi/20190628/20190628_raspberry-pi-3_buster_PREVIEW.img.xz
+wget https://raspi.debian.net/verified/20210210_raspi_3_buster.img.xz
+
+# si lo anterior falla ir a raspi.debian.net y ver cual es la imagen actual
 
 unxz 20190628_raspberry-pi-3_buster_PREVIEW.img.xz
 
