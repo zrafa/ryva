@@ -1,11 +1,5 @@
 
-adx385
+Ejecutar con (posiblemente tiene que ser root):
 
-python ADXL345.py
-
-
-magnetometro
-
-cd py-qmc5883l
-python test2.py
+python imu.py
 

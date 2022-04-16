@@ -9,6 +9,6 @@ fi
 DIR=/home/rafa/fotos/$1
 mkdir $DIR
 
-./gps_time/gps_time > ${DIR}/gps.txt &
+./gps_time/gps_time >> ${DIR}/gps.txt &
 
 ./cam_udp_streaming/cliente-udp-image-streaming/cliente_v4l2 --640 --save ${DIR}   --server 10.0.50.100 --port 6000 
