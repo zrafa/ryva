@@ -18,3 +18,8 @@ $(app): $(app.c)
 
 clean:
 	rm *.o $(app)
+
+run: $(app)
+	stty -F /dev/ttyUSB0 speed 115200
+	cat /dev/ttyUSB0 | ./$(app)
+	

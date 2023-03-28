@@ -11,8 +11,8 @@ void dot(SDL_Renderer* rend, int x, int y, enum colores c)
 	SDL_Rect r;
     	r.x = x;
     	r.y = y;
-    	r.w = 10;
-    	r.h = 10;
+    	r.w = 5;	/* tamaño del dot (punto) */
+    	r.h = 5;
 
 	if (c == rojo)
 		SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
@@ -25,8 +25,10 @@ void dot(SDL_Renderer* rend, int x, int y, enum colores c)
 
 }
 
+/* posicion en pixeles del valor 5 en x */
 int cen_x = 563;
 int cen_y = 507;
+
 void dibujar_obstaculo(SDL_Renderer* rend, int angulo, int radio)
 {
 	static const double PI = 3.1415926535;
@@ -39,21 +41,6 @@ void dibujar_obstaculo(SDL_Renderer* rend, int angulo, int radio)
 	y1 = radio * sin(angulo * PI / 180);
 	dot(rend, cen_x - x1, cen_y - y1, rojo);
 }
-/*
-void DrawCircle(int x, int y, int r, int color)
-{
-      static const double PI = 3.1415926535;
-      double i, angle, x1, y1;
-
-      for(i = 0; i < 360; i += 0.1)
-      {
-            angle = i;
-            x1 = r * cos(angle * PI / 180);
-            y1 = r * sin(angle * PI / 180);
-            putpixel(x + x1, y + y1, color);
-      }
-}
-*/
 
 
 
@@ -64,7 +51,7 @@ int main(int argc, char *argv[])
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         printf("error initializing SDL: %s\n", SDL_GetError());
     }
-    SDL_Window* win = SDL_CreateWindow("GAME", // creates a window
+    SDL_Window* win = SDL_CreateWindow("Lidar Lite sobre SERVO DEMO GRAFICO", // creates a window
                                        SDL_WINDOWPOS_CENTERED,
                                        SDL_WINDOWPOS_CENTERED,
                                        1000, 618, 0);
@@ -211,9 +198,9 @@ int main(int argc, char *argv[])
 		SDL_RenderCopyEx(rend, tex, NULL, NULL, frotate, NULL, SDL_FLIP_NONE);
 	//SDL_SetRenderDrawColor(rend, 255, 0, 0, SDL_ALPHA_OPAQUE);
         //SDL_RenderDrawLine(rend, x/2, 0, x/2, 240);
-	dot(rend, 200, 100, rojo);
+//	dot(rend, 200, 100, rojo);
 	dibujar_obstaculo(rend, grados, dist);
-	SDL_RenderFillRect(rend, &r );
+//	SDL_RenderFillRect(rend, &r );
  
         // triggers the double buffers
         // for multiple rendering
