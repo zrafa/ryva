@@ -1,0 +1,27 @@
+CC=mips-openwrt-linux-gcc
+#CFLAGS+=-g
+CFLAGS+=-Wall
+# LDFLAGS+=-ljpeg
+LDFLAGS+=jpeg-9c/.libs/libjpeg.a
+LDFLAGS+=-L/home/lechnerm/rafa/programacion/gv/udp_streaming_jul30_105904_2017/cliente-udp-image-streaming/jpeg-9c
+PROG=cliente_v4l2
+SRCS=utils
+INCS=-I. -I$(SRCS) -I/home/lechnerm/rafa/programacion/gv/udp_streaming_jul30_105904_2017/cliente-udp-image-streaming/jpeg-9c
+
+OBJS =  $(PROG).o \
+        $(SRCS)/YUYVtoJPEG.o \
+        $(SRCS)/socket.o \
+	tiempos.o
+
+.PHONY: all clean
+$(PROG): $(OBJS)
+	$(CC) -o $(PROG) $(OBJS) $(LDFLAGS)
+
+%.o: %.c
+	$(CC) -c $(CFLAGS)  $(INCS) $<  -o $@
+
+all: $(PROG)
+
+clean:
+	rm -f $(OBJS) $(PROG)
+
