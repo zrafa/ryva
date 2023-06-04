@@ -96,25 +96,25 @@ def adquirir_data():
 	
 
 
-	# x = sensor.get_magnet()
-	# declination = 4.75688
-	# heading = (math.atan2(x[1], x[0]) + declination )
+	x = sensor.get_magnet()
+	declination = 4.75688
+	heading = (math.atan2(x[1], x[0]) + declination )
 	# Correct for when signs are reversed.
-	# if(heading < 0):
-	#     heading  = 2*math.pi;
+	if(heading < 0):
+	    heading  = 2*math.pi;
 
 	# Check for wrap due to addition of declination.
-	# if(heading > 2*math.pi):
-	#     heading -= 2*math.pi;
+	if(heading > 2*math.pi):
+	    heading -= 2*math.pi;
 
-	# heading = heading * (180 / math.pi)
-        # print heading
+	heading = heading * (180 / math.pi)
+        print int(round(time.time() * 1000.0)),heading
 
 	# Output data to screen
 	#print "Acc: %d" %xAccl
 	#print "Acceleration in Y-Axis : %d" %yAccl
 	#print "Acceleration in Z-Axis : %d" %zAccl
-        print int(round(time.time() * 1000.0)),xAccl,yAccl,zAccl,xGyro,yGyro,zGyro
+        # print int(round(time.time() * 1000.0)),xAccl,yAccl,zAccl,xGyro,yGyro,zGyro
 
 	# Output data to screen
 	#print "X-Axis of Rotation : %d" %xGyro

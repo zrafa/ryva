@@ -1,5 +1,17 @@
 
-Ejecutar con (posiblemente tiene que ser root):
+sudo python imu.py
+sudo python magnetometro.py
 
-python imu.py
+
+intrucciones viejas borrar
+--------------------------
+adx385
+
+python ADXL345.py
+
+
+magnetometro
+
+cd py-qmc5883l
+python test2.py
 
