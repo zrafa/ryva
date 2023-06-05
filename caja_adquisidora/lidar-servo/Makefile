@@ -18,11 +18,11 @@ $(APP): $(OBJETOS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<
-pc:
-	gcc -o lidar_servo_pc lidar_servo_pc.c
+leer:
+	gcc -o lidar_servo_leer lidar_servo_leer.c
 
 flash:
 	avr-objcopy -O ihex -R .eeprom $(APP) $(FIRMWARE)
 	avrdude -p atmega328p -c arduino -P /dev/ttyUSB0 -b 57600 -D -U flash:w:$(FIRMWARE):i
 clean:
-	rm $(OBJETOS) $(APP) $(FIRMWARE) lidar_servo_pc
+	rm $(OBJETOS) $(APP) $(FIRMWARE) lidar_servo_leer
