@@ -1,0 +1,2 @@
+para calibrar:
+./magnetometro.sh | octave go.m 

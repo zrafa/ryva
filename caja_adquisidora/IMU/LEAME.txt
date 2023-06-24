@@ -12,6 +12,5 @@ python ADXL345.py
 
 magnetometro
 
-cd py-qmc5883l
-python test2.py
+sudo python magnetometro.py
 
