@@ -1,10 +1,8 @@
 # ryva
 
 
-Robots y Vehiculos Autonomos (ryva)
-===================================
-
-Tambien podria llamarse VYRA (vehiculos y robots autonomos)
+Vehiculos y Robots Autonomos para Fruticultura(ryva)
+====================================================
 
 Adquirir con la caja adquisidora:
 
