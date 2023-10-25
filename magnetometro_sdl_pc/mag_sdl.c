@@ -83,24 +83,6 @@ int main(int argc, char *argv[])
     // clears main-memory
     SDL_FreeSurface(surface);
  
-    // let us control our image position
-    // so that we can move it with our keyboard.
-    //SDL_Rect dest;
- 
-    // connects our texture with dest to control position
-    //SDL_QueryTexture(tex, NULL, NULL, &dest.w, &dest.h);
- 
-    // adjust height and width of our image box.
-    //dest.w /= 2;
-    //dest.h /= 2;
- 
-    // sets initial x-position of object
-    //dest.x = (1000 - dest.w) / 2;
- 
-    // sets initial y-position of object
-    //dest.y = (1000 - dest.h) / 2;
- 
-    // controls annimation loop
     int close = 0;
  
     // speed of box
@@ -109,14 +91,6 @@ int main(int argc, char *argv[])
 	double frotate;
         int x,y;
 	SDL_GetRendererOutputSize(rend, &x, &y);
-	//SDL_Rect r;
-    	//r.x = x/2;
-    	//r.y = 0;
-    	//r.w = 10;
-    	//r.h = 10;
-	
-	//int grados;
-	//int dist;
 
  char *line = NULL;
  char *bkp = NULL;
@@ -141,17 +115,23 @@ float x_offset, y_offset;
 	lineSize = 10;
 	int i = 0;
 	int cant = 0;
+
+	/* cargamos los datos crudos del sensor y calculamos el offset */
 	while ((i<1000) && (lineSize != -1)) {
+
 		line = bkp2;
 		lineSize = getline(&line, &len, stdin);
 	
 		printf("linesize: %i - linea: %s \n", lineSize, line);
+
+		/* si fin de archivo calculamos el offset */
 		if (lineSize < 1) { 
 			x_offset = (max_x + min_x) / 2;
 			y_offset = (max_y + min_y) / 2;
 			printf("x_offset:%f, y_offset:%f \n", x_offset, y_offset);
 			break;
 		}
+
 		if (*line != '[') {sleep(20); continue; }
 		if (strlen(line) < 8) continue;
 	
@@ -169,7 +149,7 @@ float x_offset, y_offset;
 		z2=atoi(bkp);
 		printf("x: %i, y: %i, z: %i \n", x2, y2, z2);
 		
-		// pasamos a gauss 
+		/* pasamos a gauss cada dato crudo */
 		x1[i] = (x2 * 1.0) / 12000;
 		y1[i] = (y2 * 1.0) / 12000;
 		z1[i] = (z2 * 1.0) / 12000;
@@ -185,7 +165,63 @@ float x_offset, y_offset;
 	}
 	cant = i;
     	 
-    // annimation loop
+	/* dibujamos el centro (coordenadas [0,0]) */
+	dot(rend, 500, 300, rojo);
+
+	/* dibujamos la elipse de los datos crudos */
+	for (i=0; i<cant; i++) {
+		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), rojo);
+		printf("x1: %i, z1: %i \n", (int)(x1[i]*500+500), (int)(y1[i]*500+300));
+	}
+
+	max_r2 = 0;
+	min_r2 = 10000;
+	for (i=0; i<cant; i++) {
+
+		/* corregimos el hard iron de cada punto */
+		x1[i] = x1[i] - x_offset;
+		y1[i] = y1[i] - y_offset;
+
+		/* distancia desde el centro al punto [ECUACION (3) ] */
+		r2 = sqrtf(powf(x1[i],2) + powf(y1[i],2));
+		/* nos quedamos con el mayor y el menor (r y q) */
+		if (r2 > max_r2) {
+			max_r2 = r2;
+			max_r2_y1 = y1[i];
+		} else if (r2 < min_r2) {
+			min_r2 = r2;
+		};
+
+		/* dibujamos con hard iron corregido */
+		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), rojo);
+		printf("x1: %i, z1: %i \n", (int)(x1[i]*500+500), (int)(y1[i]*500+300));
+	}
+	alfa = asinf((max_r2_y1 / max_r2));
+
+	/* rotamos la elipse con la matriz de rotacion [ECUACION (5) y (6)] */
+	for (i=0; i<cant; i++) {
+		x1[i] = x1[i] * cosf(alfa) + y1[i] * sinf(alfa);
+		y1[i] = (-1) * x1[i] * sinf(alfa) + y1[i] * cosf(alfa);
+		/* dibujamos cada punto luego de rotarlo */
+		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), azul);
+	}
+
+	/* entiendo que r y q no cambian [ECUACION (7)] */
+	factor = min_r2 / max_r2;
+	for (i=0; i<cant; i++) {
+		x1[i] = x1[i] / factor;
+	}
+
+	/* alfa negativo */
+	alfa = (-1) * alfa;
+	for (i=0; i<cant; i++) {
+		x1[i] = x1[i] * cosf(alfa) + y1[i] * sinf(alfa);
+		y1[i] = (-1) * x1[i] * sinf(alfa) + y1[i] * cosf(alfa);
+		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), verde);
+	}
+
+
+    // annimation loop de la grafica, esto ya no es parte de la calibracion
     while (!close) {
         SDL_Event event;
  
@@ -210,48 +246,6 @@ float x_offset, y_offset;
 
 
 
-	dot(rend, 500, 300, rojo);
-	for (i=0; i<cant; i++) {
-		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), rojo);
-		printf("x1: %i, z1: %i \n", (int)(x1[i]*500+500), (int)(y1[i]*500+300));
-	}
-	max_r2 = 0;
-	min_r2 = 10000;
-	for (i=0; i<cant; i++) {
-		x1[i] = x1[i] - x_offset;
-		y1[i] = y1[i] - y_offset;
-		/* distancia desde el centro al punto */
-		r2 = sqrt(pow(x1[i],2) + pow(y1[i],2));
-		if (r2 > max_r2) {
-			max_r2 = r2;
-			max_r2_y1 = y1[i];
-		} else if (r2 < min_r2) {
-			min_r2 = r2;
-		};
-
-		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), rojo);
-		printf("x1: %i, z1: %i \n", (int)(x1[i]*500+500), (int)(y1[i]*500+300));
-	}
-	alfa = asin((max_r2_y1 / max_r2));
-
-	/* rotamos la elipse */
-	for (i=0; i<cant; i++) {
-		x1[i] = x1[i] * cos(alfa) + y1[i] * sin(alfa);
-		y1[i] = (-1) * x1[i] * sin(alfa) + y1[i] * cos(alfa);
-		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), azul);
-
-	}
-
-	factor = min_r2 / max_r2;
-	for (i=0; i<cant; i++) {
-		x1[i] = x1[i] / factor;
-	}
-//	alfa = (-1) * alfa;
-	for (i=0; i<cant; i++) {
-		x1[i] = x1[i] * cos(alfa) - y1[i] * sin(alfa);
-		y1[i] = x1[i] * sin(alfa) + y1[i] * cos(alfa);
-		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), verde);
-	}
         SDL_RenderPresent(rend);
 
  
@@ -260,8 +254,8 @@ float x_offset, y_offset;
  
         // calculates to 60 fps
         SDL_Delay(1000 / 60);
-	sleep(20);
-	break;
+	//sleep(20);
+	//break;
     }
  
   free(line);
