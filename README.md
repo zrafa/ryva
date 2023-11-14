@@ -12,3 +12,8 @@ en tractores antiguos del Alto Valle de Río Negro y Neuquen.
 Para Adquirir a la maxima frecuencia utilizando todos los sensores:
 
 ./adquirir.sh  /DIRECTORIO/DESTINO/
+
+El código fuente para el control de los distintos sensores (drivers,
+software de adquisición, filtrado, calibración, documentación) de la
+herramienta experimental en construcción están en 
+caja\_adquisidora/
