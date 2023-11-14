@@ -1,7 +1,16 @@
-Esto grafica los datos del lidar_servo
+En este subdirectorio se encuentra implementado el software de calibración 
+para el magnetómetro. Se están evaluando distintas estrategias con distintos
+resultados. 
+La calibración es requerida minutos previos a la utilización de este sensor
+(en el ambiente y equipo donde esté trabajando).
+
+Compilar con
+
+make clean
+make
 
 Ejecutar con 
 stty -F /dev/ttyUSB0 speed 115200
 
-cat /dev/ttyUSB0 | ./lidar_sdl
+cat /dev/ttyUSB0 | ./mag_sdl
 
