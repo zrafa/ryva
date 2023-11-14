@@ -1,6 +1,8 @@
 En este subdirectorio se encuentra implementado el software de calibración 
 para el magnetómetro. Se están evaluando distintas estrategias con distintos
 resultados. 
+El código fuente principal está en el archivo fuente mag_sdl.c
+(funciona en cualquier máquina con GNU/Linux u otro UNIX moderno).
 La calibración es requerida minutos previos a la utilización de este sensor
 (en el ambiente y equipo donde esté trabajando).
 
