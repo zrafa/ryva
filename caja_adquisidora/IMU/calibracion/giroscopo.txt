@@ -1,0 +1,15 @@
+
+Segun internet.
+
+Latitud de Calle A15 Cipolletti:
+Latitud: -38.86821 | Longitud: -68.039448
+
+Radio: 6369.759 km
+
+Velocidad lineal: 807 mi/h (millas por hora)
+			1298.74 km/h
+
+
+sin -38.8621 = -0.62753116
+
+rotacion en ecuador: 1036 millas/h = 1667 km/h

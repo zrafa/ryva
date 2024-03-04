@@ -5,3 +5,13 @@ el acelerometro adxl345 y el software python que estamos usando:
 - el rango impreso por software es de -512 a 511. 
 - -512 es -2g. 511 es 2g.
 - la gravedad es 1g. Sería 255 por software.
+
+
+Para calibrarlo se tomaron muestras por diez minutos. Con cada eje sensible
+hacia arriba. Se obtuvo un archivo de datos crudos por cada prueba.
+Ejemplo de toma por 10 minutos:
+(sudo python imu.py > ejez_arriba.txt) & sleep 600 ; killall python
+
+Luego el programa calib.c hace el calculo de los sesgos y factores de escala.
+
+
