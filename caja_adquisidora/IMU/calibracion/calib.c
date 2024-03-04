@@ -1,3 +1,8 @@
+/*
+ * programa para calibrar el acelerometro
+ *
+ * las ecuaciones son de NotasCursoPosicion.pdf, by Favio Masson
+ */
 
 #include <stdio.h>
 
@@ -8,19 +13,19 @@
 #define RAW_FILE_Z_UP	"ejez_arriba.txt"
 #define RAW_FILE_Z_DOWN	"ejez_abajo.txt"
 
-#define gravity ((double) 9.80665)
+#define gravity (9.80665)
 
 /* 
  * Promedia una de las columnas de los datos crudos
  * raw file contents:
  * timestamp ax, ay, az, gx, gy, gz
- * n: argument is the column of interest
+ * n argument is the column of interest
  */
-int raw_mean_from_file(const char *raw_file, int n) 
+double raw_mean_from_file(const char *raw_file, int n) 
 {
-	long long int raw[7];
+	int raw[7];
 	int i;
-	long long int sum;
+	int sum;
 	char buf[400];
 
 	FILE *ff;
@@ -33,46 +38,56 @@ int raw_mean_from_file(const char *raw_file, int n)
 	i = 0;
 	sum = 0;
 	while (fgets(buf, sizeof(buf), ff)) {
-		sscanf(buf, "%i %i,%i,%i,%i,%i,%i", &raw[0], &raw[1], &raw[2], &raw[3], &raw[4], &raw[5], &raw[6]);
+		//printf("sum : %i \n", sum);
+		sscanf(buf, "%li %i %i %i %i %i %i", &raw[0], &raw[1], &raw[2], &raw[3], &raw[4], &raw[5], &raw[6]);
 		sum = sum + raw[n];
 		i++;
 	}
-	printf("%i %i %i\n", sum, i, (sum/i));
 
 	fclose(ff);
-
 	return (sum/i);
 }
 
 
-/* 
- * raw file contents:
- * timestamp ax, ay, az, gx, gy, gz
- * n: argument is the column of interest
- * f arguments are the raw data files
+/*
+ * calcula el sesgo y factor de escala 
+ * 	raw file contents:
+ * 	timestamp ax, ay, az, gx, gy, gz
+ * 	n argument is the column of interest
+ * 	f arguments are the raw data files
  */
-double sesgo(const char *f1, const char *f2, int n)
+void sesgo(const char *f1, const char *f2, int n, double *s, double *fs)
 {
-	int fup_x, fdown_x, sesgo_int;
-	double sesgo_d;
-	fup_x = raw_mean_from_file(f1, n);
-	fdown_x = raw_mean_from_file(f2, n);
-	
-	sesgo_int = (fup_x + fdown_x) / 2; /* ecuacion (2.88), pagina 118, NotasCursoPosicion.pdf */
-	sesgo_d = sesgo_int * gravity / 255.0;
+	double fup, fdown, sesgo_int;
+	double sesgo_d, factor_d;
+	fup = raw_mean_from_file(f1, n);
+	fdown = raw_mean_from_file(f2, n);
 
-	return sesgo_d;
+	/* ecuacion (2.88), pagina 118, NotasCursoPosicion.pdf */
+	/* calculamos sesgo */
+	sesgo_d = (fup + fdown) / 2; 
+	sesgo_d = sesgo_d * gravity / 255.0;
+	*s = sesgo_d;
+
+	/* calculamos factor de escala */
+	factor_d = ((fup * gravity / 255.0) - (fdown * gravity / 255.0) - (2*gravity)) / (2*gravity);
+	*fs = factor_d;
+
+//	return sesgo_d;
 }
 
 void main(void) {
-	double sesgo_d;
+	double sesgo_d, factor_d;
 
-	sesgo_d = sesgo(RAW_FILE_X_UP, RAW_FILE_X_DOWN, 1);
+	sesgo(RAW_FILE_X_UP, RAW_FILE_X_DOWN, 1, &sesgo_d, &factor_d);
 	printf("sesgo de acelerometro en x : %f \n", sesgo_d);
+	printf("factor de escala de acelerometro en x : %f \n\n", factor_d);
 
-	sesgo_d = sesgo(RAW_FILE_Y_UP, RAW_FILE_Y_DOWN, 2);
+	sesgo(RAW_FILE_Y_UP, RAW_FILE_Y_DOWN, 2, &sesgo_d, &factor_d);
 	printf("sesgo de acelerometro en y : %f \n", sesgo_d);
+	printf("factor de escala de acelerometro en y : %f \n\n", factor_d);
 
-	sesgo_d = sesgo(RAW_FILE_Z_UP, RAW_FILE_Z_DOWN, 3);
+	sesgo(RAW_FILE_Z_UP, RAW_FILE_Z_DOWN, 3, &sesgo_d, &factor_d);
 	printf("sesgo de acelerometro en z : %f \n", sesgo_d);
+	printf("factor de escala de acelerometro en z : %f \n\n", factor_d);
 }
