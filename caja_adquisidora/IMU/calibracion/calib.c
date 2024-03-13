@@ -60,20 +60,18 @@ void sesgo(const char *f1, const char *f2, int n, double *s, double *fs)
 {
 	double fup, fdown, sesgo_int;
 	double sesgo_d, factor_d;
-	fup = raw_mean_from_file(f1, n);
-	fdown = raw_mean_from_file(f2, n);
 
+	fup = raw_mean_from_file(f1, n) * gravity / 255.0;
+	fdown = raw_mean_from_file(f2, n) * gravity / 255.0;
 	/* ecuacion (2.88), pagina 118, NotasCursoPosicion.pdf */
 	/* calculamos sesgo */
 	sesgo_d = (fup + fdown) / 2; 
-	sesgo_d = sesgo_d * gravity / 255.0;
 	*s = sesgo_d;
 
 	/* calculamos factor de escala */
-	factor_d = ((fup * gravity / 255.0) - (fdown * gravity / 255.0) - (2*gravity)) / (2*gravity);
+	factor_d = (fup - fdown - (2*gravity)) / (2*gravity);
 	*fs = factor_d;
 
-//	return sesgo_d;
 }
 
 void main(void) {
