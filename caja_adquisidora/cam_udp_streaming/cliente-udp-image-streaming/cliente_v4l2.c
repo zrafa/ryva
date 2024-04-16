@@ -107,8 +107,11 @@ static void send_YUV(unsigned char *p, int size) {
 
 	cronometro_start();
 	if (save)
+		//save_to_file(p, size);
 		save_to_file(jpegbuffer_start, size2);
-	send_frame(jpegbuffer_start, size2);
+		
+	//send_frame(p, size);
+	// send_frame(jpegbuffer_start, size2);
 	printf("Enviar: ");
 	cronometro_stop();
 
@@ -162,6 +165,7 @@ static int read_frame() {
     		send_YUV(buffers[buf.index].start, buf.bytesused);
 
 	} else if (fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG) {
+		printf("FORMATO JPEG\n");		
 
     		send_MJPEG();
   	}
@@ -345,10 +349,16 @@ static void init_device(void) {
 	fmt.fmt.pix.width       = 160;
 	fmt.fmt.pix.height      = 120;
 
+	fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
+
 	switch (resolucion) {
 	  case 3:
 		fmt.fmt.pix.width       = 320;
 		fmt.fmt.pix.height      = 240;
+		break;
+	  case 5:
+		fmt.fmt.pix.width       = 848;
+		fmt.fmt.pix.height      = 480;
 		break;
 	  case 6:
 		fmt.fmt.pix.width       = 640;
@@ -362,11 +372,13 @@ static void init_device(void) {
 		fmt.fmt.pix.width       = 1920;
 		fmt.fmt.pix.height      = 1080;
 		break;
+	  case 10:	/* zed */
+		fmt.fmt.pix.width       = 1344;
+		fmt.fmt.pix.height      = 376;
+		fmt.fmt.pix.field       = 1;
+		break;
 	};
 	  
-
-	fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
-
         if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
 		errno_exit("VIDIOC_S_FMT");
 
@@ -474,18 +486,22 @@ static void usage(FILE* fp, int argc, char** argv) {
     "                     (solo para la captura, el envio es siempre en formato JPEG).\n"
     "--320 	      res: 160x120 (predeterminado: 160x120)\n"
     "--640 	      res: 160x120 (predeterminado: 160x120\n"
+    "--848 	      res: 848x480 (c525 logitech \n"
     "--720 	      res: 1280x720 (predeterminado: 160x120)\n"
     "--1080 	      res: 1920x1080 (predeterminado: 160x120)\n"
+    "--zed 	      res: 1344x376 stereo zed (predeterminado: 160x120)\n"
    "",
     argv[0]);
 }
 
 #define M320  1000
 #define M640  1001
+#define M848  1005
 #define M720  1002
 #define M1080  1003
+#define MZED  1004
 
-static const char short_options [] = "d:h:s:p:j:NULL:NULL:NULL:NULL:";
+static const char short_options [] = "d:h:s:p:w:j:NULL:NULL:NULL:NULL:";
 
 static const struct option
 long_options [] = {
@@ -497,8 +513,10 @@ long_options [] = {
         { "jpeg",       no_argument, 	        NULL,           'j' },
         { "320",       no_argument, 	        NULL,           M320 },
         { "640",       no_argument, 	        NULL,           M640 },
+        { "848",       no_argument, 	        NULL,           M848 },
         { "720",       no_argument, 	        NULL,           M720 },
         { "1080",       no_argument, 	        NULL,           M1080 },
+        { "zed",       no_argument, 	        NULL,           MZED },
 	{NULL, 0, NULL, 0}
 };
 
@@ -543,11 +561,16 @@ int main(int argc, char **argv) {
 
       case 'j':
         // jpeg (default yuyv)
+	printf("seleccion: jpeg\n");
         jpeg = 1;
         break;
 
       case M320:
         resolucion = 3;
+        break;
+
+      case M848:
+        resolucion = 5;
         break;
 
       case M640:
@@ -560,6 +583,10 @@ int main(int argc, char **argv) {
 
       case M1080:
         resolucion = 9;
+        break;
+
+      case MZED:
+        resolucion = 10;
         break;
 
 

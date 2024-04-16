@@ -1,6 +1,12 @@
 Embedded Video Data Acquisition and Streaming via UDP
 =====================================================
 
+Capturar en caja adquisidora fotos a disco:
+
+ ./cliente_v4l2 --640 -w /home/rafa/fotos/ 
+ ./cliente_v4l2 --848 -w /home/rafa/fotos/ 
+
+
 Hay 3 programas en este proyecto.
 
 cliente-udp-image-streaming 

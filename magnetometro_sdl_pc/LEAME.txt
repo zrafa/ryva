@@ -1,0 +1,18 @@
+
+Expliqué el problema a resolver en un video. Se los mandé por telegram.
+
+La guía que utilicé es esta:
+https://www.fierceelectronics.com/components/compensating-for-tilt-hard-iron-and-soft-iron-effects
+
+
+Los datos crudos son estos:
+
+https://github.com/zrafa/ryva/blob/master/magnetometro_sdl_pc/magnetometro.txt
+
+
+
+Calibracion 2: mas sencilla (la usamos con Cande):
+
+https://www.appelsiini.net/2018/calibrate-magnetometer/
+https://github.com/kriswiner/MPU6050/wiki/Simple-and-Effective-Magnetometer-Calibration
+

@@ -108,6 +108,7 @@ def adquirir_data():
 	#     heading -= 2*math.pi;
 
 	# heading = heading * (180 / math.pi)
+        # print heading
 
 	# Output data to screen
 	#print "Acc: %d" %xAccl
