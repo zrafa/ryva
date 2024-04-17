@@ -1,3 +1,14 @@
+LO MEJOR HASTA AHORA
+
+Calibro con el programa ellipsoid en python
+Lo tengo para que pase a gauss el dato crudo, y luego
+saque unicamente el centro (offset). 
+El dibujo del ellipsoid sale bastante circular, sin soft iron.
+Tomé el offset y se lo harcodeé al magnetometro.py.
+
+
+
+
 
 https://www.fierceelectronics.com/components/compensating-for-tilt-hard-iron-and-soft-iron-effects
 
