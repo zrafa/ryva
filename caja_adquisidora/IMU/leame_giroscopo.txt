@@ -7,7 +7,7 @@ Su unidad en el Sistema Internacional es el radián por segundo (rad/s)."
 Giroscopo
 ---------
 
-El giroscopo es un itg3200
+El giroscopo es un itg3200. El software que usamos:
 
 - envía datos en +-2000 grados por segundo, usando 16 bits de resolucion.
   (a 256hz, pagina 24 de datasheet, DLPF_CFG = 0)

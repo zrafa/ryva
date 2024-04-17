@@ -2,7 +2,7 @@
 Acelerometro
 ------------
 
-El acelerometro adxl345 y el software python que estamos usando:
+El acelerometro adxl345 y el software que estamos usando:
 
 - envía datos en +/- 2g usando 10 bits de resolución. 100hz
 - el rango impreso por software es de -512 a 511. 
