@@ -1,5 +1,8 @@
 
-el acelerometro adxl345 y el software python que estamos usando:
+Acelerometro
+------------
+
+El acelerometro adxl345 y el software python que estamos usando:
 
 - envía datos en +/- 2g usando 10 bits de resolución. 100hz
 - el rango impreso por software es de -512 a 511. 
@@ -7,11 +10,16 @@ el acelerometro adxl345 y el software python que estamos usando:
 - la gravedad es 1g. Sería 255 por software.
 
 
+Calibracion
+-----------
+
 Para calibrarlo se tomaron muestras por diez minutos. Con cada eje sensible
 hacia arriba. Se obtuvo un archivo de datos crudos por cada prueba.
 Ejemplo de toma por 10 minutos:
 (sudo python imu.py > ejez_arriba.txt) & sleep 600 ; killall python
 
-Luego el programa calib.c hace el calculo de los sesgos y factores de escala.
+Se utilizaron las ecuaciones del apunte de Favio.
+Se implementó en el programa calib.c, que hace el calculo de los sesgos 
+y factores de escala.
 
 
