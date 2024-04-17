@@ -28,6 +28,12 @@ Configurado a 33RPM.
 1,8 segundos cada vuelta
 
 
+Para calibrarlo se tomaron muestras por diez minutos con cada eje sensible
+al movimiento del tocadiscos. El tocadiscos funcionando. 
+Se obtuvo un archivo de datos crudos por cada prueba.
+Ejemplo de toma por 10 minutos:
+(sudo python imu.py > ejez_arriba.txt) & sleep 600 ; killall python
+
 Se utilizaron las ecuaciones del curso de Favio para la calibración.
 Se implementó la misma en calibracion/calib_giro.c
 
