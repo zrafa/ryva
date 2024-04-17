@@ -1,0 +1,67 @@
+
+"La velocidad angular es una medida de la velocidad de rotación. 
+Se define como el ángulo girado por una unidad de tiempo y se 
+designa mediante la letra griega w. 
+Su unidad en el Sistema Internacional es el radián por segundo (rad/s)."
+
+Giroscopo
+---------
+
+El giroscopo es un itg3200
+
+- envía datos en +-2000 grados por segundo, usando 16 bits de resolucion.
+  (a 256hz, pagina 24 de datasheet, DLPF_CFG = 0)
+- el rango crudo por software es de -32768 a 32767.
+- El sensivity scale factor es 14.375 (hoja de datos). 
+  Eso significa que cuando el dato crudo aumenta en 14.375 el movimiento
+  aumentó un grado.
+- grados por segundo  =  dato crudo del sensor / 14.375 (sensivity scale factor)
+- radianes por segundo  =  grados por segundo / 57.29577951 (1 radian)
+
+
+Calibracion
+-----------
+
+Se utilizó un tocadiscos: 
+Configurado a 33RPM.
+50 vueltas 1:30:224
+1,8 segundos cada vuelta
+
+
+Se utilizaron las ecuaciones del curso de Favio para la calibración.
+Se implementó la misma en calibracion/calib_giro.c
+
+
+
+El resto es Machete Rafa
+------------------------
+
+1 radian = 57.29577951
+2 * pi * 1 radian = 360
+
+pi = 3.14159265358979323846
+gravedad = 9.80665
+
+
+dato crudo del sensor / 14.375 (sensivity scale factor) = grados por segundo
+grados por segundo / 57.29577951 = radianes por segundo
+
+
+ROTACION DE LA TIERRA
+---------------------
+
+Segun internet.
+
+Latitud de Calle A15 Cipolletti:
+Latitud: -38.86821 | Longitud: -68.039448
+
+Radio: 6369.759 km
+
+Velocidad lineal: 807 mi/h (millas por hora)
+			1298.74 km/h
+
+
+sin -38.8621 = -0.62753116
+
+rotacion en ecuador: 1036 millas/h = 1667 km/h
+
