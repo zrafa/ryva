@@ -172,12 +172,13 @@ class QMC5883L(object):
         [x, y, z] = self.get_magnet_raw()
         print [x, y, z]
         if x is None or y is None:
-            [x1, y1] = [x, y]
+            [x1, y1, z1] = [x, y, z]
         else:
             c = self._calibration
             x1 = x * c[0][0] + y * c[0][1] + c[0][2]
             y1 = x * c[1][0] + y * c[1][1] + c[1][2]
-        return [x1, y1]
+            z1 = x * c[2][0] + y * c[2][1] + z * c[2][2]
+        return [x1, y1, z1]
 
     def get_bearing_raw(self):
         """Horizontal bearing (in degrees) from magnetic value X and Y."""
