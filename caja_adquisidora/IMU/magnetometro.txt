@@ -1,0 +1,89 @@
+Magnetometro
+------------
+
+El magnetometro es un qmc5883l 
+
+- envía datos en +/- 2 gauss, usando 16 bits por cada eje (x,y,z). 
+- el rango es [-32768, 32767].
+- La "sensibilidad" es 12000 (segun hoja de datos)
+- valor en gauss =  dato_crudo * 1.0 / 12000 
+
+En C sería
+
+double x,y,z;
+x = x_raw * 1.0 / 12000;
+y = y_raw * 1.0 / 12000;
+z = z_raw * 1.0 / 12000;
+
+
+Calibracion
+-----------
+
+
+LO MEJOR HASTA AHORA
+
+Calibro con el programa ellipsoid desarrollado en python.
+Ya está modificado para que pase a gauss el dato crudo, y luego
+saque unicamente el centro (offset). 
+El dibujo del ellipsoid sale bastante circular, sin soft iron.
+Tomé el offset y se lo harcodeé al magnetometro.py (cuando obtengo grados
+para indicar la orientacion).
+
+
+
+
+Machete de Rafa viejo
+---------------------
+
+Utilicé varios algoritmos. Uno que implementé es este.
+
+https://www.fierceelectronics.com/components/compensating-for-tilt-hard-iron-and-soft-iron-effects
+
+
+El problema es que toma el máximo y minimo. No sirve en ciertos casos.
+Utilicé otro muy sencillo. Muy basico y no sirve en ciertos casos.
+Utilicé una media entre varios máximos y mínimos. No sirve en ciertos casos.
+Utilizamos el método de mínimos cuadrados, para obtener los parámetros de la
+elipse. No sirve en ciertos casos.
+Utilizamos matlab que ya trae software de calibración. No sirve en ciertos 
+casos (incluso con Dario estudiamos la implementacion de matlab. Si matlab
+se da cuenta que no puede hacer el calculo que quiere hacer te devuelve la
+matrix identidad).
+Marce y Dario buscaron como obtener los parametros de la elipsoide.
+Encontré una muy buena implementación de como obtener los parámetros de la
+elipsoide e incluso ya proporciona el centro, y la matrix de transformación
+para usar. No sirve en ciertos casos.
+
+Conclusion. Lo mejor que tengo ahora es que:
+- tal cual dejé la caja adquisidora, obteniendo datos en dos ejes (x,y)
+por 10 minutos, y graficar, observo un circulo bastante exacto.
+Obtengo el offset con la implementacion de calibracion del
+ellipsoide en python. Y solo "corrijo" el hard iron, sabiendo que 
+los datos del sensor generan un circulo bastante "prolijo".
+
+
+
+Machete Rafa
+------------
+
+
+
+Consultando varias fuentes, se habla de "sensibilidad".
+(por ejemplo en :  https://community.st.com/t5/mems-sensors/lis3mdl-data-interpretation/m-p/439097#M18629)
+La sensibilidad es cada cuanto cuenta el adc del magnetometro y 
+sucede una unidad en la resolución del conteo a +/- 2 gauss.
+
+Bien, la hoja de datos dice que la sensibilidad es 12000
+(sensivity for field range +/- 2G)
+
+Okey. entonces, cada valor X, Y y Z
+debe ser transformado a gauss con 
+
+X/12000 = X' (dentro de +/- 2 gauss)
+
+En C sería
+
+double x;
+x = X * 1.0 / 12000;
+
+
