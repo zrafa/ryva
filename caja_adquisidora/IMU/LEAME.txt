@@ -5,7 +5,7 @@ sudo python imu.py
 sudo python magnetometro.py
 
 
-Detalles de cada sensor en:
+Detalles de cada sensor y calibracion de los mismos en:
 
 acelerometro.txt
 giroscopo.txt
