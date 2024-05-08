@@ -42,16 +42,19 @@ void dibujar_obstaculo(SDL_Renderer* rend, int angulo, int radio)
 	dot(rend, cen_x - x1, cen_y - y1, rojo);
 }
 
+#define N 1000
+
 
 
 int main(int argc, char *argv[])
 {
  
 	int x2,y2,z2;
-	float x1[1000],y1[1000],z1[1000];
+	float x1[N],y1[N],z1[N], dist[N];
 	float r2, max_r2, max_r2_y1, min_r2;
 	float alfa;
 	float factor;
+	float x_tmp;
 
 
     // retutns zero on success else non-zero
@@ -174,6 +177,13 @@ float x_offset, y_offset;
 		printf("x1: %i, z1: %i \n", (int)(x1[i]*500+500), (int)(y1[i]*500+300));
 	}
 
+
+	float delta_x, delta_y, avg_delta, scale_x, scale_y;
+	min_x = 10000;
+	min_y = 10000;
+	max_x = 0;
+	max_y = 0;
+
 	max_r2 = 0;
 	min_r2 = 10000;
 	for (i=0; i<cant; i++) {
@@ -181,9 +191,11 @@ float x_offset, y_offset;
 		/* corregimos el hard iron de cada punto */
 		x1[i] = x1[i] - x_offset;
 		y1[i] = y1[i] - y_offset;
+		printf("sin hard iron: i:%i x:%f, y:%f \n", i, x1[i], y1[i]);
 
-		/* distancia desde el centro al punto [ECUACION (3) ] */
+		/* distancia desde el origen al punto [ECUACION (3) ] */
 		r2 = sqrtf(powf(x1[i],2) + powf(y1[i],2));
+		dist[i] = r2;
 		/* nos quedamos con el mayor y el menor (r y q) */
 		if (r2 > max_r2) {
 			max_r2 = r2;
@@ -192,33 +204,89 @@ float x_offset, y_offset;
 			min_r2 = r2;
 		};
 
+
+		// RAFA nuevo soft
+		if (x1[i] < min_x) min_x = x1[i];
+		if (x1[i] > max_x) max_x = x1[i];
+		if (y1[i] < min_y) min_y = y1[i];
+		if (y1[i] > max_y) max_y = y1[i];
+
 		/* dibujamos con hard iron corregido */
 		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), rojo);
 		printf("x1: %i, z1: %i \n", (int)(x1[i]*500+500), (int)(y1[i]*500+300));
 	}
+
+		// RAFA nuevo soft
+		delta_x = (max_x - min_x) / 2;
+		delta_y = (max_y - min_y) / 2;
+		avg_delta = (delta_x + delta_y) / 2;
+		scale_x = avg_delta / delta_x;
+		scale_y = avg_delta / delta_y;
+
+        int j;
+	float aux, aux2;
+        for (i = 0; i < cant - 1; i++) {
+            for (j = 0; j < cant - i - 1; j++) {                                                              
+                if (dist[j + 1] < dist[j]) {
+                    aux = dist[j + 1];
+                    dist[j + 1] = dist[j];
+                    dist[j] = aux;
+                    aux = x1[j + 1];
+                    x1[j + 1] = x1[j];
+                    x1[j] = aux;
+                    aux = y1[j + 1];
+                    y1[j + 1] = y1[j];
+                    y1[j] = aux;
+                }
+            }
+        }
+	#define M 20
+	aux = 0;
+        for (i = 0; i < M; i++)
+		aux = aux + dist[i];
+	min_r2 = aux / M;
+	
+	aux = 0;
+	aux2 = 0;
+        for (i = cant; i > cant-M; i--) {
+		aux = aux + dist[i];
+		aux2 = aux2 + y1[i];
+	}
+	max_r2 = aux / M;
+	max_r2_y1 = aux2 / M;
+	
 	alfa = asinf((max_r2_y1 / max_r2));
 
 	/* rotamos la elipse con la matriz de rotacion [ECUACION (5) y (6)] */
 	for (i=0; i<cant; i++) {
-		x1[i] = x1[i] * cosf(alfa) + y1[i] * sinf(alfa);
-		y1[i] = (-1) * x1[i] * sinf(alfa) + y1[i] * cosf(alfa);
+//		x_tmp = x1[i] * cosf(alfa) + y1[i] * sinf(alfa);
+//		y1[i] = (-1) * x1[i] * sinf(alfa) + y1[i] * cosf(alfa);
+//		x1[i] = x_tmp;
+			// RAFA nuevo soft
+			x1[i] = x1[i] * scale_x;
+			y1[i] = y1[i] * scale_y;
 		/* dibujamos cada punto luego de rotarlo */
 		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), azul);
 	}
 
+	
+
 	/* entiendo que r y q no cambian [ECUACION (7)] */
 	factor = min_r2 / max_r2;
 	for (i=0; i<cant; i++) {
-		x1[i] = x1[i] / factor;
+//		x1[i] = x1[i] / factor;
 	}
 
 	/* alfa negativo */
 	alfa = (-1) * alfa;
 	for (i=0; i<cant; i++) {
-		x1[i] = x1[i] * cosf(alfa) + y1[i] * sinf(alfa);
-		y1[i] = (-1) * x1[i] * sinf(alfa) + y1[i] * cosf(alfa);
+//		x_tmp = x1[i] * cosf(alfa) + y1[i] * sinf(alfa);
+//		y1[i] = (-1) * x1[i] * sinf(alfa) + y1[i] * cosf(alfa);
+//		x1[i] = x_tmp;
+		printf("sin soft iron: i:%i x:%f, y:%f \n", i, x1[i], y1[i]);
 		dot(rend, (int)(x1[i]*500+500), (int)(y1[i]*500+300), verde);
 	}
+	printf("cantidad de valores : %i, alfa=%f alfa_neg=%f \n", cant, (-1)*alfa, alfa);
 
 
     // annimation loop de la grafica, esto ya no es parte de la calibracion

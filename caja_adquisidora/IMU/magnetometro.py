@@ -45,6 +45,10 @@ def adquirir_data():
 
 	x = sensor.get_magnet()
 	declination = 4.75688
+        x[0] = x[0] * 1.0 / 12000.0
+        x[1] = x[1] * 1.0 / 12000.0
+        x[0] = x[0] + 0.05850266
+        x[1] = x[1] + 0.18496448
 	heading = (math.atan2(x[1], x[0]) + declination )
 	# Correct for when signs are reversed.
 	if(heading < 0):
@@ -54,8 +58,8 @@ def adquirir_data():
 	if(heading > 2*math.pi):
 	    heading -= 2*math.pi;
 
-	heading = heading * (180 / math.pi)
-        print int(round(time.time() * 1000.0)),heading
+	heading2 = heading * (180 / math.pi)
+        print int(round(time.time() * 1000.0)),heading2
 
 
 

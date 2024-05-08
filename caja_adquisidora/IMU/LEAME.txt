@@ -1,16 +1,13 @@
 
+Adquirir datos de los sensores:
+
 sudo python imu.py
 sudo python magnetometro.py
 
 
-intrucciones viejas borrar
---------------------------
-adx385
+Detalles de cada sensor y calibracion de los mismos en:
 
-python ADXL345.py
-
-
-magnetometro
-
-sudo python magnetometro.py
+acelerometro.txt
+giroscopo.txt
+magnetometro.txt
 
