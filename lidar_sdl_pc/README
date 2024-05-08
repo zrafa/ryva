@@ -1,7 +1,11 @@
 Esto grafica los datos del lidar_servo
 
 Ejecutar con 
-stty -F /dev/ttyUSB0 speed 115200
 
-cat /dev/ttyUSB0 | ./lidar_sdl
+ssh 10.0.50.94 "stty -F /dev/ttyUSB0 speed 115200 ; cat /dev/ttyUSB0 " | ./lidar_sdl 
+
+
+# en banana pi stty -F /dev/ttyUSB0 speed 115200
+
+# en pc cat /dev/ttyUSB0 | ./lidar_sdl
 
