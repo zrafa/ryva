@@ -8,4 +8,7 @@ void mover_izq();
 void apagar();
 void mover_2();
 void mover(long grados);
+void timer_set_ticks(unsigned int n);
+unsigned int timer_get_ticks();
+
 #endif

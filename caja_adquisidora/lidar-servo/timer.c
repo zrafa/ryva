@@ -68,6 +68,10 @@ void timer1_init( void )
     	timer1-> ocr1al = MED_L;
 	
 	aux = 0;
+
+
+	// overflow interrupt enable
+	*timer1_timsk1 |= 0x01;
 }
 
 void mover(long grados){
@@ -121,4 +125,22 @@ void apagar()
 {
 	timer1-> ocr1ah = 0x0B;
     	timer1-> ocr1al = 0xB8;
+}
+
+unsigned int ticks;
+
+void timer_set_ticks(unsigned int n)
+{
+	ticks = 0;
+}
+
+unsigned int timer_get_ticks()
+{
+	return ticks;
+}
+
+
+ISR(TIMER1_OVF_vect)
+{
+	ticks++;
 }

@@ -29,13 +29,29 @@ void esperar(long curr, long new_pos)
 	for(i=0; i<(int)delay; i++);
 }
 
+void get_and_show_distance(int j)
+{
+	char msg[80];
+	uint16_t distance;
+	unsigned int ticks;
+	int i;
+
+	mover(j);
+	for(i = 0; i < 15000;i++);
+	//current = j;
+	timer_set_ticks(0);
+	distance = lidar_v4_get_distance();
+	ticks = timer_get_ticks();
+	//sprintf(msg, "distance (cm): %i \n", distance);
+	sprintf(msg, "%.3d:%.5d:%.6d", j, distance, ticks);
+	serial_put_str(msg);
+}
+
 void main()
 {
 	/* pin 9 arduino pwm signal output */
         DDRB = 0x02;
 
-	char msg[80];
-	uint16_t distance;
 	volatile unsigned long i;
 	int j;
 	int current;
@@ -51,22 +67,28 @@ void main()
 
 	while(1) {
 		for (j=0; j<=180; j=j+10) {
+			/*
 			mover(j);
 			for(i = 0; i < 15000;i++);
 			current = j;
 			distance = lidar_v4_get_distance();
 			//sprintf(msg, "distance (cm): %i \n", distance);
-			sprintf(msg, "%.3d:%.3d", j, distance);
+			sprintf(msg, "%.3d:%.5d", j, distance);
 			serial_put_str(msg);
+			*/
+			get_and_show_distance(j);
 		}
 		for (j=175; j>=0; j=j-10) {
+			/*
 			mover(j);
 			for(i = 0; i < 15000;i++);
 			current = j;
 			distance = lidar_v4_get_distance();
 			//sprintf(msg, "distance (cm): %i \n", distance);
-			sprintf(msg, "%.3d:%.3d", j, distance);
+			sprintf(msg, "%.3d:%.5d", j, distance);
 			serial_put_str(msg);
+			*/
+			get_and_show_distance(j);
 		}
 
 	}

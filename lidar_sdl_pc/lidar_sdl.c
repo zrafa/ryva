@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
 	
 	int grados;
 	int dist;
+	int tiempo;
 
  char *line = NULL;
 	line = malloc(80);
@@ -187,11 +188,15 @@ int main(int argc, char *argv[])
 	*(line+3)=0;
 	grados=atoi(line);
 	dist=atoi((line+4));
+	tiempo=atoi((line+10));
 //	buf[13] = '\0';
 //	frotate = atof(buf);
 	//frotate = atof(line);
 	frotate=0.02;
-	printf("%f grados:%i, distancia:%i\n", frotate, grados, dist);
+	if ((tiempo > 13) && (dist < 300))
+		dist = -1;
+
+	printf("%f grados:%i, distancia:%i, demora:%i \n", frotate, grados, dist, tiempo);
 
 	// frotate = frotate + 0.02;
 	if (grados == 0)
