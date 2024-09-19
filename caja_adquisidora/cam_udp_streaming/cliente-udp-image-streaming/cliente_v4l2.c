@@ -56,6 +56,7 @@ int total_frames = 0;
 
 int jpeg = 0;
 int save = 0;
+int enviar = 0;
 int resolucion = 0;
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
@@ -110,8 +111,9 @@ static void send_YUV(unsigned char *p, int size) {
 		//save_to_file(p, size);
 		save_to_file(jpegbuffer_start, size2);
 		
+	if (enviar)
+		send_frame(jpegbuffer_start, size2);
 	//send_frame(p, size);
-	// send_frame(jpegbuffer_start, size2);
 	printf("Enviar: ");
 	cronometro_stop();
 
@@ -547,6 +549,7 @@ int main(int argc, char **argv) {
       case 's':
         // server hostname or ip address
         hostname = optarg;
+	enviar = 1;
         break;
 
       case 'p':
