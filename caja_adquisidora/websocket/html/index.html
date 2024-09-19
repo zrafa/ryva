@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Demo</title>
+    <script>
+        const ws = new WebSocket('ws://10.0.50.94:8765');
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            document.getElementById("imu").innerText = "imu: " + data.imu;
+            document.getElementById("lidar").innerText = "lidar: " + data.lidar;
+            document.getElementById("magnetometro").innerText = "magnetometro: " + data.magnetometro;
+            document.getElementById("gps").innerText = "gps: " + data.gps;
+
+            // Update the image element with the base64 image
+            // document.getElementById("image").src = "data:image/jpeg;base64," + data.image;
+        };
+        function startCapture() {
+		fetch('/cgi-bin/start_ws.sh')
+		.then(response => response.text())
+		.then(data => {
+			alert(data);
+			location.reload();
+		})
+		.catch(error => console.error('Error:', error));
+			            }
+
+        function stopCapture() {
+		fetch('/cgi-bin/stop_ws.sh')
+		.then(response => response.text())
+		.then(data => alert(data))
+		.catch(error => console.error('Error:', error));
+			            }
+
+    </script>
+</head>
+<body>
+	<h1>Control de Captura</h1>
+		<button onclick="startCapture()">Iniciar captura</button>
+		<button onclick="stopCapture()">Detener captura</button>
+    <h1>Real-Time Data</h1>
+    <p id="imu">imu: </p>
+    <p id="lidar">lidar: </p>
+    <p id="magnetometro">magnetometro: </p>
+    <p id="gps">gps: </p>
+    <!--img id="image" src="" alt="Image not loaded" /-->
+</body>
+</html>
+

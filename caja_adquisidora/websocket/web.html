@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Demo</title>
+    <script>
+        const ws = new WebSocket('ws://10.0.50.94:8765');
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            document.getElementById("imu").innerText = "imu: " + data.imu;
+            document.getElementById("lidar").innerText = "lidar: " + data.lidar;
+            document.getElementById("magnetometer").innerText = "magnetometer: " + data.magnetometer.toFixed(2);
+
+            // Update the image element with the base64 image
+            document.getElementById("image").src = "data:image/jpeg;base64," + data.image;
+        };
+    </script>
+</head>
+<body>
+    <h1>Real-Time Data</h1>
+    <p id="imu">imu: </p>
+    <p id="lidar">lidar: </p>
+    <p id="magnetometer">magnetometer: </p>
+    <img id="image" src="" alt="Image not loaded" />
+</body>
+</html>
+
