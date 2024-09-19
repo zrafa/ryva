@@ -123,8 +123,10 @@ int main()
 		t = read_buf;
 		c = 0;
 		while (c < num_bytes) {
-			if ((*t) == '$')
+			if ((*t) == '$') {
+				fflush(0);
 				printf("%lld %lld \n", microsegundos(), microsegundos()/1000);
+			}
 			printf("%c",*t);
 			c++;
 			t++;
