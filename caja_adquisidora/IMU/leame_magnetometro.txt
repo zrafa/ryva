@@ -22,6 +22,30 @@ Calibracion
 
 LO MEJOR HASTA AHORA
 
+cd EllipsoidFit/
+
+python3 get_calibration_ellipsoid.py  # los datos en mag_out.txt
+				      # valores crudos [-32768,32767]
+				      # x y z (separados por espacio)
+
+center:  [[ -656.13327591]
+ [-1579.26170024]
+ [  290.25803575]]
+transformation:
+[[ 0.19841981  0.06881925 -0.69102294]
+ [ 0.06881925  0.30817876 -2.73565128]
+ [-0.69102294 -2.73565128 42.04550276]]
+
+Luego, en magnetometro.py (el que obtiene los datos crudos), cuando obtiene 
+los crudos, simplemente quitamos el offset:
+x[0] = x[0] - 656
+x[1] = x[1] - 1579
+
+
+
+
+viejos datos
+------------
 Calibro con el programa ellipsoid desarrollado en python.
 Ya está modificado para que pase a gauss el dato crudo, y luego
 saque unicamente el centro (offset). 
