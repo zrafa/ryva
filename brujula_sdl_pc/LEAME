@@ -1,0 +1,6 @@
+
+ejecutar con (desde la pc):
+
+
+ssh 10.0.50.94 "sudo python -u ryva/caja_adquisidora/IMU/magnetometro.py "  | stdbuf -i0 -o0 grep -v , | stdbuf -i0 -o0 awk '{print $2}' | ./bru 
+

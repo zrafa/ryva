@@ -27,7 +27,7 @@ fi
 ./caja_adquisidora/lidar-servo/lidar_servo_pc >> ${1}/lidar.txt &
 (cd ./caja_adquisidora/IMU/ && sudo python imu.py) >> ${1}/imu.txt &
 (cd ./caja_adquisidora/IMU/ && sudo python magnetometro.py) >> ${1}/magnetometro.txt &
-./caja_adquisidora/cam_udp_streaming/cliente-udp-image-streaming/cliente_v4l2 --848 -w ${1}/ >> /dev/null &
+(sudo v4l2-ctl -d /dev/video0 --set-ctrl=focus_auto=0 && v4l2-ctl -d /dev/video0 --set-ctrl=focus_absolute=60 && ./caja_adquisidora/cam_udp_streaming/cliente-udp-image-streaming/cliente_v4l2 --848 -w ${1}/ ) >> /dev/null &
 
 echo "
 	Iniciando adquisición de datos...

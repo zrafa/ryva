@@ -101,6 +101,14 @@ char serial_get_char(void)
         return (puerto_serial->data_es);
 }
 
+int serial_recibido (void) 
+{
+	int r = 1;
+	if (!((puerto_serial->status_control_a) & (READY_TO_READ)) )
+		r = 0;
+
+	return r;
+}
 
 void serial_put_str(char * str)
 {

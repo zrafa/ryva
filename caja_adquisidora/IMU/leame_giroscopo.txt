@@ -38,6 +38,35 @@ Se utilizaron las ecuaciones del curso de Favio para la calibración.
 Se implementó la misma en calibracion/calib_giro.c
 
 
+Calibración final:
+
+cd calibracion/
+gcc -o calib_giro calib_giro.c 
+./calib_giro 
+
+la media up : -3102.000000
+la media up : -3.766269
+la media down : 2619.000000
+la media down : 3.179838
+sesgo de giroscopo en x : -0.293215 
+factor de escala de giroscopo en x : -1.994957 
+
+la media up : -2884.000000
+la media up : -3.501586
+la media down : 2827.000000
+la media down : 3.432380
+sesgo de giroscopo en y : -0.034603 
+factor de escala de giroscopo en y : -1.993217 
+
+la media up : -2826.000000
+la media up : -3.431166
+la media down : 2871.000000
+la media down : 3.485802
+sesgo de giroscopo en z : 0.027318 
+factor de escala de giroscopo en z : -1.990783 
+
+
+
 
 El resto es Machete Rafa
 ------------------------

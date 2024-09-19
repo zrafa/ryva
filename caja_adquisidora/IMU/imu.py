@@ -40,18 +40,18 @@ def adquirir_data():
 ##
 #    global heading
 
-    while True:
-	# ADXL345 address, 0x53(83)
-	# Read data back from 0x32(50), 2 bytes
-	# X-Axis LSB, X-Axis MSB
-	data = bus.read_i2c_block_data(0x53, 0x32, 6)
-	#data0 = bus.read_byte_data(0x53, 0x32)
-	#data1 = bus.read_byte_data(0x53, 0x33)
+	while True:
+		# ADXL345 address, 0x53(83)
+		# Read data back from 0x32(50), 2 bytes
+		# X-Axis LSB, X-Axis MSB
+		data = bus.read_i2c_block_data(0x53, 0x32, 6)
+		#data0 = bus.read_byte_data(0x53, 0x32)
+		#data1 = bus.read_byte_data(0x53, 0x33)
 	
 	# Convert the data to 10-bits
-	xAccl = ((data[1] & 0x03) * 256) + data[0]
-	if xAccl > 511 :
-		xAccl -= 1024
+		xAccl = ((data[1] & 0x03) * 256) + data[0]
+		if xAccl > 511 :
+			xAccl -= 1024
 	
 	# ADXL345 address, 0x53(83)
 	# Read data back from 0x34(52), 2 bytes
@@ -60,9 +60,9 @@ def adquirir_data():
 	#data1 = bus.read_byte_data(0x53, 0x35)
 	
 	# Convert the data to 10-bits
-	yAccl = ((data[3] & 0x03) * 256) + data[2]
-	if yAccl > 511 :
-		yAccl -= 1024
+		yAccl = ((data[3] & 0x03) * 256) + data[2]
+		if yAccl > 511 :
+			yAccl -= 1024
 	
 	# ADXL345 address, 0x53(83)
 	# Read data back from 0x36(54), 2 bytes
@@ -71,28 +71,28 @@ def adquirir_data():
 	# data1 = bus.read_byte_data(0x53, 0x37)
 	
 	# Convert the data to 10-bits
-	zAccl = ((data[5] & 0x03) * 256) + data[4]
-	if zAccl > 511 :
-		zAccl -= 1024
+		zAccl = ((data[5] & 0x03) * 256) + data[4]
+		if zAccl > 511 :
+			zAccl -= 1024
 
 
 	# ITG3200 address, 0x68(104)
 	# Read data back from 0x1D(29), 6 bytes
 	# X-Axis MSB, X-Axis LSB, Y-Axis MSB, Y-Axis LSB, Z-Axis MSB, Z-Axis LSB
-	data = bus.read_i2c_block_data(0x68, 0x1D, 6)
+		data = bus.read_i2c_block_data(0x68, 0x1D, 6)
 	
 	# Convert the data
-	xGyro = data[0] * 256 + data[1]
-	if xGyro > 32767 :
-		xGyro -= 65536
+		xGyro = data[0] * 256 + data[1]
+		if xGyro > 32767 :
+			xGyro -= 65536
 	
-	yGyro = data[2] * 256 + data[3]
-	if yGyro > 32767 :
-		yGyro -= 65536
+		yGyro = data[2] * 256 + data[3]
+		if yGyro > 32767 :
+			yGyro -= 65536
 	
-	zGyro = data[4] * 256 + data[5]
-	if zGyro > 32767 :
-		zGyro -= 65536
+		zGyro = data[4] * 256 + data[5]
+		if zGyro > 32767 :
+			zGyro -= 65536
 	
 
 
@@ -114,7 +114,7 @@ def adquirir_data():
 	#print "Acc: %d" %xAccl
 	#print "Acceleration in Y-Axis : %d" %yAccl
 	#print "Acceleration in Z-Axis : %d" %zAccl
-        print int(round(time.time() * 1000.0)),xAccl,yAccl,zAccl,xGyro,yGyro,zGyro
+		print (int(round(time.time() * 1000.0)),xAccl,yAccl,zAccl,xGyro,yGyro,zGyro)
 
 	# Output data to screen
 	#print "X-Axis of Rotation : %d" %xGyro
@@ -163,7 +163,7 @@ bus.write_byte_data(0x68, 0x16, 0x18)
 time.sleep(0.5)
 
 
-print "xAccl,yAccl,zAccl,xGyro,yGyro,zGyro"
+print ("xAccl,yAccl,zAccl,xGyro,yGyro,zGyro")
 adquirir_data()
 
 
