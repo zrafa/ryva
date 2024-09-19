@@ -44,22 +44,33 @@ def adquirir_data():
 
 
 	x = sensor.get_magnet()
+        rawx = x[0]
+        rawy = x[1]
+        rawz = x[2]
 	declination = 4.75688
+        #print "crudos:",[x[0], x[1]]
+        x[0] = x[0] - 656
+        x[1] = x[1] - 1579
         x[0] = x[0] * 1.0 / 12000.0
         x[1] = x[1] * 1.0 / 12000.0
         x[0] = x[0] + 0.05850266
         x[1] = x[1] + 0.18496448
-	heading = (math.atan2(x[1], x[0]) + declination )
+	heading = (math.atan2(x[1], x[0]))
+
+	# heading = (math.atan2(x[1], x[0]) + declination )
 	# Correct for when signs are reversed.
-	if(heading < 0):
-	    heading  = 2*math.pi;
+	#if(heading < 0):
+	#    heading  = heading + (2*math.pi);
 
 	# Check for wrap due to addition of declination.
-	if(heading > 2*math.pi):
-	    heading -= 2*math.pi;
+	#if(heading > (2*math.pi)):
+	#    heading = heading - (2*math.pi);
 
-	heading2 = heading * (180 / math.pi)
-        print int(round(time.time() * 1000.0)),heading2
+	heading2 = (heading * 180) / math.pi
+        heading2 = heading2 + declination
+        heading2 = heading2 % 360
+        print heading2, [rawx, rawy, rawz], int(round(time.time() * 1000.0))
+        sys.stdout.flush() 
 
 
 

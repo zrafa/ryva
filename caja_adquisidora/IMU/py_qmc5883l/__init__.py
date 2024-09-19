@@ -170,7 +170,7 @@ class QMC5883L(object):
     def get_magnet(self):
         """Return the horizontal magnetic sensor vector with (x, y) calibration applied."""
         [x, y, z] = self.get_magnet_raw()
-        print [x, y, z]
+        # print [x, y, z]
         if x is None or y is None:
             [x1, y1, z1] = [x, y, z]
         else:
