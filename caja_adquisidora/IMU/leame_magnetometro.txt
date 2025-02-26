@@ -20,8 +20,16 @@ Calibracion
 -----------
 
 
-LO MEJOR HASTA AHORA
+LO MEJOR HASTA AHORA en 2D:
+calibracion/cal_magnetometro_2d/
 
+python3 get_calibration_ellipsoid.py  # los datos en mag_out.txt
+				      # valores crudos en el rango [-32768,32767]
+				      # x y z (separados por espacio)
+Devuelve una calibración 2D.
+
+
+En 3D:
 cd EllipsoidFit/
 
 python3 get_calibration_ellipsoid.py  # los datos en mag_out.txt
