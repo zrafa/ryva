@@ -50,7 +50,7 @@ double raw_mean_from_file(const char *raw_file, int n)
 	}
 
 	fclose(ff);
-	return (sum/i);
+	return ((double)sum/i);
 }
 
 
@@ -88,6 +88,7 @@ void sesgo(const char *f1, const char *f2, int n, double *s, double *fs)
 void main(void) {
 	double sesgo_d, factor_d;
 
+	printf("VALORES RESULTADOS EN RADIANES \n\n\r");
 	sesgo(RAW_FILE_X_UP, RAW_FILE_X_DOWN, 4, &sesgo_d, &factor_d);
 	printf("sesgo de giroscopo en x : %f \n", sesgo_d);
 	printf("factor de escala de giroscopo en x : %f \n\n", factor_d);
