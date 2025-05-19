@@ -139,8 +139,8 @@ bus = smbus.SMBus(2)
 
 # ADXL345 address, 0x53(83)
 # Select bandwidth rate register, 0x2C(44)
-#		0x0A(10)	Normal mode, Output data rate = 100 Hz
-bus.write_byte_data(0x53, 0x2C, 0x0A)
+#		0x0C(12)=1100 en base 2. Normal mode, Output data rate = 400 Hz
+bus.write_byte_data(0x53, 0x2C, 0x0C)
 # ADXL345 address, 0x53(83)
 # Select power control register, 0x2D(45)
 #		0x08(08)	Auto Sleep disable
@@ -157,7 +157,7 @@ time.sleep(0.5)
 #		0x01(01)	Power up, PLL with X-Gyro reference
 bus.write_byte_data(0x68, 0x3E, 0x01)
 # ITG3200 address, 0x68(104)
-# Select DLPF register, 0x16(22)
+# Select DLPF register, 0x16(22) 
 #		0x18(24)	Gyro FSR of +/- 2000 dps
 bus.write_byte_data(0x68, 0x16, 0x18)
 time.sleep(0.5)
