@@ -79,7 +79,13 @@ void sesgo(const char *f1, const char *f2, int n, double *s, double *fs)
 	*s = sesgo_d;
 
 	/* calculamos factor de escala - ecuacion (2.93) */
-	factor_d = ((fup - fdown - 2*VEL_ANG_LAB) / (2*VEL_ANG_LAB));
+	/* IMPORTANTE : la idea es que (fup - fdown) sea cercano a 2*VEL_ANG_LAB
+	 * 	        de manera tal que el término superior  
+	 * 	        (fup-fdown)-(2*VEL_ANG_LAB) sea cercano a cero.
+	 * 	        En mi caso, hay que dar vuelta fup y fdown!! .
+	 */
+	// factor_d = ((fup - fdown - 2*VEL_ANG_LAB) / (2*VEL_ANG_LAB));
+	factor_d = ((fdown - fup - 2*VEL_ANG_LAB) / (2*VEL_ANG_LAB));
 	*fs = factor_d;
 
 //	return sesgo_d;
