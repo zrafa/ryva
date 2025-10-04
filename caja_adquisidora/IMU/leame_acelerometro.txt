@@ -28,13 +28,13 @@ cd calibracion/
 gcc -o calib_accel calib_accel.c 
 
 ./calib_accel 
-	sesgo de acelerometro en x : 0.749920 
-	factor de escala de acelerometro en x : 0.017647 
 
-	sesgo de acelerometro en y : -0.403803 
-	factor de escala de acelerometro en y : 0.013725 
+sesgo de acelerometro en x : 0.077539 
+factor de escala de acelerometro en x : 0.016197 
+sesgo de acelerometro en y : -0.039652 
+factor de escala de acelerometro en y : 0.011726 
+sesgo de acelerometro en z : -0.058538 
+factor de escala de acelerometro en z : -0.007254 
 
-	sesgo de acelerometro en z : -0.576862 
-	factor de escala de acelerometro en z : -0.003922 
 
 

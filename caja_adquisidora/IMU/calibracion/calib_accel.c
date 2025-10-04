@@ -13,7 +13,8 @@
 #define RAW_FILE_Z_UP	"ejez_arriba.txt"
 #define RAW_FILE_Z_DOWN	"ejez_abajo.txt"
 
-#define gravity (9.80665)
+// #define gravity (9.80665)	/* HAY QUE UTILIZR LA DE NEUQUEN */
+#define gravity (9.79965718)	/* gravedad en NEUQUEN */
 
 /* 
  * Promedia una de las columnas de los datos crudos
@@ -45,7 +46,8 @@ double raw_mean_from_file(const char *raw_file, int n)
 	}
 
 	fclose(ff);
-	return (sum/i);
+	printf("sum/i : %f \n", (double)sum/i);
+	return ((double)sum/i);
 }
 
 
@@ -61,15 +63,20 @@ void sesgo(const char *f1, const char *f2, int n, double *s, double *fs)
 	double fup, fdown, sesgo_int;
 	double sesgo_d, factor_d;
 
-	fup = raw_mean_from_file(f1, n) * gravity / 255.0;
-	fdown = raw_mean_from_file(f2, n) * gravity / 255.0;
+	//fup = raw_mean_from_file(f1, n) * gravity / 256.0;
+	//fdown = raw_mean_from_file(f2, n) * gravity / 256.0;
+	fup = raw_mean_from_file(f1, n) / 256.0;
+	fdown = raw_mean_from_file(f2, n) / 256.0;
+	printf("raw mean f1 %f \n", raw_mean_from_file(f1, n));
+	printf("raw mean f2 %f \n", raw_mean_from_file(f2, n));
 	/* ecuacion (2.88), pagina 118, NotasCursoPosicion.pdf */
 	/* calculamos sesgo */
 	sesgo_d = (fup + fdown) / 2; 
 	*s = sesgo_d;
 
 	/* calculamos factor de escala */
-	factor_d = (fup - fdown - (2*gravity)) / (2*gravity);
+	//factor_d = (fup - fdown - (2*gravity)) / (2*gravity);
+	factor_d = (fup - fdown - (2)) / (2);
 	*fs = factor_d;
 
 }
