@@ -7,7 +7,7 @@ if __name__=='__main__':
     data = np.loadtxt("mag_out.txt")
     data2 = data_regularize(data)
 
-    center, radii, evecs = ellipsoid_fit(data2)
+    center, radii, evecs, v = ellipsoid_fit(data2)
 
     a,b,c = radii
     r = (a*b*c)**(1./3.)

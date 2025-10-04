@@ -117,72 +117,33 @@ def ellipsoid_plot(center, radii, rotation, ax, plotAxes=False, cageColor='b', c
 
 
 
+# http://www.mathworks.com/matlabcentral/fileexchange/24693-ellipsoid-fit
+# for arbitrary axes
 def ellipsoid_fit(X):
-    """
-    Ajusta una elipse en 2D (plano XY) y asume un valor para Z.
-
-    Parámetros:
-        X (numpy array): Matriz de datos de entrada con forma (n, 3), donde n es el número de puntos.
-        x_offset (float): Offset en el eje x.
-        y_offset (float): Offset en el eje y.
-        z_offset (float): Offset en el eje z.
-
-    Retorna:
-        center (numpy array): Centro de la elipsoide en coordenadas originales.
-        radii (numpy array): Radios de la elipsoide.
-        evecs (numpy array): Vectores propios (orientación de la elipsoide).
-    """
-    # Vector de offset
-    # offset = np.array([x_offset, y_offset, z_offset])
-
-    # Centrar los datos restando el offset
-    # X_centered = X - offset
-    X_centered = X
-
-    # Extraer componentes centrados en XY
-    x = X_centered[:, 0]
-    y = X_centered[:, 1]
-
-    # Construir la matriz D para el ajuste de la elipse en 2D
-    D = np.array([x * x,
-                  y * y,
-                  2 * x * y,
-                  2 * x,
-                  2 * y])
-
-    # Resolver el sistema lineal para encontrar los parámetros de la elipse
+    x=X[:,0]
+    y=X[:,1]
+    z=X[:,2]
+    D = np.array([x*x,
+                 y*y,
+                 z*z,
+                 2 * x*y,
+                 2 * x*z,
+                 2 * y*z,
+                 2 * x,
+                 2 * y,
+                 2 * z])
     DT = D.conj().T
-    v = np.linalg.solve(D.dot(DT), D.dot(np.ones(np.size(x))))
+    v = np.linalg.solve( D.dot(DT), D.dot( np.ones( np.size(x) ) ) )
+    A = np.array(  [[v[0], v[3], v[4], v[6]],
+                    [v[3], v[1], v[5], v[7]],
+                    [v[4], v[5], v[2], v[8]],
+                    [v[6], v[7], v[8], -1]])
 
-    # Construir la matriz A en 2D
-    A = np.array([[v[0], v[2], v[3]],
-                  [v[2], v[1], v[4]],
-                  [v[3], v[4], -1]])
-
-    # Calcular el centro de la elipse en coordenadas centradas
-    center_centered_xy = np.linalg.solve(-A[:2, :2], [[v[3]], [v[4]]])
-
-    # Asumir un valor para Z (usamos el promedio de los valores disponibles en Z)
-    z_mean = np.mean(X_centered[:, 2]) if np.any(X_centered[:, 2]) else 0.0
-    center_centered = np.vstack([center_centered_xy, [z_mean]])
-
-    # Convertir el centro a coordenadas originales sumando el offset
-    # center = center_centered + offset.reshape(3, 1)
-    center = center_centered
-
-    # Calcular los radios de la elipse en XY
-    evals_xy, evecs_xy = np.linalg.eig(A[:2, :2] / -A[2, 2])
-    radii_xy = np.sqrt(1. / np.abs(evals_xy))
-
-    # Asumir un radio para Z (usamos el promedio de los radios de X e Y)
-    radius_z = np.mean(radii_xy)
-
-    # Radios de la elipsoide
-    radii = np.array([radii_xy[0], radii_xy[1], radius_z])
-
-    # Vectores propios (orientación)
-    evecs = np.eye(3)  # Asumimos que no hay rotación en Z
-    evecs[:2, :2] = evecs_xy
-
-    return center, radii, evecs
+    center = np.linalg.solve(- A[:3,:3], [[v[6]],[v[7]],[v[8]]])
+    T = np.eye(4)
+    T[3,:3] = center.T
+    R = T.dot(A).dot(T.conj().T)
+    evals, evecs = np.linalg.eig(R[:3,:3] / -R[3,3])
+    radii = np.sqrt(1. / evals)
+    return center, radii, evecs, v
 
