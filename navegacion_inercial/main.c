@@ -135,7 +135,7 @@ void * actitud(void *arg) {
 
 		display_redraw();
 		// ESPERAR
-		//sleep(1);
+		// sleep(1);
 
 	}
 

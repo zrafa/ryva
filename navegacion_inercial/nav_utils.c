@@ -138,6 +138,7 @@ Matrix* attitude_update(const Matrix* C_prev, const Matrix* Omega_dt)
 int leer_siguiente_imu(IMUData *data) {
     static FILE *fp = NULL;
     static long last_timestamp = 0;
+    static long sample = 0;
 
     // Abrir el archivo solo una vez
     if (fp == NULL) {
@@ -148,12 +149,16 @@ int leer_siguiente_imu(IMUData *data) {
         }
     }
 
+    sample++;
+    printf("sample=%li \n", sample);
+
     // Leer una línea del archivo
     char linea[256];
     if (fgets(linea, sizeof(linea), fp) == NULL) {
         // Llegamos al final del archivo
         fclose(fp);
         fp = NULL;
+	exit(0);
         return 0;
     }
 
