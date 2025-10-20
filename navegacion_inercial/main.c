@@ -63,16 +63,8 @@ void* actualizar(void* arg)
 }
 
 
-void imu_init(double *acelx, double *acely, double *acelz, 
-		double *bias_gx, double *bias_gy, double *bias_gz)
+void imu_init(double *acelx, double *acely, double *acelz)
 {
-	double bias_ax = 0.077539;
-	double bias_ay = -0.039652;
-	double bias_az = -0.058538;
-	double factor_de_escala_ax = 0.016197;
-	double factor_de_escala_ay = 0.011726;
-	double factor_de_escala_az = -0.007254;
-
 	int i;
 	IMUData imu;
 	long long int ax, ay, az, gx, gy, gz;
@@ -90,46 +82,61 @@ void imu_init(double *acelx, double *acely, double *acelz,
 	ax /= CANT_MUESTRAS; ay /= CANT_MUESTRAS; az /= CANT_MUESTRAS;
 	gx /= CANT_MUESTRAS; gy /= CANT_MUESTRAS; gz /= CANT_MUESTRAS;
 
+	// convertimos datos crudos de acelerometros a g (quitando bias etc)
 	*acelx = ( (ax * 2.0 / 512.0) - bias_ax ) / (1.0 + factor_de_escala_ax);
 	*acely = ( (ay * 2.0 / 512.0) - bias_ay ) / (1.0 + factor_de_escala_ay);
 	*acelz = ( (az * 2.0 / 512.0) - bias_az ) / (1.0 + factor_de_escala_az);
-	*bias_gx = gx;
-	*bias_gy = gy;
-	*bias_gz = gz;
-	printf("ax=%f, ay=%f, az=%f, bias_gx=%f, bias_gy=%f, bias_gz=%f \n",
-	       *acelx, *acely, *acelz, *bias_gx, *bias_gy, *bias_gz);
-	exit(0);
+	bias_gx = gx;
+	bias_gy = gy;
+	bias_gz = gz;
+	printf("ax=%f, ay=%f, az=%f, bias_gx=%i, bias_gy=%i, bias_gz=%i \n",
+	       *acelx, *acely, *acelz, bias_gx, bias_gy, bias_gz);
+	//exit(0);
 }
 
 
+long long int muestra = 0;
 
 void * actitud(void *arg) {
 
 
 	double theta, phi;
+	// IMUData imu;
 
 	double ax, ay, az;
-	double bias_gx, bias_gy, bias_gz;
-	imu_init(&ax, &ay, &az, &bias_gx, &bias_gy, &bias_gz);
+	double wx, wy, wz, dt;
+	//double bias_gx, bias_gy, bias_gz;
+	imu_init(&ax, &ay, &az);
 
 
 	attitud_determination_zero(ax, ay, az, &theta, &phi);
 
-	Matrix* C_ib = attitude_matrix_init(phi, theta);
+	//Matrix* C_ib = attitude_matrix_init(phi, theta);
+	C_ib = attitude_matrix_init(phi, theta);
 
 	while (1) {
 		// Leer giroscopios (rad/s)
-		double wx, wy, wz;
-		double dt = 0.01; // 10 ms, por ejemplo
+		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
+		printf("muestra=%lli, ax=%f, ay=%f, az=%f, wx=%f, wy=%f, wz=%f dt=%f\n",
+	       		muestra++, ax, ay, az, wx, wy, wz, dt);
 
 		Matrix* Omega_dt = gyro_matrix_build(wx, wy, wz, dt);
 		Matrix* C_new = attitude_update(C_ib, Omega_dt);
 
-		M_free(C_ib);
+	        pthread_mutex_lock(&lock);
+        	M_free(C_ib);
 		M_free(Omega_dt);
 		C_ib = C_new;
+        	pthread_mutex_unlock(&lock);
 
+		//M_free(C_ib);
+		//M_free(Omega_dt);
+		//C_ib = C_new;
+
+		display_redraw();
 		// ESPERAR
+		//sleep(1);
+
 	}
 
 

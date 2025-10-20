@@ -10,7 +10,19 @@ typedef struct {
     long delta_t;
 } IMUData;
 
+extern int bias_gx;
+extern int bias_gy;
+extern int bias_gz;
+extern double bias_ax;
+extern double bias_ay;
+extern double bias_az;
+extern double factor_de_escala_ax;
+extern double factor_de_escala_ay;
+extern double factor_de_escala_az;
+
 int leer_siguiente_imu(IMUData *data);
+void leer_imu(double *ax, double *ay, double *az,
+		double *gx, double *gy, double *gz, double *dt);
 
 /* -----------------------------------------------------------
    Determinación inicial de actitud (nivelación)

@@ -5,10 +5,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// bias/sesgo de los datos crudos de los giroscopos
+int bias_gx;
+int bias_gy;
+int bias_gz;
+
+// bias/sesgo de los acelerometros (calibrado segun apunte de Favio)
+double bias_ax = 0.077539;
+double bias_ay = -0.039652;
+double bias_az = -0.058538;
+double factor_de_escala_ax = 0.016197;
+double factor_de_escala_ay = 0.011726;
+double factor_de_escala_az = -0.007254;
+
+
+// devuelve valores del acelerometro en g (quitando bias etc)
+// devuelve valores del giroscopo en radianes por segundo (quitando bias etc)
+// y delta_t en segundos
+void leer_imu(double *ax, double *ay, double *az, 
+		double *wx, double *wy, double *wz, double *dt)
+{
+        IMUData imu;
+        leer_siguiente_imu(&imu);
+	// convertimos datos crudos de acelerometros a g (quitando bias etc)
+        *ax = ( (imu.ax * 2.0 / 512.0) - bias_ax ) / (1.0 + factor_de_escala_ax);
+        *ay = ( (imu.ay * 2.0 / 512.0) - bias_ay ) / (1.0 + factor_de_escala_ay);
+        *az = ( (imu.az * 2.0 / 512.0) - bias_az ) / (1.0 + factor_de_escala_az);
+
+        // 14.375 factor de escala de nuestra IMU
+	// 57.29577951 grados = 1 radian
+	// convertimos datos crudos giroscopo a radianes por segundo
+        *wx = (imu.gx - bias_gx) / 14.375 / 57.29577951;
+        *wy = (imu.gy - bias_gy) / 14.375 / 57.29577951;
+        *wz = (imu.gz - bias_gz) / 14.375 / 57.29577951;
+
+        *dt = imu.delta_t / 1000.0;
+}
+
 
 /* -----------------------------------------------------------
    Determinación inicial de actitud (nivelación)
-   Usa acelerómetros: ax, ay, az  (en m/s²)
+   Usa acelerómetros: ax, ay, az  (en m/s² o en g)
    Devuelve pitch (θ) y roll (φ)
 ----------------------------------------------------------- */
 void attitud_determination_zero(double ax, double ay, double az,
@@ -52,6 +89,8 @@ Matrix* attitude_matrix_init(double phi, double theta)
 
 /* -----------------------------------------------------------
    Construye la matriz incremental [I + Ω*dt]
+   wx, wy y wz : valores en radianes por segundo
+   dt: en segundos (ej: 0.001 = 1ms) 
    según ecuación (19) de Groves
 ----------------------------------------------------------- */
 Matrix* gyro_matrix_build(double wx, double wy, double wz, double dt)
