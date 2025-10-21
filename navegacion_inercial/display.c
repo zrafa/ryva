@@ -27,6 +27,7 @@ void initOpenGL(void)
 }
 
 
+/*
 // Dibuja la caja con la orientación de C_ib
 void draw_body_frame(const Matrix* C_ib)
 {
@@ -46,49 +47,50 @@ void draw_body_frame(const Matrix* C_ib)
 
     glPopMatrix();
 }
-
-
-// Thread que actualiza C_ib cada segundo
-/*
-void* actualizar(void* arg)
-{
-    double t = 0.0;
-
-    while (1) {
-        // Calcula una rotación lenta alrededor del eje Z
-        double phi = 0.0;             // roll
-        double theta = 0.0;           // pitch
-        double psi = t;               // yaw cambia con el tiempo
-
-        double cphi = cos(phi), sphi = sin(phi);
-        double cth = cos(theta), sth = sin(theta);
-        double cpsi = cos(psi), spsi = sin(psi);
-
-        Matrix* nueva = M_create(3,3);
-        // Matriz C_ib (ZYX)
-        M_set(nueva, 0,0, cpsi*cth);
-        M_set(nueva, 0,1, cpsi*sth*sphi - spsi*cphi);
-        M_set(nueva, 0,2, cpsi*sth*cphi + spsi*sphi);
-        M_set(nueva, 1,0, spsi*cth);
-        M_set(nueva, 1,1, spsi*sth*sphi + cpsi*cphi);
-        M_set(nueva, 1,2, spsi*sth*cphi - cpsi*sphi);
-        M_set(nueva, 2,0, -sth);
-        M_set(nueva, 2,1, cth*sphi);
-        M_set(nueva, 2,2, cth*cphi);
-
-        pthread_mutex_lock(&lock);
-        M_free(C_ib);
-        C_ib = nueva;
-        pthread_mutex_unlock(&lock);
-
-        glutPostRedisplay();  // pide redibujar
-
-        t += 0.1;  // avanza el ángulo
-        sleep(1);
-    }
-    return NULL;
-}
 */
+
+
+void draw_body_frame(const Matrix* C_ib)
+{
+    glPushMatrix();
+
+    // Matriz 4x4 para OpenGL (column-major)
+    double M[16] = {
+        M_get(C_ib, 0, 0), M_get(C_ib, 1, 0), M_get(C_ib, 2, 0), 0.0,
+        M_get(C_ib, 0, 1), M_get(C_ib, 1, 1), M_get(C_ib, 2, 1), 0.0,
+        M_get(C_ib, 0, 2), M_get(C_ib, 1, 2), M_get(C_ib, 2, 2), 0.0,
+        0.0,                0.0,                0.0,                1.0
+    };
+
+    glMultMatrixd(M);
+
+    // --- Cara superior (Z = +0.5) ---
+    glColor3f(0.2f, 0.6f, 1.0f); // azul claro
+    glBegin(GL_QUADS);
+        glVertex3f(-0.5f, -0.5f,  0.5f);
+        glVertex3f( 0.5f, -0.5f,  0.5f);
+        glVertex3f( 0.5f,  0.5f,  0.5f);
+        glVertex3f(-0.5f,  0.5f,  0.5f);
+    glEnd();
+
+    // --- Cara lateral (X = +0.5) ---
+    glColor3f(1.0f, 0.3f, 0.3f); // rojo suave
+    glBegin(GL_QUADS);
+        glVertex3f( 0.5f, -0.5f, -0.5f);
+        glVertex3f( 0.5f,  0.5f, -0.5f);
+        glVertex3f( 0.5f,  0.5f,  0.5f);
+        glVertex3f( 0.5f, -0.5f,  0.5f);
+    glEnd();
+
+    // --- Wireframe del cubo ---
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glutWireCube(1.0);
+
+    glPopMatrix();
+}
+
+
+
 
 
 // Dibuja la escena actual
