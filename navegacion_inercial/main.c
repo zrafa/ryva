@@ -17,6 +17,9 @@
 
 // --- Variables globales compartidas ---
 Matrix* C_ib;
+Matrix* V_gamma;	// el vector de GRAVEDAD
+
+
 pthread_mutex_t lock;
 
 void display_init(int argc, char** argv);
@@ -108,7 +111,6 @@ void * actitud(void *arg) {
 	//double bias_gx, bias_gy, bias_gz;
 	imu_init(&ax, &ay, &az);
 
-
 	attitud_determination_zero(ax, ay, az, &theta, &phi);
 
 	//Matrix* C_ib = attitude_matrix_init(phi, theta);
@@ -117,6 +119,17 @@ void * actitud(void *arg) {
 	while (1) {
 		// Leer giroscopios (rad/s)
 		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
+
+		if (acceleration_zero(ax, ay, az)) {
+			printf("muestra=%i, MAGNITUD=%f \n", muestra, sqrt(ax*ax + ay*ay + az*az));
+			attitud_determination_zero(ax, ay, az, &theta, &phi);
+	        	pthread_mutex_lock(&lock);
+			M_free(C_ib);
+			C_ib = attitude_matrix_init(phi, theta);
+        		pthread_mutex_unlock(&lock);
+			continue;
+		}
+
 		printf("muestra=%lli, ax=%f, ay=%f, az=%f, wx=%f, wy=%f, wz=%f dt=%f\n",
 	       		muestra++, ax, ay, az, wx, wy, wz, dt);
 
@@ -129,9 +142,29 @@ void * actitud(void *arg) {
 		C_ib = C_new;
         	pthread_mutex_unlock(&lock);
 
-		//M_free(C_ib);
-		//M_free(Omega_dt);
-		//C_ib = C_new;
+		// f_b: vector 3x1 medido por el acelerómetro (en marco cuerpo)
+		Matrix* f_b = accel_vector_build(ax, ay, az);
+
+		// Aplica ecuación (20): f_i = C_ib * f_b
+		Matrix* f_i = M_mult(C_ib, f_b);
+
+		// Opcional: leer componentes transformadas
+		double fx_i = M_get(f_i, 0, 0);
+		double fy_i = M_get(f_i, 1, 0);
+		double fz_i = M_get(f_i, 2, 0);
+		// f_i está en m/s²
+		
+		// a_i = f_i + V_gamma
+		Matrix* a_i = M_add(f_i, V_gamma);
+		printf("ACEL muestra=%lli, ax=%f, ay=%f, az=%f, wx=%f, wy=%f, wz=%f dt=%f\n",
+	       		muestra, M_get(a_i, 0, 0), M_get(a_i, 1, 0), M_get(a_i, 2, 0), wx, wy, wz, dt);
+		// if (muestra==100000) exit(0);
+
+		// Liberar
+		M_free(f_b);
+		M_free(f_i);
+		M_free(a_i);
+
 
 		display_redraw();
 		// ESPERAR
@@ -153,8 +186,15 @@ int main(int argc, char** argv)
 {
 	pthread_mutex_init(&lock, NULL);
 
+	acceleration_zero_init();
 	// Inicializa matriz identidad
 	C_ib = M_identity(3);
+
+	// El vector de GRAVEDAD en g
+	V_gamma = M_create(3,1);
+	M_set(V_gamma, 0,0, 0.0);
+	M_set(V_gamma, 1,0, 0.0);
+	M_set(V_gamma, 2,0, -1.0);
 
 	display_init(argc, argv);
 

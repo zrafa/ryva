@@ -24,6 +24,12 @@ int leer_siguiente_imu(IMUData *data);
 void leer_imu(double *ax, double *ay, double *az,
 		double *gx, double *gy, double *gz, double *dt);
 
+Matrix* accel_vector_build(double ax, double ay, double az);
+
+void acceleration_zero_init(void);
+int acceleration_zero(double ax, double ay, double az);
+
+
 /* -----------------------------------------------------------
    Determinación inicial de actitud (nivelación)
    Usa acelerómetros: ax, ay, az  (en m/s²)

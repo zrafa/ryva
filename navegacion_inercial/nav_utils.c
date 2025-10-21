@@ -18,6 +18,32 @@ double factor_de_escala_ax = 0.016197;
 double factor_de_escala_ay = 0.011726;
 double factor_de_escala_az = -0.007254;
 
+#define AZ_N 5
+double az_mag[AZ_N];
+
+void acceleration_zero_init(void)
+{
+	int i;
+	for (i=0; i<AZ_N; i++)
+		az_mag[i] = -1.0;
+}
+
+int acceleration_zero(double ax, double ay, double az)
+{
+	static int n = 0;
+	int i;
+
+	az_mag[n] = sqrt(ax*ax + ay*ay + az*az);
+	n++; if (n == AZ_N) n = 0;
+	for (i=0; i<AZ_N; i++) {
+		if ((az_mag[i] < 0.999) || (az_mag[i] > 1.0009)) {
+			return 0;
+		}
+	}
+	acceleration_zero_init();
+	return 1;
+}
+
 
 // devuelve valores del acelerometro en g (quitando bias etc)
 // devuelve valores del giroscopo en radianes por segundo (quitando bias etc)
@@ -86,6 +112,19 @@ Matrix* attitude_matrix_init(double phi, double theta)
     return C;
 }
 
+
+/* -----------------------------------------------------------
+   Construye el vector de la fuerza obtenida por los acelerometros
+----------------------------------------------------------- */
+Matrix* accel_vector_build(double ax, double ay, double az)
+{
+	Matrix* f_b = M_create(3, 1);
+	M_set(f_b, 0, 0, ax);   // componente X del acelerómetro
+	M_set(f_b, 1, 0, ay);   // componente Y
+	M_set(f_b, 2, 0, az);   // componente Z
+
+	return f_b;
+}
 
 /* -----------------------------------------------------------
    Construye la matriz incremental [I + Ω*dt]
@@ -177,6 +216,7 @@ int leer_siguiente_imu(IMUData *data) {
     else
         data->delta_t = data->timestamp - last_timestamp;
 
+    printf("timestamp=%li\n", data->timestamp);
     last_timestamp = data->timestamp;
 
     return 1;
