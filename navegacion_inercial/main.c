@@ -116,6 +116,9 @@ void * actitud(void *arg) {
 	//Matrix* C_ib = attitude_matrix_init(phi, theta);
 	C_ib = attitude_matrix_init(phi, theta);
 
+	/* vector velocidad */
+	Matrix* V_ib = M_zero(3, 1);
+
 	while (1) {
 		// Leer giroscopios (rad/s)
 		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
@@ -154,11 +157,19 @@ void * actitud(void *arg) {
 		double fz_i = M_get(f_i, 2, 0);
 		// f_i está en m/s²
 		
-		// a_i = f_i + V_gamma
+		/* a_i = f_i + V_gamma : Groves (21) */
 		Matrix* a_i = M_add(f_i, V_gamma);
 		printf("ACEL muestra=%lli, ax=%f, ay=%f, az=%f, wx=%f, wy=%f, wz=%f dt=%f\n",
 	       		muestra, M_get(a_i, 0, 0), M_get(a_i, 1, 0), M_get(a_i, 2, 0), wx, wy, wz, dt);
-		// if (muestra==100000) exit(0);
+
+		/* calculamos nueva velocidad: Groves (24) */
+		M_scale(f_i, dt);
+		Matrix* V_temp = M_add(V_ib, f_i);
+
+		M_free(V_ib);
+		V_ib = V_temp;
+		printf("VEL muestra=%lli, vx=%f, vy=%f, vz=%f\n",
+	       		muestra, M_get(V_ib, 0, 0), M_get(V_ib, 1, 0), M_get(V_ib, 2, 0));
 
 		// Liberar
 		M_free(f_b);

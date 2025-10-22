@@ -18,7 +18,7 @@ double factor_de_escala_ax = 0.016197;
 double factor_de_escala_ay = 0.011726;
 double factor_de_escala_az = -0.007254;
 
-#define AZ_N 10
+#define AZ_N 9
 double az_mag[AZ_N];
 
 void acceleration_zero_init(void)
