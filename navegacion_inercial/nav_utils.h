@@ -10,6 +10,9 @@ typedef struct {
     long delta_t;
 } IMUData;
 
+extern long previous_timestamp;
+extern long current_timestamp;
+
 extern int bias_gx;
 extern int bias_gy;
 extern int bias_gz;
@@ -38,11 +41,15 @@ int acceleration_zero(double ax, double ay, double az);
 void attitud_determination_zero(double ax, double ay, double az,
                                 double* theta, double* phi);
 
+double get_yaw_from_Cib();
+double get_pitch_from_Cib();
+double get_roll_from_Cib();
+
 /* -----------------------------------------------------------
    Construye matriz inicial C_ib (convención ZYX de Groves)
    φ = roll, θ = pitch, ψ = yaw (asumido 0 al inicio)
 ----------------------------------------------------------- */
-Matrix* attitude_matrix_init(double phi, double theta);
+Matrix* attitude_matrix_init(double phi, double theta, double psi);
 
 /* -----------------------------------------------------------
    Construye la matriz incremental [I - Ω*dt]

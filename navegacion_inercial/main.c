@@ -9,6 +9,7 @@
 
 #include "matrix.h"
 #include "nav_utils.h"
+#include "magn.h"
 #include <math.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -18,7 +19,6 @@
 // --- Variables globales compartidas ---
 Matrix* C_ib;
 Matrix* V_gamma;	// el vector de GRAVEDAD
-
 
 pthread_mutex_t lock;
 
@@ -98,12 +98,13 @@ void imu_init(double *acelx, double *acely, double *acelz)
 }
 
 
+#define GRAVEDAD 9.80665
 long long int muestra = 0;
 
 void * actitud(void *arg) {
 
 
-	double theta, phi;
+	double theta, phi, psi;
 	// IMUData imu;
 
 	double ax, ay, az;
@@ -113,8 +114,8 @@ void * actitud(void *arg) {
 
 	attitud_determination_zero(ax, ay, az, &theta, &phi);
 
-	//Matrix* C_ib = attitude_matrix_init(phi, theta);
-	C_ib = attitude_matrix_init(phi, theta);
+	psi = 0.0;
+	C_ib = attitude_matrix_init(phi, theta, psi);
 
 	/* vector velocidad */
 	Matrix* V_ib = M_zero(3, 1);
@@ -123,12 +124,31 @@ void * actitud(void *arg) {
 		// Leer giroscopios (rad/s)
 		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
 
+		double x, y, z, grados;
+		long magn_timestamp;
+		magnetometro_get((double) current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
+		printf("muestra=%i, GRADOS timestamp=%li curr=%li \n", muestra, magn_timestamp, current_timestamp);
+		if ((previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
+			printf("muestra=%i, GRADOS=%f \n", muestra, grados);
+			double psi = grados * M_PI / 180.0;
+			phi = get_roll_from_Cib();
+			theta = get_pitch_from_Cib();
+
+	        	pthread_mutex_lock(&lock);
+			M_free(C_ib);
+			C_ib = attitude_matrix_init(phi, theta, psi);
+        		pthread_mutex_unlock(&lock);
+			continue;
+		}
+
 		if (acceleration_zero(ax, ay, az)) {
 			printf("muestra=%i, MAGNITUD=%f \n", muestra, sqrt(ax*ax + ay*ay + az*az));
 			attitud_determination_zero(ax, ay, az, &theta, &phi);
+			psi = get_yaw_from_Cib();
+
 	        	pthread_mutex_lock(&lock);
 			M_free(C_ib);
-			C_ib = attitude_matrix_init(phi, theta);
+			C_ib = attitude_matrix_init(phi, theta, psi);
         		pthread_mutex_unlock(&lock);
 			continue;
 		}
@@ -163,13 +183,19 @@ void * actitud(void *arg) {
 	       		muestra, M_get(a_i, 0, 0), M_get(a_i, 1, 0), M_get(a_i, 2, 0), wx, wy, wz, dt);
 
 		/* calculamos nueva velocidad: Groves (24) */
-		M_scale(f_i, dt);
-		Matrix* V_temp = M_add(V_ib, f_i);
+		M_scale(a_i, dt);
+		Matrix* V_temp = M_add(V_ib, a_i);
 
 		M_free(V_ib);
 		V_ib = V_temp;
 		printf("VEL muestra=%lli, vx=%f, vy=%f, vz=%f\n",
-	       		muestra, M_get(V_ib, 0, 0), M_get(V_ib, 1, 0), M_get(V_ib, 2, 0));
+	       		muestra, M_get(V_ib, 0, 0)*GRAVEDAD, M_get(V_ib, 1, 0)*GRAVEDAD, M_get(V_ib, 2, 0)*GRAVEDAD);
+
+		if (muestra == 50000) {
+			M_set(V_ib, 0, 0, 0);
+			M_set(V_ib, 1, 0, 0);
+			M_set(V_ib, 2, 0, 0);
+		}
 
 		// Liberar
 		M_free(f_b);
@@ -184,10 +210,6 @@ void * actitud(void *arg) {
 	}
 
 
-
-    // Operaciones
-    // printf("Matriz A:\n");
-    // M_print(A);
 
 
     return 0;
@@ -208,6 +230,8 @@ int main(int argc, char** argv)
 	M_set(V_gamma, 2,0, -1.0);
 
 	display_init(argc, argv);
+
+	leer_magnetometro_data("magnetometro.txt");
 
 	// Inicia thread que actualiza C_ib
 	pthread_t th;
