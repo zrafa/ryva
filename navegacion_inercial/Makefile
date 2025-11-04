@@ -15,4 +15,4 @@ matrix_example: main.c display.c nav_utils.c matrix.c
 	g++ -g -o $@ main.o display.o matrix.o nav_utils.o magn.o $(LDFLAGS) `pkg-config --libs opencv4`
 
 clean:
-	rm -f matrix_example
+	rm -f matrix_example *.o

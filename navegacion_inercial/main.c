@@ -22,6 +22,8 @@ Matrix* V_gamma;	// el vector de GRAVEDAD
 
 pthread_mutex_t lock;
 
+double velocidad_y = 0;
+
 void display_init(int argc, char** argv);
 void display_loop();
 void display_redraw();
@@ -119,6 +121,8 @@ void * actitud(void *arg) {
 
 	/* vector velocidad */
 	Matrix* V_ib = M_zero(3, 1);
+	/* vector posicion */
+	Matrix* Pos_ib = M_zero(3, 1);
 
 	while (1) {
 		// Leer giroscopios (rad/s)
@@ -128,9 +132,11 @@ void * actitud(void *arg) {
 		long magn_timestamp;
 		magnetometro_get((double) current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
 		printf("muestra=%i, GRADOS timestamp=%li curr=%li \n", muestra, magn_timestamp, current_timestamp);
+		/*
 		if ((previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
 			printf("muestra=%i, GRADOS=%f \n", muestra, grados);
-			double psi = grados * M_PI / 180.0;
+			psi = grados * M_PI / 180.0;
+
 			phi = get_roll_from_Cib();
 			theta = get_pitch_from_Cib();
 
@@ -138,8 +144,9 @@ void * actitud(void *arg) {
 			M_free(C_ib);
 			C_ib = attitude_matrix_init(phi, theta, psi);
         		pthread_mutex_unlock(&lock);
-			continue;
+			// continue;
 		}
+		*/
 
 		if (acceleration_zero(ax, ay, az)) {
 			printf("muestra=%i, MAGNITUD=%f \n", muestra, sqrt(ax*ax + ay*ay + az*az));
@@ -164,6 +171,10 @@ void * actitud(void *arg) {
 		M_free(Omega_dt);
 		C_ib = C_new;
         	pthread_mutex_unlock(&lock);
+			phi = get_roll_from_Cib();
+			theta = get_pitch_from_Cib();
+			psi = get_yaw_from_Cib();
+			printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, psi*180/M_PI);
 
 		// f_b: vector 3x1 medido por el acelerómetro (en marco cuerpo)
 		Matrix* f_b = accel_vector_build(ax, ay, az);
@@ -182,19 +193,37 @@ void * actitud(void *arg) {
 		printf("ACEL muestra=%lli, ax=%f, ay=%f, az=%f, wx=%f, wy=%f, wz=%f dt=%f\n",
 	       		muestra, M_get(a_i, 0, 0), M_get(a_i, 1, 0), M_get(a_i, 2, 0), wx, wy, wz, dt);
 
+		// HACK PARA TRATAR DE MANTENER LA ACELERACION DE Y EN 0
+		// M_set(a_i, 1, 0, M_get(a_i, 1, 0) + 0.2);
+		
 		/* calculamos nueva velocidad: Groves (24) */
 		M_scale(a_i, dt);
 		Matrix* V_temp = M_add(V_ib, a_i);
 
 		M_free(V_ib);
 		V_ib = V_temp;
-		printf("VEL muestra=%lli, vx=%f, vy=%f, vz=%f\n",
-	       		muestra, M_get(V_ib, 0, 0)*GRAVEDAD, M_get(V_ib, 1, 0)*GRAVEDAD, M_get(V_ib, 2, 0)*GRAVEDAD);
+		velocidad_y = M_get(V_ib, 1, 0);
+
+
+		/* calculamos la nueva posición en cada eje */
+		Matrix* V_temp2 = M_add(V_ib, M_zero(3,1));
+		M_scale(V_temp2, dt);
+		Matrix* V_temp3 = M_add(Pos_ib, V_temp2);
+		M_free(Pos_ib);
+		M_free(V_temp2);
+		Pos_ib = V_temp3;
+
+		printf("VEL y POS muestra=%lli, vx=%f, vy=%f, vz=%f   posx=%f, posy=%f, posz=%f \n",
+	       		muestra, M_get(V_ib, 0, 0)*GRAVEDAD, M_get(V_ib, 1, 0)*GRAVEDAD, M_get(V_ib, 2, 0)*GRAVEDAD, M_get(Pos_ib, 0, 0), M_get(Pos_ib, 1, 0), M_get(Pos_ib, 2, 0));
 
 		if (muestra == 50000) {
 			M_set(V_ib, 0, 0, 0);
 			M_set(V_ib, 1, 0, 0);
 			M_set(V_ib, 2, 0, 0);
+			velocidad_y = 0;
+			M_set(Pos_ib, 0, 0, 0);
+			M_set(Pos_ib, 1, 0, 0);
+			M_set(Pos_ib, 2, 0, 0);
 		}
 
 		// Liberar

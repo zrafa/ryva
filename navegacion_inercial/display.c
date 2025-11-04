@@ -3,11 +3,14 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <math.h>
+#include <stdio.h>
 #include "matrix.h"
 
 // --- Variables globales compartidas ---
 extern Matrix* C_ib;
 extern pthread_mutex_t lock;
+
+extern double velocidad_y;
 
 // --- Prototipos ---
 void draw_body_frame(const Matrix* C_ib);
@@ -27,27 +30,36 @@ void initOpenGL(void)
 }
 
 
-/*
-// Dibuja la caja con la orientación de C_ib
-void draw_body_frame(const Matrix* C_ib)
+void display_velocidad(void)
 {
+	 // ======= Mostrar velocidad (abajo a la derecha) =======
+
+    char text[64];
+    snprintf(text, sizeof(text), "Vel Y: %.2f m/s", velocidad_y);
+
+    glMatrixMode(GL_PROJECTION);
     glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, 800, 0, 600);   // coordenadas 2D de pantalla (ajustá a tu ventana)
 
-    // Matriz 4x4 para OpenGL (column-major)
-    double M[16] = {
-        M_get(C_ib, 0, 0), M_get(C_ib, 1, 0), M_get(C_ib, 2, 0), 0.0,
-        M_get(C_ib, 0, 1), M_get(C_ib, 1, 1), M_get(C_ib, 2, 1), 0.0,
-        M_get(C_ib, 0, 2), M_get(C_ib, 1, 2), M_get(C_ib, 2, 2), 0.0,
-        0.0,                0.0,                0.0,                1.0
-    };
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
 
-    glMultMatrixd(M);
-    glColor3f(1.0, 1.0, 1.0);
-    glutWireCube(1.0);
+    glColor3f(1.0f, 1.0f, 0.0f);  // texto amarillo
+    glRasterPos2i(650, 20);       // posición abajo a la derecha
 
+    for (char* c = text; *c; c++)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
+
+    // restaurar matrices
     glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
 }
-*/
+
 
 
 void draw_body_frame(const Matrix* C_ib)
@@ -61,7 +73,6 @@ void draw_body_frame(const Matrix* C_ib)
         M_get(C_ib, 0, 2), M_get(C_ib, 1, 2), M_get(C_ib, 2, 2), 0.0,
         0.0,                0.0,                0.0,                1.0
     };
-
     glMultMatrixd(M);
 
     // --- Cara superior (Z = +0.5) ---
@@ -87,8 +98,9 @@ void draw_body_frame(const Matrix* C_ib)
     glutWireCube(1.0);
 
     glPopMatrix();
-}
 
+    display_velocidad();
+}
 
 
 
@@ -99,9 +111,17 @@ void display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
+    // Mira desde arriba (Z positiva en OpenGL = "Down" del modelo NED)
+    gluLookAt(
+    0.0, -5.0, 5.0,   // posición de la cámara (atrás y arriba)
+    0.0,  0.0, 0.0,   // punto de interés (centro)
+    0.0,  0.0, 1.0    // vector "up" (hacia Z positiva)
+    );
+    /* original 
     gluLookAt(2.0, 2.0, 2.0,   // cámara
               0.0, 0.0, 0.0,   // mira al origen
               0.0, 0.0, 1.0);  // "up"
+    */
 
     pthread_mutex_lock(&lock);
     draw_body_frame(C_ib);
