@@ -147,33 +147,6 @@ Matrix* attitude_matrix_init(double phi, double theta, double psi)
 
     return C;
 }
-/*
-Matrix* attitude_matrix_init(double phi, double theta)
-{
-    double psi = 0.0; // sin referencia de rumbo inicial
-    Matrix* C = M_create(3, 3);
-
-    double cphi = cos(phi), sphi = sin(phi);
-    double cth  = cos(theta), sth = sin(theta);
-    double cpsi = cos(psi), spsi = sin(psi);
-
-    // C_ib según convención ZYX (yaw–pitch–roll)
-    M_set(C, 0, 0, cpsi*cth);
-    M_set(C, 0, 1, cpsi*sth*sphi - spsi*cphi);
-    M_set(C, 0, 2, cpsi*sth*cphi + spsi*sphi);
-
-    M_set(C, 1, 0, spsi*cth);
-    M_set(C, 1, 1, spsi*sth*sphi + cpsi*cphi);
-    M_set(C, 1, 2, spsi*sth*cphi - cpsi*sphi);
-
-    M_set(C, 2, 0, -sth);
-    M_set(C, 2, 1, cth*sphi);
-    M_set(C, 2, 2, cth*cphi);
-
-    return C;
-}
-*/
-
 
 /* -----------------------------------------------------------
    Construye el vector de la fuerza obtenida por los acelerometros
@@ -283,15 +256,3 @@ int leer_siguiente_imu(IMUData *data) {
 
     return 1;
 }
-
-// Ejemplo de uso
-// int main(void) {
-  //   IMUData data;
- //    while (leer_siguiente_imu(&data)) {
-   //      printf("ax=%d ay=%d az=%d gx=%d gy=%d gz=%d Δt=%ld ms\n",
-     //           data.ax, data.ay, data.az, data.gx, data.gy, data.gz, data.delta_t);
- //    }
-
-   //  return 0;
-// }
-
