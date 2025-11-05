@@ -124,6 +124,13 @@ void * actitud(void *arg) {
 	/* vector posicion */
 	Matrix* Pos_ib = M_zero(3, 1);
 
+	/* intentamos una vel constante */
+
+	Matrix* v_body = M_create(3, 1);
+	M_set(v_body, 0, 0, 0.3);
+	M_set(v_body, 1, 0, 0.0);
+	M_set(v_body, 2, 0, 0.0);
+
 	while (1) {
 		// Leer giroscopios (rad/s)
 		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
@@ -166,15 +173,16 @@ void * actitud(void *arg) {
 		Matrix* Omega_dt = gyro_matrix_build(wx, wy, wz, dt);
 		Matrix* C_new = attitude_update(C_ib, Omega_dt);
 
-	        pthread_mutex_lock(&lock);
-        	M_free(C_ib);
+		pthread_mutex_lock(&lock);
+		M_free(C_ib);
 		M_free(Omega_dt);
 		C_ib = C_new;
-        	pthread_mutex_unlock(&lock);
-			phi = get_roll_from_Cib();
-			theta = get_pitch_from_Cib();
-			psi = get_yaw_from_Cib();
-			printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, psi*180/M_PI);
+		pthread_mutex_unlock(&lock);
+
+		phi = get_roll_from_Cib();
+		theta = get_pitch_from_Cib();
+		psi = get_yaw_from_Cib();
+		printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, psi*180/M_PI);
 
 		// f_b: vector 3x1 medido por el acelerómetro (en marco cuerpo)
 		Matrix* f_b = accel_vector_build(ax, ay, az);
@@ -182,20 +190,12 @@ void * actitud(void *arg) {
 		// Aplica ecuación (20): f_i = C_ib * f_b
 		Matrix* f_i = M_mult(C_ib, f_b);
 
-		// Opcional: leer componentes transformadas
-		double fx_i = M_get(f_i, 0, 0);
-		double fy_i = M_get(f_i, 1, 0);
-		double fz_i = M_get(f_i, 2, 0);
-		// f_i está en m/s²
 		
 		/* a_i = f_i + V_gamma : Groves (21) */
 		Matrix* a_i = M_add(f_i, V_gamma);
 		printf("ACEL muestra=%lli, ax=%f, ay=%f, az=%f, wx=%f, wy=%f, wz=%f dt=%f\n",
 	       		muestra, M_get(a_i, 0, 0), M_get(a_i, 1, 0), M_get(a_i, 2, 0), wx, wy, wz, dt);
 
-		// HACK PARA TRATAR DE MANTENER LA ACELERACION DE Y EN 0
-		// M_set(a_i, 1, 0, M_get(a_i, 1, 0) + 0.2);
-		
 		/* calculamos nueva velocidad: Groves (24) */
 		M_scale(a_i, dt);
 		Matrix* V_temp = M_add(V_ib, a_i);
@@ -206,15 +206,31 @@ void * actitud(void *arg) {
 
 
 		/* calculamos la nueva posición en cada eje */
+		/*
+		// FALTA escalar la Vel de V_ib * 9.8 
 		Matrix* V_temp2 = M_add(V_ib, M_zero(3,1));
 		M_scale(V_temp2, dt);
 		Matrix* V_temp3 = M_add(Pos_ib, V_temp2);
 		M_free(Pos_ib);
 		M_free(V_temp2);
 		Pos_ib = V_temp3;
+		*/
 
-		printf("VEL y POS muestra=%lli, vx=%f, vy=%f, vz=%f   posx=%f, posy=%f, posz=%f \n",
-	       		muestra, M_get(V_ib, 0, 0)*GRAVEDAD, M_get(V_ib, 1, 0)*GRAVEDAD, M_get(V_ib, 2, 0)*GRAVEDAD, M_get(Pos_ib, 0, 0), M_get(Pos_ib, 1, 0), M_get(Pos_ib, 2, 0));
+		/* calculamos la nueva posición en usando el HACK de vel CONSTANTE cada eje */
+		Matrix* v_world = M_mult(C_ib, v_body);
+		M_scale(v_world, dt);
+		Matrix* V_temp3 = M_add(Pos_ib, v_world);
+		M_free(Pos_ib);
+		M_free(v_world);
+		Pos_ib = V_temp3;
+
+
+		printf("VEL muestra=%lli, vx=%f, vy=%f, vz=%f  \n",
+	       		muestra, M_get(V_ib, 0, 0)*GRAVEDAD, M_get(V_ib, 1, 0)*GRAVEDAD, M_get(V_ib, 2, 0)*GRAVEDAD);
+		if (muestra>65000) {
+		printf("POS muestra=%lli, %f %f %f \n",
+	       		muestra, M_get(Pos_ib, 0, 0), M_get(Pos_ib, 1, 0), M_get(Pos_ib, 2, 0));
+		}
 
 		if (muestra == 50000) {
 			M_set(V_ib, 0, 0, 0);
@@ -231,11 +247,7 @@ void * actitud(void *arg) {
 		M_free(f_i);
 		M_free(a_i);
 
-
 		display_redraw();
-		// ESPERAR
-		// sleep(1);
-
 	}
 
 
