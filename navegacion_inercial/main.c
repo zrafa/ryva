@@ -233,17 +233,20 @@ void * actitud(void *arg) {
 	       		muestra, M_get(a_i, 0, 0), M_get(a_i, 1, 0), M_get(a_i, 2, 0), wx, wy, wz, dt);
 
 		/* calculamos nueva velocidad: Groves (24) */
+		/*
 		M_scale(a_i, dt);
+		M_scale(a_i, GRAVEDAD);
 		Matrix* V_temp = M_add(V_ib, a_i);
 
 		M_free(V_ib);
 		V_ib = V_temp;
 		velocidad_y = M_get(V_ib, 1, 0);
+		*/
 
 
 		/* calculamos la nueva posición en cada eje */
+		// YA NO FALTA FALTA escalar la Vel de V_ib * 9.8 
 		/*
-		// FALTA escalar la Vel de V_ib * 9.8 
 		Matrix* V_temp2 = M_add(V_ib, M_zero(3,1));
 		M_scale(V_temp2, dt);
 		Matrix* V_temp3 = M_add(Pos_ib, V_temp2);
@@ -262,7 +265,7 @@ void * actitud(void *arg) {
 
 
 		printf("VEL muestra=%lli, vx=%f, vy=%f, vz=%f  \n",
-	       		muestra, M_get(V_ib, 0, 0)*GRAVEDAD, M_get(V_ib, 1, 0)*GRAVEDAD, M_get(V_ib, 2, 0)*GRAVEDAD);
+	       		muestra, M_get(V_ib, 0, 0), M_get(V_ib, 1, 0), M_get(V_ib, 2, 0));
 		if (muestra>65000) {
 		printf("POS muestra=%lli, %f %f %f \n",
 	       		muestra, M_get(Pos_ib, 0, 0), M_get(Pos_ib, 1, 0), M_get(Pos_ib, 2, 0));
