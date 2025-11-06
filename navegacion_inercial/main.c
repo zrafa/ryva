@@ -156,8 +156,8 @@ void * actitud(void *arg) {
 	/* intentamos una vel constante */
 
 	Matrix* v_body = M_create(3, 1);
-	M_set(v_body, 0, 0, 0.3);
-	M_set(v_body, 1, 0, 0.0);
+	M_set(v_body, 0, 0, 0.0);
+	M_set(v_body, 1, 0, 0.7);
 	M_set(v_body, 2, 0, 0.0);
 
 	while (1) {
@@ -168,16 +168,17 @@ void * actitud(void *arg) {
 		long magn_timestamp;
 		magnetometro_get((double) current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
 		printf("muestra=%i, GRADOS timestamp=%li curr=%li \n", muestra, magn_timestamp, current_timestamp);
+		/* 
 		if ((previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
 			printf("muestra=%i, GRADOS=%f \n", muestra, grados);
 
-			/* IMPORTANTE hago signo menos porque del magnetometro
-			 * tengo sentido horario e IMU y ecuaciones sentido
-			 * antihorario
-			 */
+			// IMPORTANTE hago signo menos porque del magnetometro
+			// tengo sentido horario e IMU y ecuaciones sentido
+			// antihorario
 			double psi_mag = -(grados * M_PI / 180.0);
 			psi = get_yaw_from_Cib();
-			/* suavizado para no reemplazar brusco */
+
+			// suavizado para no reemplazar brusco
 			actualizar_yaw_con_magnetometro(&psi, psi_mag);
 
 			phi = get_roll_from_Cib();
@@ -188,6 +189,7 @@ void * actitud(void *arg) {
 			C_ib = attitude_matrix_init(phi, theta, psi);
         		pthread_mutex_unlock(&lock);
 		}
+		*/
 
 		if (acceleration_zero(ax, ay, az)) {
 			printf("muestra=%i, MAGNITUD=%f \n", muestra, sqrt(ax*ax + ay*ay + az*az));

@@ -68,10 +68,9 @@ std::vector<MagnetometroData> readMagnetometroData(const std::string& filename) 
 
     // Matriz de transformación (obtenida de la calibración)
     cv::Mat transformation = (cv::Mat_<double>(3, 3) <<
- 0.95534472, -0.02389597,  0.0,        
- -0.02389597,  1.04829138,  0.0,        
+ 0.95534472, -0.02389597,  0.0,
+ -0.02389597,  1.04829138,  0.0,
   0.0,          0.0,          0.99909221);
-
 
 extern "C" {
 
