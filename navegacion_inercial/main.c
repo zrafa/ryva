@@ -161,7 +161,7 @@ void * actitud(void *arg) {
 	M_set(v_body, 2, 0, 0.0);
 
 	while (1) {
-		// Leer giroscopios (rad/s)
+		/* Leer aceleraciones y giros (rad/s) */
 		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
 
 		magnetometro_get((double) current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
