@@ -62,6 +62,15 @@ Tomé el offset y se lo harcodeé al magnetometro.py (cuando obtengo grados
 para indicar la orientacion).
 
 
+Gravedad en la chacra
+---------------------
+
+1g = 9.80665 // convencion internacional
+
+En Cinco Saltos (provincia de Río Negro, latitud ≈ −38.82225°; altitud media ≈ 288 m) la gravedad estimada es aproximadamente:
+
+g ≈ 9.79977 m/s² (≈ 9.7998 m/s²)
+
 
 
 Machete de Rafa viejo
