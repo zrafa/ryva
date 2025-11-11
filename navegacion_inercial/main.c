@@ -23,6 +23,7 @@ Matrix* V_gamma;	// el vector de GRAVEDAD
 pthread_mutex_t lock;
 
 double velocidad_y = 0;
+double velocidad_x = 0;
 
 void display_init(int argc, char** argv);
 void display_loop();
@@ -136,11 +137,11 @@ void * actitud(void *arg) {
 
 
 	double theta, phi, psi;
-	// IMUData imu;
-
 	double ax, ay, az;
 	double wx, wy, wz, dt;
-	//double bias_gx, bias_gy, bias_gz;
+	double x, y, z, grados;
+	long magn_timestamp;
+
 	imu_init(&ax, &ay, &az);
 
 	attitud_determination_zero(ax, ay, az, &theta, &phi);
@@ -154,7 +155,6 @@ void * actitud(void *arg) {
 	Matrix* Pos_ib = M_zero(3, 1);
 
 	/* intentamos una vel constante */
-
 	Matrix* v_body = M_create(3, 1);
 	M_set(v_body, 0, 0, 0.0);
 	M_set(v_body, 1, 0, 0.7);
@@ -164,13 +164,9 @@ void * actitud(void *arg) {
 		// Leer giroscopios (rad/s)
 		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
 
-		double x, y, z, grados;
-		long magn_timestamp;
 		magnetometro_get((double) current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
-		printf("muestra=%i, GRADOS timestamp=%li curr=%li \n", muestra, magn_timestamp, current_timestamp);
 		/* 
 		if ((previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
-			printf("muestra=%i, GRADOS=%f \n", muestra, grados);
 
 			// IMPORTANTE hago signo menos porque del magnetometro
 			// tengo sentido horario e IMU y ecuaciones sentido
@@ -192,7 +188,6 @@ void * actitud(void *arg) {
 		*/
 
 		if (acceleration_zero(ax, ay, az)) {
-			printf("muestra=%i, MAGNITUD=%f \n", muestra, sqrt(ax*ax + ay*ay + az*az));
 			attitud_determination_zero(ax, ay, az, &theta, &phi);
 			psi = get_yaw_from_Cib();
 
@@ -203,9 +198,6 @@ void * actitud(void *arg) {
 			continue;
 		}
 
-		printf("muestra=%lli, ax=%f, ay=%f, az=%f, wx=%f, wy=%f, wz=%f dt=%f\n",
-	       		muestra++, ax, ay, az, wx, wy, wz, dt);
-
 		Matrix* Omega_dt = gyro_matrix_build(wx, wy, wz, dt);
 		Matrix* C_new = attitude_update(C_ib, Omega_dt);
 
@@ -215,67 +207,69 @@ void * actitud(void *arg) {
 		C_ib = C_new;
 		pthread_mutex_unlock(&lock);
 
-		phi = get_roll_from_Cib();
-		theta = get_pitch_from_Cib();
-		psi = get_yaw_from_Cib();
-		printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, psi*180/M_PI);
+		muestra++;
 
 		// f_b: vector 3x1 medido por el acelerómetro (en marco cuerpo)
 		Matrix* f_b = accel_vector_build(ax, ay, az);
 
-		// Aplica ecuación (20): f_i = C_ib * f_b
+		// Aplica ecuación Groves (20): f_i = C_ib * f_b
 		Matrix* f_i = M_mult(C_ib, f_b);
-
 		
 		/* a_i = f_i + V_gamma : Groves (21) */
-		Matrix* a_i = M_add(f_i, V_gamma);
-		printf("ACEL muestra=%lli, ax=%f, ay=%f, az=%f, wx=%f, wy=%f, wz=%f dt=%f\n",
-	       		muestra, M_get(a_i, 0, 0), M_get(a_i, 1, 0), M_get(a_i, 2, 0), wx, wy, wz, dt);
+		M_scale(f_i, GRAVEDAD); 	/* pasamos a mts/seg^2 */
+		Matrix* a_i = M_add(f_i, V_gamma); /* quitamos gravedad en la chacra */
 
 		/* calculamos nueva velocidad: Groves (24) */
-		/*
 		M_scale(a_i, dt);
-		M_scale(a_i, GRAVEDAD);
 		Matrix* V_temp = M_add(V_ib, a_i);
 
 		M_free(V_ib);
 		V_ib = V_temp;
 		velocidad_y = M_get(V_ib, 1, 0);
-		*/
-
+		velocidad_x = M_get(V_ib, 0, 0);
 
 		/* calculamos la nueva posición en cada eje */
-		// YA NO FALTA FALTA escalar la Vel de V_ib * 9.8 
-		/*
 		Matrix* V_temp2 = M_add(V_ib, M_zero(3,1));
 		M_scale(V_temp2, dt);
 		Matrix* V_temp3 = M_add(Pos_ib, V_temp2);
 		M_free(Pos_ib);
 		M_free(V_temp2);
 		Pos_ib = V_temp3;
-		*/
 
 		/* calculamos la nueva posición en usando el HACK de vel CONSTANTE cada eje */
+		/*
 		Matrix* v_world = M_mult(C_ib, v_body);
 		M_scale(v_world, dt);
 		Matrix* V_temp3 = M_add(Pos_ib, v_world);
 		M_free(Pos_ib);
 		M_free(v_world);
 		Pos_ib = V_temp3;
+		*/
 
-
-		printf("VEL muestra=%lli, vx=%f, vy=%f, vz=%f  \n",
-	       		muestra, M_get(V_ib, 0, 0), M_get(V_ib, 1, 0), M_get(V_ib, 2, 0));
 		if (muestra>65000) {
-		printf("POS muestra=%lli, %f %f %f \n",
-	       		muestra, M_get(Pos_ib, 0, 0), M_get(Pos_ib, 1, 0), M_get(Pos_ib, 2, 0));
+			printf("muestra=%i, MAGNITUD=%f \n", muestra, sqrt(ax*ax + ay*ay + az*az));
+			printf("muestra=%i, GRADOS timestamp=%li curr=%li \n", muestra, magn_timestamp, current_timestamp);
+			printf("muestra=%lli, ax=%f, ay=%f, az=%f, wx=%f, wy=%f, wz=%f dt=%f\n",
+	       			muestra, ax, ay, az, wx, wy, wz, dt);
+			printf("POS muestra=%lli, %f %f %f \n",
+	       			muestra, M_get(Pos_ib, 0, 0), M_get(Pos_ib, 1, 0), M_get(Pos_ib, 2, 0));
+			printf("%lli VEL %f %f %f  \n",
+	       			muestra, M_get(V_ib, 0, 0), M_get(V_ib, 1, 0), M_get(V_ib, 2, 0));
+			printf("%lli ACEL muestra=%lli, %f %f %f, wx=%f, wy=%f, wz=%f dt=%f\n",
+	       			muestra, muestra, ax*GRAVEDAD, ay*GRAVEDAD, az*GRAVEDAD, wx, wy, wz, dt);
+			phi = get_roll_from_Cib();
+			theta = get_pitch_from_Cib();
+			psi = get_yaw_from_Cib();
+			printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, psi*180/M_PI);
 		}
 
-		if (muestra == 50000) {
+		//if (muestra == 50000) {
+		if (muestra == 65000) {
 			M_set(V_ib, 0, 0, 0);
 			M_set(V_ib, 1, 0, 0);
 			M_set(V_ib, 2, 0, 0);
 			velocidad_y = 0;
+			velocidad_x = 0;
 			M_set(Pos_ib, 0, 0, 0);
 			M_set(Pos_ib, 1, 0, 0);
 			M_set(Pos_ib, 2, 0, 0);
@@ -290,8 +284,6 @@ void * actitud(void *arg) {
 	}
 
 
-
-
     return 0;
 }
 
@@ -303,11 +295,11 @@ int main(int argc, char** argv)
 	// Inicializa matriz identidad
 	C_ib = M_identity(3);
 
-	// El vector de GRAVEDAD en g
+	// El vector de GRAVEDAD EN CINCO SALTOS
 	V_gamma = M_create(3,1);
 	M_set(V_gamma, 0,0, 0.0);
 	M_set(V_gamma, 1,0, 0.0);
-	M_set(V_gamma, 2,0, -1.0);
+	M_set(V_gamma, 2,0, -9.79977);
 
 	display_init(argc, argv);
 

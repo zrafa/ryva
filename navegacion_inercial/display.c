@@ -11,6 +11,7 @@ extern Matrix* C_ib;
 extern pthread_mutex_t lock;
 
 extern double velocidad_y;
+extern double velocidad_x;
 
 // --- Prototipos ---
 void draw_body_frame(const Matrix* C_ib);
@@ -58,6 +59,30 @@ void display_velocidad(void)
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
 
+
+    // MOSTRAR velocidad_x
+    snprintf(text, sizeof(text), "Vel X: %.2f m/s", velocidad_x);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, 800, 0, 600);   // coordenadas 2D de pantalla (ajustá a tu ventana)
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glColor3f(1.0f, 1.0f, 0.0f);  // texto amarillo
+    glRasterPos2i(450, 20);       // posición abajo a la derecha
+
+    for (char* c = text; *c; c++)
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
+
+    // restaurar matrices
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
 }
 
 
