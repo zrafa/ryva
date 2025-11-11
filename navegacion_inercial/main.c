@@ -198,6 +198,7 @@ void * actitud(void *arg) {
 			continue;
 		}
 
+		// Attitude update. Groves (19)
 		Matrix* Omega_dt = gyro_matrix_build(wx, wy, wz, dt);
 		Matrix* C_new = attitude_update(C_ib, Omega_dt);
 
@@ -209,18 +210,18 @@ void * actitud(void *arg) {
 
 		muestra++;
 
-		// f_b: vector 3x1 medido por el acelerómetro (en marco cuerpo)
+		// Construimo f_b: vector 3x1 medido por el acelerómetro (en marco cuerpo)
 		Matrix* f_b = accel_vector_build(ax, ay, az);
 
-		// Aplica ecuación Groves (20): f_i = C_ib * f_b
+		// Specific-Force Frame Transformation. Groves (20): f_i = C_ib * f_b
 		Matrix* f_i = M_mult(C_ib, f_b);
 		
 		/* a_i = f_i + V_gamma : Groves (21) */
 		M_scale(f_i, GRAVEDAD); 	/* pasamos a mts/seg^2 */
 		Matrix* a_i = M_add(f_i, V_gamma); /* quitamos gravedad en la chacra */
 
-		/* calculamos nueva velocidad: Groves (24) */
-		M_scale(a_i, dt);
+		/* calculamos la nueva velocidad: Groves (24) */
+		M_scale(a_i, dt);	/* mts/seg */
 		Matrix* V_temp = M_add(V_ib, a_i);
 
 		M_free(V_ib);
