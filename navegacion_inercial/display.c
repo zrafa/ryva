@@ -98,7 +98,11 @@ void draw_body_frame(const Matrix* C_ib)
         M_get(C_ib, 0, 2), M_get(C_ib, 1, 2), M_get(C_ib, 2, 2), 0.0,
         0.0,                0.0,                0.0,                1.0
     };
+	glRotatef(90.0, 0.0, 0.0, 1.0);   // Rotación alrededor de Z
     glMultMatrixd(M);
+
+	// Corrección para que +X del cubo coincida con tu +X real
+	//glMultMatrixd(M);
 
     // --- Cara superior (Z = +0.5) ---
     glColor3f(0.2f, 0.6f, 1.0f); // azul claro
