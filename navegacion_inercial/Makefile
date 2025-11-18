@@ -3,9 +3,9 @@ CC = gcc
 CFLAGS = -Wall -Wextra -O2 -g
 LDFLAGS = -lgsl -lgslcblas -lm -lGL -lGLU -lglut -lpthread
 
-all: matrix_example
+all: ins-go
 
-matrix_example: main.c display.c nav_utils.c matrix.c magn.cpp gps.cpp
+ins-go: main.c display.c nav_utils.c matrix.c magn.cpp gps.cpp
 	g++ -g -c -o magn.o magn.cpp `pkg-config --cflags opencv4`
 	g++ -g -c -o gps.o gps.cpp `pkg-config --cflags opencv4`
 	gcc -g -c -o main.o main.c
@@ -16,4 +16,4 @@ matrix_example: main.c display.c nav_utils.c matrix.c magn.cpp gps.cpp
 	g++ -g -o $@ main.o display.o matrix.o nav_utils.o gps.o magn.o $(LDFLAGS) `pkg-config --libs opencv4`
 
 clean:
-	rm -f matrix_example *.o
+	rm -f ins-go *.o
