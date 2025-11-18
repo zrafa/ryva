@@ -129,12 +129,18 @@ void actualizar_yaw_con_magnetometro(double *yaw_ins, double yaw_mag)
     *yaw_ins = wrap_pi(*yaw_ins);
 }
 
+void gps_velocidad(long int ts, double *vel, long int *ts_current);
+
+double velocidad_media(double vel, long ts);
+
 
 #define GRAVEDAD 9.80665
 long long int muestra = 0;
 
 void * actitud(void *arg) {
 
+	double vel_gps = 0;
+	long int vel_gps_ts;
 
 	double theta, phi, psi;
 	double ax, ay, az;
@@ -163,8 +169,13 @@ void * actitud(void *arg) {
 	while (1) {
 		/* Leer aceleraciones y giros (rad/s) */
 		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
+		//gps_velocidad(current_timestamp, &vel_gps, &vel_gps_ts);
+		//vel_gps = velocidad_media(vel_gps, vel_gps_ts);
+		// M_set(v_body, 1, 0, vel_gps);
 
-		magnetometro_get((double) current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
+			printf("%lli VEL_GPS %f %lli \n", muestra, vel_gps, current_timestamp+1000);
+
+		//magnetometro_get((double) current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
 		/* 
 		if ((previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
 
@@ -187,7 +198,10 @@ void * actitud(void *arg) {
 		}
 		*/
 
-		if (acceleration_zero(ax, ay, az)) {
+			/*
+		if ((muestra<65000) && (acceleration_zero(ax, ay, az))) {
+		*/
+		if ((acceleration_zero(ax, ay, az))) {
 			attitud_determination_zero(ax, ay, az, &theta, &phi);
 			psi = get_yaw_from_Cib();
 
@@ -230,22 +244,22 @@ void * actitud(void *arg) {
 		velocidad_x = M_get(V_ib, 0, 0);
 
 		/* calculamos la nueva posición en cada eje */
+		/*
 		Matrix* V_temp2 = M_add(V_ib, M_zero(3,1));
 		M_scale(V_temp2, dt);
 		Matrix* V_temp3 = M_add(Pos_ib, V_temp2);
 		M_free(Pos_ib);
 		M_free(V_temp2);
 		Pos_ib = V_temp3;
+		*/
 
 		/* calculamos la nueva posición en usando el HACK de vel CONSTANTE cada eje */
-		/*
 		Matrix* v_world = M_mult(C_ib, v_body);
 		M_scale(v_world, dt);
 		Matrix* V_temp3 = M_add(Pos_ib, v_world);
 		M_free(Pos_ib);
 		M_free(v_world);
 		Pos_ib = V_temp3;
-		*/
 
 		if (muestra>65000) {
 			printf("muestra=%i, MAGNITUD=%f \n", muestra, sqrt(ax*ax + ay*ay + az*az));
@@ -262,6 +276,7 @@ void * actitud(void *arg) {
 			theta = get_pitch_from_Cib();
 			psi = get_yaw_from_Cib();
 			printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, psi*180/M_PI);
+			printf("%lli VEL_GPS %f \n", muestra, vel_gps);
 		}
 
 		//if (muestra == 50000) {
@@ -304,7 +319,7 @@ int main(int argc, char** argv)
 
 	display_init(argc, argv);
 
-	leer_magnetometro_data("magnetometro.txt");
+	// leer_magnetometro_data("magnetometro.txt");
 
 	// Inicia thread que actualiza C_ib
 	pthread_t th;

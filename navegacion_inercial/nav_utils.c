@@ -38,6 +38,8 @@ int acceleration_zero(double ax, double ay, double az)
 	static int n = 0;
 	int i;
 
+	// Lo siguiente supone que en donde estamos la gravedad es 9.8
+	// Hay que modificar en algun momento para utilizar la gravedad local
 	az_mag[n] = sqrt(ax*ax + ay*ay + az*az);
 	n++; if (n == AZ_N) n = 0;
 	for (i=0; i<AZ_N; i++) {
