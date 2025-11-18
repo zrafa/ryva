@@ -22,6 +22,9 @@ Se utilizaron las ecuaciones del apunte de Favio.
 Se implementó en el programa calib.c, que hace el calculo de los sesgos 
 y factores de escala.
 
+Para calcular un dato en m/s² :
+
+double acel = ( (raw * 2 / 512) - bias ) / (1 + factor_de_escala);
 
 cd calibracion/
 
