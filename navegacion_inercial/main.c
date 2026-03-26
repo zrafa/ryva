@@ -130,6 +130,8 @@ void actualizar_yaw_con_magnetometro(double *yaw_ins, double yaw_mag)
 }
 
 void gps_velocidad(long int ts, double *vel, long int *ts_current);
+double gps_get_speed(long long tiempo_us);
+
 
 double velocidad_media(double vel, long ts);
 
@@ -145,6 +147,10 @@ void * actitud(void *arg) {
 	double theta, phi, psi;
 	double ax, ay, az;
 	double wx, wy, wz, dt;
+
+	double wxx, wyy, wzz, dtt;
+	int i;
+
 	double x, y, z, grados;
 	long magn_timestamp;
 
@@ -169,11 +175,32 @@ void * actitud(void *arg) {
 	while (1) {
 		/* Leer aceleraciones y giros (rad/s) */
 		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
+		/*
+		if (muestra>65000) {
+			wxx = wx; wyy = wy; wzz = wz; dtt = dt;
+			for (i=0; i<4; i++) {
+				leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
+				wxx += wx;
+				wyy += wy;
+				wzz += wz;
+				dtt += dt;
+				muestra++;
+			}
+			wx = wxx / 5.0;
+			wy = wyy / 5.0;
+			wz = wzz / 5.0;
+			dt = dtt;
+		}
+		*/
 		//gps_velocidad(current_timestamp, &vel_gps, &vel_gps_ts);
 		//vel_gps = velocidad_media(vel_gps, vel_gps_ts);
+		//
+		//if (muestra>65000) {
+		//	vel_gps = gps_get_speed(current_timestamp*1000);
+//
+//			printf("%lli VEL_GPS %f %lli \n", muestra, vel_gps, current_timestamp*1000);
+//		}
 		// M_set(v_body, 1, 0, vel_gps);
-
-			printf("%lli VEL_GPS %f %lli \n", muestra, vel_gps, current_timestamp+1000);
 
 		//magnetometro_get((double) current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
 		/* 
@@ -271,7 +298,10 @@ void * actitud(void *arg) {
 			printf("%lli VEL %f %f %f  \n",
 	       			muestra, M_get(V_ib, 0, 0), M_get(V_ib, 1, 0), M_get(V_ib, 2, 0));
 			printf("%lli ACEL muestra=%lli, %f %f %f, wx=%f, wy=%f, wz=%f dt=%f\n",
-	       			muestra, muestra, ax*GRAVEDAD, ay*GRAVEDAD, az*GRAVEDAD, wx, wy, wz, dt);
+				muestra, muestra, ax*GRAVEDAD, ay*GRAVEDAD, az*GRAVEDAD, wx, wy, wz, dt);
+
+			printf("%lli acel-vel %f %f \n",
+	       			muestra, ax*GRAVEDAD, M_get(V_ib, 0, 0) );
 			phi = get_roll_from_Cib();
 			theta = get_pitch_from_Cib();
 			psi = get_yaw_from_Cib();

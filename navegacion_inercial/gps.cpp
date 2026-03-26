@@ -14,6 +14,11 @@
 #include <algorithm>
 
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <limits.h>
 
 using namespace std;
 
@@ -29,6 +34,14 @@ struct GPS_position {
 	// GPS_position pos1(latitud, longitud);
 	// GPS_position pos2(arbol.latitud, arbol.longitud);
 	
+
+
+
+
+
+
+
+
 
 
 
@@ -169,6 +182,63 @@ double velocidad_media(double vel, long ts)
 
 	return media_p;
 }
+
+
+double gps_get_speed(long long tiempo_us)
+{
+    ifstream file("gps.txt");
+    if (!file.is_open()) {
+        cerr << "Error: No se pudo abrir el archivo gps.txt" << endl;
+        return -1.0;
+    }
+
+    long long prev_timestamp_us = 0;
+    long long min_time_diff = LLONG_MAX;
+
+    double closest_speed_knots = -1.0;
+
+    string line;
+
+    while (getline(file, line)) {
+
+        if (line.find("$GNRMC") != string::npos) {
+
+            stringstream ss(line);
+            string token;
+            vector<string> tokens;
+
+            while (getline(ss, token, ',')) {
+                tokens.push_back(token);
+            }
+
+            // Campo 7 = velocidad en nudos
+            if (tokens.size() > 7 && tokens[7] != "") {
+
+                double speed_knots = stod(tokens[7]);
+                long long diff = llabs(prev_timestamp_us - tiempo_us);
+
+                if (diff < min_time_diff) {
+                    min_time_diff = diff;
+                    closest_speed_knots = speed_knots;
+                }
+            }
+
+        } else {
+            // línea con timestamp
+            stringstream ss(line);
+            ss >> prev_timestamp_us;
+        }
+    }
+
+    file.close();
+
+    if (closest_speed_knots < 0.0)
+        return -1.0;
+
+    // knots → cm/s
+    return closest_speed_knots * 51.4444;
+}
+
 
 
 void gps_velocidad(long int ts, double *vel, long *ts_current)
