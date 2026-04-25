@@ -99,19 +99,30 @@ int main() {
     printf("Comando LR enviado\n");
     char buf2[9];
     read(fd, buf2, 9);
-    /*
-    char cmd2[] = "MS01\r\n";
-    write(fd, cmd2, strlen(cmd2));
-    printf("Comando MS enviado\n");
-    char buf2[9];
+    sleep(2);
+
+    char cmd3[] = "MS02\r\n";
+    write(fd, cmd3, strlen(cmd3));
+    printf("Comando MS enviado. Esperamos 10 segundos...\n");
     read(fd, buf2, 9);
-    */
+    sleep(10);
 
     // 🔴 Comando correcto: CR + LF
     char cmd[] = "DS\r\n";
 
     write(fd, cmd, strlen(cmd));
-    printf("Comando DS enviado\n");
+    printf("Comando DS enviado. Esperando 2 segundos...\n");
+    sleep(2);
+
+    strncpy(cmd, "DX\r\n", 5);
+    write(fd, cmd, strlen(cmd));
+    printf("Comando DX enviado. Esperando 2 segundos...\n");
+    sleep(2);
+
+    strncpy(cmd, "DS\r\n", 5);
+    write(fd, cmd, strlen(cmd));
+    printf("Comando DS enviado. Esperando 2 segundos...\n");
+    sleep(2);
 
     // -------- HEADER (7 bytes) --------
     uint8_t header[7];
@@ -128,6 +139,9 @@ int main() {
     // -------- DATA LOOP --------
     uint8_t buf[7];
 
+    float prom = 0;
+    int n = 0;
+    int falta_imprimir = 0;
     while (1) {
         int total = 0;
 
@@ -166,11 +180,22 @@ int main() {
 	//printf("Angle: %.2f deg | Distance: %d cm | Signal: %d | Sync: %d\n",
         //      angulo, dist, signal, (sync & 0x01));
         //	fflush(stdout);
-	if ((angulo < 11) || (angulo > 350)) {
+	//
+	// if ((angulo < 11) || (angulo > 350)) {
+	if ((angulo < 3) || (angulo > 358)) {
         	printf("Angle: %.2f deg | Distance: %d cm \n",
                angulo, dist);
+		prom += dist;
+		n++;
 
         	fflush(stdout);
+		falta_imprimir = 1;
+	} else if (falta_imprimir) {
+        	printf("Promedio: %.2f cm \n", prom/n);
+        	fflush(stdout);
+		prom = 0;
+		n = 0;
+		falta_imprimir = 0;
 	}
     }
 
