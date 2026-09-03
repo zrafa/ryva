@@ -329,6 +329,7 @@ $$(A+BD^{-1}C)^{-1} = A^{-1}-A^{-1}B(D+CA^{-1}B)^{-1}CA^{-1} \tag{1.39}$$
 
 El lema de inversión de matrices a veces puede usarse para reducir el esfuerzo computacional de la inversión de matrices. Por ejemplo, supongamos que $A$ es de $n\times n$, $B$ es de $n\times p$, $C$ es de $p\times n$, $D$ es de $p\times p$, y $p<n$. Supongamos además que ya conocemos $A^{-1}$, y queremos sumarle alguna cantidad a $A$ y luego calcular la nueva inversa. Un cálculo directo de la nueva inversa requeriría una inversión de $n\times n$. Pero si la nueva matriz por invertir puede escribirse en la forma del lado izquierdo de la Ecuación (1.39), entonces podemos usar el lado derecho de la Ecuación (1.39) para calcular la nueva inversa, y el lado derecho de la Ecuación (1.39) requiere una inversión de $p\times p$ en lugar de una de $n\times n$ (ya que conocemos de antemano la inversa de la matriz $A$ original).
 
+\vspace{\baselineskip}
 **EJEMPLO 1.1**
 
 En su firma de inversión, usted nota que en enero el índice de la Bolsa de Nueva York disminuyó un 2%, el índice de la Bolsa Americana de Valores aumentó un 1%, y el índice de la bolsa NASDAQ aumentó un 2%. Como resultado, los inversores aumentaron sus depósitos un 1%. El mes siguiente, los índices bursátiles cambiaron un −4%, 3% y 2%, respectivamente, y los depósitos de los inversores aumentaron un 2%. El mes posterior, los índices bursátiles cambiaron un −5%, 1% y 5%, respectivamente, y los depósitos de los inversores aumentaron un 2%. Usted sospecha que los cambios en la inversión $y$ pueden modelarse como $y=g_1x_1+g_2x_2+g_3x_3$, donde las variables $x_i$ son los cambios en los índices bursátiles, y las $g_i$ son constantes desconocidas. Para determinar las constantes $g_i$, necesita invertir la matriz
@@ -646,6 +647,7 @@ $$
 
 Otro hecho interesante acerca de la exponencial matricial es que todos los elementos individuales de la exponencial matricial $e^A$ son no negativos si y solo si todos los elementos individuales de $A$ son no negativos [Bel60, Bel80].
 
+\vspace{\baselineskip}
 **EJEMPLO 1.2**
 
 Como ejemplo de un sistema lineal, supongamos que estamos controlando la aceleración angular de un motor (por ejemplo, mediante alguna tensión aplicada a los devanados del motor). La derivada de la posición es la velocidad. Un modelo simplificado del motor puede entonces escribirse como
@@ -672,6 +674,7 @@ El escalar $v$ consiste en ruido de medición. Comparando con la Ecuación (1.67
 
 ▽▽▽
 
+\vspace{\baselineskip}
 **EJEMPLO 1.3**
 
 En este ejemplo usaremos las tres expresiones de la Ecuación (1.71) para calcular la matriz de transición de estado del sistema descrito en el Ejemplo 1.2. A partir de la primera expresión de la Ecuación (1.71) obtenemos
@@ -855,6 +858,7 @@ $$
 \tag{1.95}
 $$
 
+\vspace{\baselineskip}
 **EJEMPLO 1.4**
 
 Consideremos el siguiente modelo de un motor síncrono de imán permanente bifásico:
@@ -1128,6 +1132,7 @@ fin
 
 La integración de Runge–Kutta fue inventada por Carl Runge, un matemático y físico alemán, en 1895. Wilhelm Kutta, un matemático y aerodinamicista alemán, la inventó y generalizó de manera independiente en 1901. También se han deducido algoritmos de integración más precisos, que a veces se usan, pero la integración de Runge–Kutta de cuarto orden generalmente se considera un buen equilibrio entre precisión y esfuerzo computacional. Puede encontrarse más información y las deducciones de los algoritmos de integración numérica en muchos textos de análisis numérico, entre ellos [Atk89].
 
+\vspace{\baselineskip}
 **EJEMPLO 1.5**
 
 Supongamos que queremos calcular numéricamente $x(t)$ en $t=1$ a partir de la ecuación diferencial
@@ -1208,6 +1213,7 @@ Ahora recordemos que $\exp(At)=Q\exp(\hat At)Q^{-1}$, donde $Q$ es una matriz co
 
 *⁵A veces la expresión $A<B$ significa que cada elemento de $A$ es menor que el elemento correspondiente de $B$. Sin embargo, en este libro no usaremos esa definición.*
 
+\vspace{\baselineskip}
 **EJEMPLO 1.6**
 
 Consideremos el sistema
@@ -1248,6 +1254,7 @@ y $x(t)$ crece sin cota. Esto demuestra que el sistema es asintóticamente inest
 
 ▽▽▽
 
+\vspace{\baselineskip}
 **EJEMPLO 1.7**
 
 Consideremos el sistema
@@ -1416,6 +1423,7 @@ $$
 
 Nótese que los Teoremas 9 y 12 dan pruebas idénticas de controlabilidad tanto para sistemas en tiempo continuo como para sistemas en tiempo discreto. En general, estas son las pruebas de controlabilidad más simples. Pueden obtenerse pruebas de controlabilidad para sistemas lineales variantes en el tiempo generalizando los teoremas anteriores. La controlabilidad para sistemas no lineales es mucho más difícil de formalizar.
 
+\vspace{\baselineskip}
 **EJEMPLO 1.8**
 
 El circuito RLC de la Figura 1.4 tiene la siguiente descripción de sistema
@@ -1566,6 +1574,7 @@ $$
 
 Nótese que los Teoremas 15 y 18 dan pruebas idénticas de observabilidad tanto para sistemas en tiempo continuo como para sistemas en tiempo discreto. En general, estas son las pruebas de observabilidad más simples. Pueden obtenerse pruebas de observabilidad para sistemas lineales variantes en el tiempo generalizando los teoremas anteriores. La observabilidad para sistemas no lineales es mucho más difícil de formalizar.
 
+\vspace{\baselineskip}
 **EJEMPLO 1.9**
 
 El circuito RLC del Ejemplo 1.8 tiene la siguiente descripción de sistema
@@ -1634,6 +1643,7 @@ $$
 
 Al nuevo sistema se lo llama la representación en forma de Jordan del sistema original. Nótese que la matriz $M$ siempre será invertible, porque los autovectores de una matriz siempre pueden elegirse de manera que sean linealmente independientes. A los dos sistemas de las Ecuaciones (1.164) y (1.166) se los llama sistemas algebraicamente equivalentes. Esto se debe a que tienen la misma entrada y la misma salida (y, por lo tanto, tienen la misma función de transferencia), pero tienen estados diferentes.
 
+\vspace{\baselineskip}
 **EJEMPLO 1.10**
 
 Consideremos el sistema

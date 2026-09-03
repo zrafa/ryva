@@ -1,0 +1,23 @@
+\usepackage{amsmath}
+
+\usepackage{amssymb}      % Para tener el comando \triangledown
+\usepackage{newunicodechar} % Para capturar caracteres Unicode
+\newunicodechar{▽}{$\triangledown$}
+\makeatletter
+\renewcommand{\tagform@}[1]{\maketag@@@{(\textnormal{#1})}}
+\makeatother
+
+\usepackage{titlesec}
+
+% Ajuste de espacio ANTES de los títulos
+% Formato: \titlespacing*{comando}{izquierda}{espacio_arriba}{espacio_abajo}
+% La unidad \baselineskip equivale a una línea de texto normal.
+
+% Para títulos ## (subsection)
+\titlespacing*{\subsection}{0pt}{2\baselineskip}{0.5\baselineskip}
+
+% Para títulos ### (subsubsection)
+\titlespacing*{\subsubsection}{0pt}{2\baselineskip}{0.5\baselineskip}
+
+% (Opcional) Para títulos # (section) 
+\titlespacing*{\section}{0pt}{1.5\baselineskip}{0.5\baselineskip}

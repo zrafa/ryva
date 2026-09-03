@@ -49,6 +49,7 @@ $$\binom{n}{k} = \frac{n!}{(n-k)!k!} \tag{2.2}$$
 
 Por ejemplo, supongamos que tenemos una moneda de un centavo (P, de *penny*), una de cinco centavos (N, de *nickel*), una de diez centavos (D, de *dime*), y una de veinticinco centavos (Q, de *quarter*). ¿Cuántos subconjuntos distintos de tres monedas podemos elegir de ese conjunto? Podemos elegir PND, PNQ, PDQ, o NDQ, lo cual da un total de cuatro subconjuntos posibles. Esto es igual a 4 sobre 3.
 
+\vspace{\baselineskip}
 **EJEMPLO 2.1**
 
 ¿Cuál es la probabilidad de que le sirvan póker¹ (es decir, cuatro cartas del mismo valor) jugando al póker? El número total de manos de póker posibles puede calcularse como el número total de subconjuntos de tamaño cinco que se pueden elegir de un mazo de 52 cartas. El número total de manos posibles es 52 sobre 5 $=2.598.960$. De todas esas manos, hay 48 manos posibles que contienen cuatro ases, 48 manos posibles que contienen cuatro reyes, y así sucesivamente. Entonces hay un total de $13\times 48$ manos que contienen póker. Por lo tanto, la probabilidad de que le sirvan póker es
@@ -82,6 +83,7 @@ $$
 
 La probabilidad *a priori* de $A$ es $1/6$. Pero la probabilidad *a posteriori* de $A$ dado $B$ es $1/3$.
 
+\vspace{\baselineskip}
 **EJEMPLO 2.2**
 
 Consideremos las ocho figuras de la Figura 2.1. Tenemos tres círculos y cinco cuadrados, por lo que $P(\text{círculo})=3/8$. Solo una de las figuras es un círculo gris, por lo que $P(\text{gris}, \text{círculo})$
@@ -304,6 +306,7 @@ $$
 
 La Figura 2.2 muestra la fdp de una VA uniformemente distribuida entre $\pm 1$. Nótese que el área bajo esta curva es uno (como lo es el área de todas las fdp).
 
+\vspace{\baselineskip}
 **EJEMPLO 2.3**
 
 En este ejemplo hallaremos la media y la varianza de una VA uniformemente distribuida entre 1 y 3. La fdp de la VA está dada por
@@ -424,6 +427,7 @@ donde usamos, en el cálculo anterior, el supuesto de que $dx$ y $dy$ son peque�
 
 *²Una función monótona es una función cuya pendiente es siempre no negativa o siempre no positiva. Si la pendiente es siempre no negativa, la función es monótonamente no decreciente. Si la pendiente es siempre positiva, la función es monótonamente creciente. Si la pendiente es siempre no positiva, la función es monótonamente no creciente. Si la pendiente es siempre negativa, la función es monótonamente decreciente.*
 
+\vspace{\baselineskip}
 **EJEMPLO 2.4**
 
 En este ejemplo, hallaremos la fdp de una función lineal de una VA gaussiana. Supongamos que $X\sim N(\bar x,\sigma_x^2)$ y $Y=g(X)=aX+b$, donde $a\neq 0$ y $b$ son constantes reales cualesquiera. Entonces
@@ -454,6 +458,7 @@ Este importante ejemplo muestra que una transformación lineal de una VA gaussia
 
 ▽▽▽
 
+\vspace{\baselineskip}
 **EJEMPLO 2.5**
 
 Supongamos que hacemos pasar una VA gaussiana $X\sim N(0,\sigma_x^2)$ por la función no lineal $Y=g(X)=X^3$:
@@ -579,6 +584,7 @@ A partir de la definición de independencia, vemos que si dos VA son independien
 
 Se dice que dos VA son ortogonales si $R_{XY}=0$. Si dos VA son no correlacionadas, entonces son ortogonales únicamente si al menos una de ellas tiene media cero. Si dos VA son ortogonales, entonces pueden estar correlacionadas o no.
 
+\vspace{\baselineskip}
 **EJEMPLO 2.6**
 
 Dos tiradas de los dados están representadas por las VA $X$ e $Y$. Las dos VA son independientes porque una tirada del dado no tiene ningún efecto sobre una segunda tirada del dado. Cada tirada del dado tiene igual probabilidad ($1/6$) de ser un 1, 2, 3, 4, 5 o 6. Por lo tanto,
@@ -606,6 +612,7 @@ Dado que $E(XY)=E(X)E(Y)$, vemos que $X$ e $Y$ no están correlacionadas. Sin em
 
 ▽▽▽
 
+\vspace{\baselineskip}
 **EJEMPLO 2.7**
 
 Una máquina tragamonedas está arreglada de modo que en el primer giro $X$ se obtiene 1 o $-1$ con igual probabilidad, y en el segundo giro $Y$ se obtiene el número opuesto. Tenemos igual probabilidad de obtener los resultados $(X,Y)$ de $(1,-1)$ y $(-1,1)$. Las dos VA son dependientes porque la realización de $Y$ depende de la realización de $X$. También vemos que
@@ -624,6 +631,7 @@ Vemos que $X$ e $Y$ están correlacionadas porque $E(XY)\neq E(X)E(Y)$. También
 
 ▽▽▽
 
+\vspace{\baselineskip}
 **EJEMPLO 2.8**
 
 Una máquina tragamonedas está arreglada de modo que en el primer giro $X$ se obtiene $-1$, 0 o $+1$ con igual probabilidad. En el segundo giro $Y$ se obtiene 1 si $X=0$, y 0 si $X\neq 0$. Las dos VA son dependientes porque la realización de $Y$ depende de la realización de $X$. También vemos que
@@ -644,6 +652,7 @@ Vemos que $X$ e $Y$ no están correlacionadas porque $E(XY)=E(X)E(Y)$. También 
 
 ▽▽▽
 
+\vspace{\baselineskip}
 **EJEMPLO 2.9**
 
 Supongamos que $x$ e $y$ son VA independientes, y que la VA $z$ se calcula como $z=g(x)+h(y)$. En este ejemplo calcularemos la media de $z$:
@@ -666,6 +675,7 @@ $$E(x+y) = E(x)+E(y) \qquad \text{si } x \text{ e } y \text{ son independientes}
 
 ▽▽▽
 
+\vspace{\baselineskip}
 **EJEMPLO 2.10**
 
 Supongamos que tiramos un dado dos veces. ¿Cuál es el valor esperado de la suma de los dos resultados? Usamos $X$ e $Y$ para referirnos a las dos tiradas del dado, y usamos $Z$ para referirnos a la suma de los dos resultados. Por lo tanto, $Z=X+Y$. Dado que $X$ e $Y$ son independientes, tenemos
@@ -681,6 +691,7 @@ $$
 
 ▽▽▽
 
+\vspace{\baselineskip}
 **EJEMPLO 2.11**
 
 Consideremos el circuito de la Figura 2.4. La tensión de entrada $V$ está uniformemente distribuida en $[-1,1]$. La tensión $V$ tiene unidades de voltios, y las dos corrientes tienen unidades de amperios.
@@ -912,6 +923,7 @@ Para procesos estocásticos escalares, puede demostrarse que
 
 $$|R_X(\tau)| \leq R_X(0) \tag{2.87}$$
 
+\vspace{\baselineskip}
 **EJEMPLO 2.12**
 
 1. La temperatura máxima de cada día puede considerarse un proceso estocástico. Sin embargo, este proceso no es estacionario. La temperatura máxima en un día de julio podría ser una VA con una media de 100 grados Fahrenheit, pero la temperatura máxima en un día de diciembre podría tener una media de 30 grados. Este es un proceso estocástico cuyas estadísticas cambian con el tiempo, por lo que el proceso no es estacionario.
@@ -946,6 +958,7 @@ $$
 
 En el mundo real, a menudo estamos limitados a solo unas pocas realizaciones de un proceso estocástico. Por ejemplo, si medimos la fluctuación de la lectura de un voltímetro, en realidad solo estamos midiendo una única realización de un proceso estocástico. Podemos calcular el promedio temporal, la autocorrelación temporal, y otras estadísticas basadas en el tiempo de esa realización. Si el proceso aleatorio es ergódico, entonces podemos usar esos promedios temporales para estimar las estadísticas del proceso estocástico.
 
+\vspace{\baselineskip}
 **EJEMPLO 2.13**
 
 1. Supongamos que cada unidad de un instrumento eléctrico se fabrica con un pequeño sesgo aleatorio. ¿Es ergódico el ruido de esa instrumentación? Si medimos el ruido de un instrumento, entonces medimos su sesgo, que es igual a su media. Sin embargo, si medimos el ruido de otro instrumento, este podría tener una media diferente porque tiene un sesgo diferente. En otras palabras, no podemos obtener la media del proceso estocástico simplemente investigando un instrumento (es decir, una realización del proceso estocástico). Por lo tanto, el proceso estocástico no es ergódico.
@@ -1031,6 +1044,7 @@ $$R_X(\tau) = R_X(0)\delta(\tau) \tag{2.100}$$
 
 donde $\delta(\tau)$ es la función impulso en tiempo continuo. Es decir, $\delta(\tau)$ es una función que es cero en todas partes excepto en $\tau=0$; tiene un ancho de 0, una altura de $\infty$, y un área de 1. El ruido blanco en tiempo continuo no es algo que ocurra en el mundo real, porque tiene potencia infinita, como puede verse al comparar las Ecuaciones (2.93) y (2.99). Sin embargo, muchos procesos en tiempo continuo se aproximan al ruido blanco, y resultan útiles en los análisis matemáticos de señales y sistemas.
 
+\vspace{\baselineskip}
 **EJEMPLO 2.14**
 
 Supongamos que un proceso estocástico estacionario de media cero tiene la función de autocorrelación

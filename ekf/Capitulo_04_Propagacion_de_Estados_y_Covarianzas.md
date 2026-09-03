@@ -84,6 +84,7 @@ $$x_k \sim N(\bar x_k,P_k) \tag{4.8}$$
 
 Esto caracteriza completamente a $x_k$ en un sentido estadístico, ya que una variable aleatoria gaussiana queda completamente caracterizada por su media y su covarianza.
 
+\vspace{\baselineskip}
 **EJEMPLO 4.1**
 
 Un sistema lineal que describe la población de un depredador $x(1)$ y la de su presa $x(2)$ puede escribirse como
@@ -242,6 +243,7 @@ Q_{k-1} &\approx Q_c(t_k)\Delta t
 \tag{4.28}
 $$
 
+\vspace{\baselineskip}
 **EJEMPLO 4.2**
 
 Supongamos que tenemos un sistema dinámico de primer orden, en tiempo continuo, dado por la ecuación
@@ -408,6 +410,7 @@ $$P = \int_0^{\infty}e^{A^T\tau}Q_ce^{A\tau}\,d\tau \tag{4.50}$$
 
 4. *Si $A$ es estable, $Q_c$ es semidefinida positiva, y $[A,(Q_c^{1/2})^T]$ es controlable, entonces $P$ es única, simétrica y definida positiva. Nótese que $Q_c^{1/2}$, la raíz cuadrada de $Q_c$, se define aquí como cualquier matriz tal que $Q_c^{1/2}(Q_c^{1/2})^T=Q_c$.*
 
+\vspace{\baselineskip}
 **EJEMPLO 4.3**
 
 Supongamos que tenemos el sistema dinámico de primer orden, en tiempo continuo, dado por la Ecuación (4.29):

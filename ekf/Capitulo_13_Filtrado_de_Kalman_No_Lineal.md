@@ -281,6 +281,7 @@ $$
 
 donde los valores nominales de ruido están dados por $w_0=0$ y $v_0=0$.
 
+\vspace{\baselineskip}
 **EJEMPLO 13.1**
 
 En este ejemplo usaremos el EKF en tiempo continuo para estimar el estado de un motor síncrono de imán permanente bifásico. Las ecuaciones del sistema están dadas en el Ejemplo 1.4 y se repiten aquí:
@@ -465,6 +466,7 @@ $$
 
 $H_k$ y $M_k$ son las derivadas parciales de $h_k(x_k,v_k)$ respecto de $x_k$ y de $v_k$, respectivamente, y ambas se evalúan en $\hat x_k^-$. Nótese que pueden usarse otras expresiones equivalentes para $K_k$ y $P_k^+$, como resulta evidente a partir de la Ecuación (5.19).
 
+\vspace{\baselineskip}
 **EJEMPLO 13.2**
 
 En este ejemplo usaremos el EKF en tiempo continuo y el EKF híbrido para estimar la altitud $x_1$, la velocidad $x_2$, y el coeficiente balístico constante $1/x_3$, de un cuerpo mientras cae hacia la Tierra. Un dispositivo de medición de distancia (telémetro) mide la altitud del cuerpo en caída. Este ejemplo (o alguna variante de él) se presenta en varias fuentes, por ejemplo, en [Ath68, Ste94, Jul00]. Las ecuaciones de este sistema son
