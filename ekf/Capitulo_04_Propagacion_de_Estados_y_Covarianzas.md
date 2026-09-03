@@ -1,6 +1,4 @@
-# Capítulo 4 — Propagación de estados y covarianzas
-
-> *Nota del traductor: traducción completa y fiel del Capítulo 4, "Propagation of States and Covariances", del libro* Optimal State Estimation *de Dan J. Simon (Wiley, 2006), con el mismo criterio usado en los capítulos anteriores (el Capítulo 3 no fue provisto). Terminología nueva de este capítulo: "sampled-data system" → sistema de datos muestreados; "first-order hold" → retenedor de primer orden; "sifting property" → propiedad de cribado. El original usa dos nombres distintos para ecuaciones del mismo tipo matemático en contextos distintos —"difference Lyapunov equation" (Capítulo 1) y "discrete-time Lyapunov equation" (este capítulo)—; se preserva esa misma distinción de nombres en español ("ecuación de Lyapunov en diferencias" y "ecuación de Lyapunov en tiempo discreto", respectivamente) en lugar de unificarlos. El pie de página 2 afirma que una entrada constante por tramos corresponde a un retenedor de "primer orden"; se tradujo tal cual, sin corregir a "orden cero", por no ser un error interno verificable con certeza dentro del propio texto. La Figura 4.1 no se reproduce gráficamente; se conserva su leyenda traducida.*
+# PROPAGACIÓN DE ESTADOS Y COVARIANZAS
 
 ---
 
@@ -23,9 +21,6 @@ $$
 \end{aligned}
 \tag{4.2}
 $$
-
-*Optimal State Estimation, primera edición.* Por Dan J. Simon — pág. 107
-ISBN 0471708585 © 2006 John Wiley & Sons, Inc.
 
 ---
 

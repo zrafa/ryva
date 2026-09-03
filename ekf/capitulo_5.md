@@ -1,10 +1,6 @@
-*Fuente: Optimal State Estimation, primera edición, por Dan J. Simon. ISBN 0471708585. © 2006 John Wiley & Sons, Inc. (Capítulo 5, páginas 123–145 del original; el ejercicio 5.4, al final, queda incompleto porque ahí termina el material subido).*
+# EL FILTRO DE KALMAN DE TIEMPO DISCRETO
 
 ---
-
-# CAPÍTULO 5
-
-# El filtro de Kalman de tiempo discreto
 
 > El filtro de Kalman, en sus diversas formas, está claramente establecido como una herramienta fundamental para analizar y resolver una amplia clase de problemas de estimación.
 >

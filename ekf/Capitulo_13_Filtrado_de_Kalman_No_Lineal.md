@@ -1,6 +1,4 @@
-# Capítulo 13 — Filtrado de Kalman no lineal
-
-> *Nota del traductor: esta es una traducción completa y fiel del Capítulo 13, "Nonlinear Kalman Filtering", del libro* Optimal State Estimation *de Dan J. Simon (Wiley, 2006). Se conserva la numeración original de ecuaciones, figuras y tablas para facilitar la referencia cruzada. La sigla EKF (filtro de Kalman extendido) se mantiene en inglés por ser el uso estándar en la literatura técnica en español. Los decimales se expresan con coma y los miles con punto, según la convención académica habitual en español. Las Figuras 13.1, 13.2 y 13.3 no se reproducen gráficamente; se conserva su leyenda traducida en el lugar correspondiente.*
+# FILTRADO DE KALMAN NO LINEAL
 
 ---
 
@@ -11,11 +9,6 @@
 Todo lo que hemos analizado hasta aquí se refirió a filtros lineales para sistemas lineales. Lamentablemente, los sistemas lineales no existen. Todos los sistemas son, en última instancia, no lineales. Incluso la simple relación $I = V/R$ de la ley de Ohm es solo una aproximación válida dentro de un rango limitado. Si la tensión aplicada a un resistor supera cierto umbral, la aproximación lineal deja de ser válida. La Figura 13.1 muestra una relación típica entre la corriente que circula por un resistor y la tensión aplicada a sus bornes. Para tensiones de entrada pequeñas, la relación es aproximadamente lineal, pero si la potencia disipada por el resistor supera cierto umbral, la relación se vuelve altamente no lineal. Incluso un dispositivo tan simple como un resistor es solo aproximadamente lineal, y esto únicamente dentro de un rango limitado de operación.
 
 Vemos entonces que los sistemas lineales no existen realmente. Sin embargo, muchos sistemas son lo bastante cercanos a lineales como para que los enfoques de estimación lineal den resultados satisfactorios. Pero esa "cercanía suficiente" solo alcanza hasta cierto punto. Tarde o temprano nos encontramos con un sistema que no se comporta linealmente ni siquiera en un rango pequeño de operación, y nuestros enfoques lineales de estimación dejan de dar buenos resultados. En ese caso, es necesario explorar estimadores no lineales.
-
-*Optimal State Estimation, primera edición.* Por Dan J. Simon — pág. 395
-ISBN 0471708585 © 2006 John Wiley & Sons, Inc.
-
----
 
 **Figura 13.1.** Relación típica entre corriente y tensión para un resistor. La relación es lineal dentro de un rango limitado de operación, pero se vuelve altamente no lineal más allá de ese rango. *(Gráfico no reproducido; ejes originales: "Current" [corriente] y "Voltage" [tensión].)*
 

@@ -1,5 +1,3 @@
-*Fuente: Optimal State Estimation, primera edición, por Dan J. Simon. ISBN 0471708585. © 2006 John Wiley & Sons, Inc. (Fragmento del capítulo 13, "Nonlinear Kalman Filtering" — "Filtrado de Kalman no lineal" —, páginas 410 a 425 del original: secciones 13.3 a 13.5. No incluye las secciones 13.1 y 13.2, que preceden a este fragmento y no fueron proporcionadas).*
-
 ---
 
 ## 13.3 ENFOQUES DE ORDEN SUPERIOR

@@ -1,10 +1,7 @@
-*Fuente: Optimal State Estimation, primera edición, por Dan J. Simon. ISBN 0471708585. © 2006 John Wiley & Sons, Inc. (Capítulo 3, páginas 79–94 y 102 del original; ver nota sobre páginas faltantes más abajo, en la sección 3.4).*
+# ESTIMACIÓN POR MÍNIMOS CUADRADOS
 
 ---
 
-# CAPÍTULO 3
-
-# Estimación por mínimos cuadrados
 
 > El valor más probable de las cantidades desconocidas será aquel para el cual la suma de los cuadrados de las diferencias entre los valores realmente observados y los valores calculados, multiplicados por números que midan el grado de precisión, sea mínima.
 >

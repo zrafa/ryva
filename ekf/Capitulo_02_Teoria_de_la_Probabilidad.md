@@ -1,6 +1,4 @@
-# Capítulo 2 — Teoría de la probabilidad
-
-> *Nota del traductor: traducción completa y fiel del Capítulo 2, "Probability Theory", del libro* Optimal State Estimation *de Dan J. Simon (Wiley, 2006), con el mismo criterio usado en los capítulos anteriores. Terminología de este capítulo: variable aleatoria (VA) para "random variable (RV)"; el original distingue "PDF" (función de distribución, mayúsculas) de "pdf" (función de densidad, minúsculas) — aquí se preserva esa misma distinción con FDP/fdp; "strict-sense stationary (SSS)" → estacionario en sentido estricto (ESE); "wide-sense stationary (WSS)" → estacionario en sentido amplio (ESA); "skew" → asimetría; "skewness" → coeficiente de asimetría. Se mantiene el registro formal ("usted") ya usado en los ejemplos de trato directo del Capítulo 1. Se corrigió una errata evidente de OCR ("Kolomogorov" → Kolmogórov) y una inconsistencia de subíndices ($z_1,z_1$ → $z_1,z_2$) en una integral doble, por ser claros artefactos de transcripción y no decisiones de contenido. La Figura 2.1, 2.2, 2.3 y 2.4 no se reproducen gráficamente; se conserva su leyenda traducida.*
+# TEORÍA DE LA PROBABILIDAD
 
 ---
 
@@ -18,14 +16,7 @@
 
 En nuestro intento de filtrar una señal, intentaremos extraer información significativa a partir de una señal ruidosa. Para lograrlo, necesitamos saber algo acerca de qué es el ruido, algunas de sus características, y cómo funciona. Este capítulo repasa la teoría de la probabilidad. Comenzamos analizando el concepto básico de probabilidad en la Sección 2.1, y luego pasamos a las variables aleatorias (VA) en la Sección 2.2. El capítulo continúa luego con los siguientes temas:
 
-- Una VA es un caso general de los escalares comunes con los que estamos familiarizados, y así como podemos aplicar una función a un número, también podemos aplicar
-
-*Optimal State Estimation, primera edición.* Por Dan J. Simon — pág. 49
-ISBN 0471708585 © 2006 John Wiley & Sons, Inc.
-
----
-
-una función a una VA. Analizamos las funciones (transformaciones) de variables aleatorias en la Sección 2.3.
+- Una VA es un caso general de los escalares comunes con los que estamos familiarizados, y así como podemos aplicar una función a un número, también podemos aplicar una función a una VA. Analizamos las funciones (transformaciones) de variables aleatorias en la Sección 2.3.
 
 - Así como podemos tener vectores de números, también podemos tener vectores de VA, por lo que analizamos grupos de variables aleatorias y vectores aleatorios en la Sección 2.4.
 
