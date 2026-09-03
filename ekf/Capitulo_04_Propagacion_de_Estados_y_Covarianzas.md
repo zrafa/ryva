@@ -124,7 +124,7 @@ El valor en estado estacionario de $P$ también puede hallarse directamente (es 
 
 *¹Por ejemplo, podemos usar la función DLYAP(F,Q) del Control System Toolbox de MATLAB.*
 
-▽▽▽
+
 
 En la Ecuación (4.1), mostramos el ruido de proceso ingresando directamente a la dinámica del sistema. Esta es la convención que usamos en este libro. Sin embargo, muchas veces el ruido de proceso primero se multiplica por alguna matriz antes de ingresar a la dinámica del sistema. Es decir,
 
@@ -151,6 +151,8 @@ $$y_k = H_kx_k+L_k\tilde v_k, \qquad \tilde v_k \sim (0,\tilde R_k) \tag{4.15}$$
 es equivalente a la ecuación de medición
 
 $$y_k = H_kx_k+v_k, \qquad v_k \sim (0,L_k\tilde R_kL_k^T) \tag{4.16}$$
+
+---
 
 ## 4.2 SISTEMAS DE DATOS MUESTREADOS
 
@@ -306,7 +308,7 @@ $$
 
 A partir de la ecuación anterior, podemos ver que $P_k$ alcanza el estado estacionario (es decir, $P_k-P_{k-1}=0$) cuando $P_{k-1}=-q_c/2f$, suponiendo que $f<0$. Por otro lado, si $f\geq 0$, entonces $P_k-P_{k-1}$ siempre será mayor que 0, lo cual significa que $\lim_{k\to\infty}P_k=\infty$.
 
-▽▽▽
+---
 
 ## 4.3 SISTEMAS EN TIEMPO CONTINUO
 
@@ -453,13 +455,15 @@ $$
 
 La integral converge para $f<0$ (es decir, si el sistema es estable), en cuyo caso $P=-q_c/2f$.
 
-▽▽▽
+---
 
 ## 4.4 RESUMEN
 
 En este capítulo dedujimos ecuaciones para la propagación de la media y la covarianza del estado de sistemas lineales. Para los sistemas en tiempo discreto, la media y la covarianza se describen mediante ecuaciones en diferencias. Los sistemas de datos muestreados son sistemas con dinámica en tiempo continuo pero con entradas de control que son constantes entre instantes de muestreo. Si la dinámica de un sistema de datos muestreados no cambia entre instantes de muestreo, entonces la media y la covarianza se describen mediante ecuaciones en diferencias, aunque los factores de esas ecuaciones en diferencias son más complicados que los correspondientes a los sistemas en tiempo discreto. Para los sistemas en tiempo continuo, la media y la covarianza se describen mediante ecuaciones diferenciales. Estos resultados formarán parte de la base para nuestra deducción del filtro de Kalman en el Capítulo 5.
 
 Las ecuaciones de covarianza que estudiamos en este capítulo llevan el nombre de Aleksandr Lyapunov, James Sylvester, y Philip Stein. Lyapunov fue un matemático ruso que vivió entre 1857 y 1918. Hizo importantes contribuciones en las áreas de las ecuaciones diferenciales, la estabilidad de sistemas, y la probabilidad. Sylvester fue un matemático y abogado inglés que vivió entre 1814 y 1897. Trabajó durante un tiempo en los Estados Unidos como profesor en la Universidad de Virginia y en la Universidad Johns Hopkins. Mientras estuvo en Johns Hopkins, fundó el *American Journal of Mathematics*, que fue la primera revista matemática de los Estados Unidos.
+
+---
 
 ## PROBLEMAS
 

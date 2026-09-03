@@ -13,8 +13,13 @@
 % Formato: \titlespacing*{comando}{izquierda}{espacio_arriba}{espacio_abajo}
 % La unidad \baselineskip equivale a una línea de texto normal.
 
+% Cambia el tamaño de la fuente para \subsection (títulos ##)
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}          % <- \large es un poco más pequeño que el tamaño por defecto
+  {\thesubsection}{1em}{}
+
 % Para títulos ## (subsection)
-\titlespacing*{\subsection}{0pt}{2\baselineskip}{0.5\baselineskip}
+\titlespacing*{\subsection}{0pt}{1.8\baselineskip}{0.5\baselineskip}
 
 % Para títulos ### (subsubsection)
 \titlespacing*{\subsubsection}{0pt}{2\baselineskip}{0.5\baselineskip}

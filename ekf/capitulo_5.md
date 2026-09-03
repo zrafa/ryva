@@ -479,8 +479,6 @@ La figura 5.5 muestra el error de la medición de posición (con una desviación
 >
 > **Figura 5.5** El error de la medición de posición y el error de estimación de posición para el ejemplo 5.1.
 
-▽▽▽
-
 ---
 
 ## 5.4 PROPAGACIÓN ALTERNATIVA DE LA COVARIANZA
@@ -729,8 +727,6 @@ $$
 >
 > **Figura 5.6** Covarianza de estimación y ganancia de Kalman en función del tiempo, para el ejemplo 5.2. La covarianza y la ganancia convergen a valores de estado estacionario.
 
-▽▽▽
-
 ---
 
 ## 5.5 PROBLEMAS DE DIVERGENCIA
@@ -833,7 +829,7 @@ La figura 5.9 muestra la evolución temporal de la ganancia de Kalman $K_k$ para
 
 Este ejemplo ilustra el principio general de que el ruido del modelo es bueno, pero solo hasta cierto punto. Si el modelo de un sistema tiene demasiado ruido, entonces resulta difícil estimar su estado. Pero si el modelo de un sistema tiene muy poco ruido, entonces nuestro estimador de estado podría volverse excesivamente susceptible a los errores de modelado.⁴ Al diseñar un modelo para un filtro de Kalman, necesitamos equilibrar nuestra confianza en el modelo (poco ruido produce un seguimiento cercano del modelo; es decir, ancho de banda bajo) con una sana autocrítica (mucho ruido produce sensibilidad del filtro; es decir, ancho de banda alto).
 
-▽▽▽
+
 
 *⁴ El ruido, como la mayoría de las cosas en la vida, es beneficioso en cantidades moderadas. Esto también lo vemos en las respuestas psicológicas humanas al ruido. Demasiado ruido puede volver loco a un ser humano, pero muy poco ruido también podría producir una pérdida de la cordura. El ruido es especialmente beneficioso para los ingenieros de control, quienes no solo perderían la cordura, sino que también perderían el financiamiento de sus investigaciones si no fuera por el ruido [Bar01, pág. 179].*
 

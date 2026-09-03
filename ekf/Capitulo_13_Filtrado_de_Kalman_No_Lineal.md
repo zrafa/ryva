@@ -31,7 +31,7 @@ La Sección 13.4 trata la estimación de parámetros mediante el filtrado de Kal
 
 ---
 
-## 13.1 El filtro de Kalman linealizado
+## 13.1 EL FILTRO DE KALMAN LINEALIZADO
 
 En esta sección mostraremos cómo linealizar un sistema no lineal y luego usar la teoría del filtrado de Kalman para estimar las desviaciones del estado respecto de un valor de estado nominal. Esto nos permitirá obtener una estimación del estado del sistema no lineal. Derivaremos el filtro de Kalman linealizado desde el punto de vista de tiempo continuo, pero la derivación análoga para sistemas en tiempo discreto o híbridos es directa.
 
@@ -194,7 +194,7 @@ El filtro de Kalman linealizado híbrido y el filtro de Kalman linealizado en ti
 
 ---
 
-## 13.2 El filtro de Kalman extendido
+## 13.2 EL FILTRO DE KALMAN EXTENDIDO
 
 La sección anterior obtuvo un filtro de Kalman linealizado para estimar los estados de un sistema no lineal. La derivación se basó en linealizar el sistema no lineal alrededor de una trayectoria de estado nominal. La pregunta que surge es: ¿cómo conocemos la trayectoria de estado nominal? En algunos casos, puede no ser sencillo hallar la trayectoria nominal. Sin embargo, dado que el filtro de Kalman estima el estado del sistema, podemos usar la estimación del filtro de Kalman como trayectoria de estado nominal. Se trata de una especie de método *bootstrap*. Linealizamos el sistema no lineal alrededor de la estimación del filtro de Kalman, y la estimación del filtro de Kalman se basa en el sistema linealizado. Esta es la idea del filtro de Kalman extendido (EKF), que fue propuesto originalmente por Stanley Schmidt para que el filtro de Kalman pudiera aplicarse a problemas no lineales de navegación de naves espaciales [Bel67].
 
@@ -356,8 +356,6 @@ La matriz $P$ cuantifica la incertidumbre en las estimaciones de estado. Si las 
 | Posición | 0,013 rad | 0,025 rad |
 
 los errores de estimación teóricos basados en la matriz $P$. Vemos que la matriz $P$ da una buena indicación de la magnitud de los errores de estimación.
-
-▽▽▽
 
 ### 13.2.2 El filtro de Kalman extendido híbrido
 
@@ -528,8 +526,6 @@ Utilizamos integración rectangular con un paso de 0,4 ms para simular el sistem
 en la estimación del recíproco del coeficiente balístico. Por supuesto, un EKF en tiempo continuo (en hardware analógico) sería más difícil de implementar, ajustar y modificar que un EKF híbrido (en hardware digital).
 
 **Figura 13.3.** Magnitudes del error de estimación de la altitud, la velocidad y el recíproco del coeficiente balístico de un cuerpo en caída, correspondientes al Ejemplo 13.2, promediadas sobre 100 simulaciones. El EKF en tiempo continuo generalmente tiene un mejor desempeño que el EKF híbrido. *(Gráfico no reproducido; muestra tres paneles — Altitud, Velocidad y 1/Coef. Balístico — en función del tiempo, comparando las curvas "Continuo" e "Híbrido".)*
-
-▽▽▽
 
 ### 13.2.3 El filtro de Kalman extendido en tiempo discreto
 

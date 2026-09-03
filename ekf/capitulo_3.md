@@ -124,7 +124,7 @@ $$
 
 En este ejemplo sencillo, vemos que la estimación por mínimos cuadrados concuerda con nuestra intuición de simplemente calcular el promedio de las mediciones.
 
-▽▽▽
+
 
 *² Un punto estacionario de una función es cualquier punto en el que su derivada es igual a cero. Un punto estacionario de una función escalar puede ser un máximo, un mínimo o un punto de inflexión. Un punto estacionario de una función vectorial puede ser un máximo, un mínimo o un punto de silla.*
 
@@ -226,8 +226,6 @@ $$
 $$
 
 Vemos que la estimación óptima $\hat{x}$ es una suma ponderada de las mediciones, en la que cada medición se pondera por el inverso de su incertidumbre. En otras palabras, ponemos más énfasis en ciertas mediciones, de acuerdo con nuestra intuición. Notemos que, si todas las constantes $\sigma_i$ son iguales, esta estimación se reduce a la forma más simple dada en la ecuación (3.10).
-
-▽▽▽
 
 ---
 
@@ -614,7 +612,7 @@ $$
 \tag{3.54}
 $$
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 3.4**
@@ -655,7 +653,7 @@ $$
 
 La razón por la que obtenemos cero es que $(1-K_1)^2 = 0.000004$, pero nuestra computadora conserva solamente tres dígitos a la derecha del punto decimal. Cero es el valor teóricamente correcto de $P_1$. La forma de la expresión anterior para $P_1$ garantiza que esta nunca será negativa, sin importar los errores numéricos que pueda haber en $P_0$, $R_1$ y $K_1$.
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 3.5**
@@ -676,7 +674,6 @@ donde $v_k$ es el ruido de medición, que es una variable aleatoria de media cer
 >
 > **Figura 3.1** Estimaciones de los parámetros y varianzas de estimación para el ejemplo 3.5.
 
-▽▽▽
 
 ### 3.3.2 Ajuste de curvas
 
@@ -733,7 +730,7 @@ P_k &= (I-K_kH_k)P_{k-1}(I-K_kH_k)^T + K_kR_kK_k^T
 \tag{3.63}
 $$
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 3.7**
@@ -783,8 +780,6 @@ P_k &= (I-K_kH_k)P_{k-1}(I-K_kH_k)^T + K_kR_kK_k^T
 \end{aligned}
 \tag{3.68}
 $$
-
-▽▽▽
 
 ---
 

@@ -385,7 +385,7 @@ $$
 
 En este ejemplo, el uso del lema de inversión de matrices no es realmente necesario, porque $A'$ (la nueva matriz por invertir) es de apenas $3\times 3$. Sin embargo, con matrices más grandes, como matrices de $1.000\times 1.000$, el ahorro computacional que se logra al usar el lema de inversión de matrices podría ser significativo.
 
-▽▽▽
+
 
 Supongamos ahora que $A$, $B$, $C$ y $D$ son matrices, con $A$ y $D$ cuadradas. Entonces puede verse que
 
@@ -560,6 +560,8 @@ James Sylvester (en 1850) fue el primero en usar el término "matriz". Sylvester
 
 Camille Jordan inventó la forma canónica de Jordan de una matriz en 1870. Georg Frobenius demostró en 1878 que todas las matrices satisfacen su propia ecuación característica (el teorema de Cayley-Hamilton). También introdujo la definición del rango de una matriz. La nulidad de una matriz cuadrada fue definida por Sylvester en 1884. Las publicaciones de Karl Weierstrass y Leopold Kronecker en 1903 fueron decisivas para establecer la teoría de matrices como una rama importante de las matemáticas. El libro de Leon Mirsky de 1955 [Mir90] ayudó a consolidar la teoría de matrices como un tema de importancia fundamental en las matemáticas universitarias.
 
+---
+
 ## 1.2 SISTEMAS LINEALES
 
 Muchos procesos de nuestro mundo pueden describirse mediante sistemas en el espacio de estados. Esto incluye procesos de la ingeniería, la economía, la física, la química, la biología, y muchas otras áreas. Si podemos deducir un modelo matemático para un proceso, entonces podemos usar las herramientas de la matemática para controlar el proceso y obtener información sobre él. Por eso los sistemas en el espacio de estados son tan importantes para los ingenieros. Si conocemos el estado de un sistema en el instante presente, y conocemos todas las entradas presentes y futuras, entonces podemos deducir los valores de todas las salidas futuras del sistema.
@@ -672,7 +674,7 @@ $$
 
 El escalar $v$ consiste en ruido de medición. Comparando con la Ecuación (1.67), vemos que el vector de estado $x$ es un vector de $2\times 1$ que contiene los escalares $\theta$ y $\omega$.
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 1.3**
@@ -741,7 +743,7 @@ e^{At} &= Qe^{\hat At}Q^{-1} \\
 \tag{1.82}
 $$
 
-▽▽▽
+---
 
 ## 1.3 SISTEMAS NO LINEALES
 
@@ -904,7 +906,7 @@ describe de manera aproximada la desviación de $x$ respecto de su valor nominal
 
 **Figura 1.1.** Comparación de las simulaciones no lineal y linealizada del motor, para el Ejemplo 1.4. *(Gráfico no reproducido; muestra cuatro paneles — Velocidad, Posición, Corriente A y Corriente B — en función del tiempo, comparando las curvas "No lineal" y "Linealizada".)*
 
-▽▽▽
+---
 
 ## 1.4 DISCRETIZACIÓN
 
@@ -957,6 +959,8 @@ G &= F\int_0^{\Delta t}e^{-A\tau}\,d\tau\,B \\
 $$
 
 donde $\Delta t$ es el tamaño de paso de discretización.
+
+--
 
 ## 1.5 SIMULACIÓN
 
@@ -1151,7 +1155,7 @@ También, como se esperaba, el error de un método dado disminuye a medida que $
 | Trapezoidal | 0,083 | 0,021 | 0,0052 |
 | Runge–Kutta de cuarto orden | $3{,}5\times10^{-6}$ | $2{,}2\times10^{-7}$ | $1{,}4\times10^{-8}$ |
 
-▽▽▽
+---
 
 ## 1.6 ESTABILIDAD
 
@@ -1252,7 +1256,7 @@ $$
 
 y $x(t)$ crece sin cota. Esto demuestra que el sistema es asintóticamente inestable y marginalmente inestable.
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 1.7**
@@ -1301,7 +1305,6 @@ $$
 
 y $x(t)$ no se aproxima a 0. Esto demuestra que el sistema es asintóticamente inestable.
 
-▽▽▽
 
 ### 1.6.2 Sistemas en tiempo discreto
 
@@ -1352,6 +1355,8 @@ Ahora recordemos que $A^k=Q\hat A^kQ^{-1}$, donde $Q$ es una matriz constante qu
 2. *Todos los autovalores de $A$ tienen magnitud menor o igual que uno, y aquellos con magnitud igual a uno tienen una multiplicidad geométrica igual a su multiplicidad algebraica. Es decir, los bloques de Jordan asociados con los autovalores cuya magnitud es igual a uno son de primer orden.*
 
 **Teorema 8** *Un sistema lineal, en tiempo discreto e invariante en el tiempo, es asintóticamente estable si y solo si todos los autovalores de $A$ tienen magnitud menor que uno.*
+
+---
 
 ## 1.7 CONTROLABILIDAD Y OBSERVABILIDAD
 
@@ -1448,7 +1453,6 @@ El determinante de $P$ es 0 únicamente si $R=\sqrt{L/C}$. Entonces, el sistema 
 
 **Figura 1.4.** Circuito RLC para el Ejemplo 1.8. *(Diagrama no reproducido: circuito RLC con una fuente de tensión $u$, un capacitor $C$, un inductor $L$ y dos resistores $R$.)*
 
-▽▽▽
 
 ### 1.7.2 Observabilidad
 
@@ -1611,7 +1615,6 @@ $$
 
 Por lo tanto, el sistema es no observable. Sería muy difícil obtener este resultado a partir de los Teoremas 16 y 17.
 
-▽▽▽
 
 ### 1.7.3 Estabilizabilidad y detectabilidad
 
@@ -1711,7 +1714,7 @@ y_2 &= \bar x_2
 \tag{1.172}
 $$
 
-▽▽▽
+
 
 **Definición 9** *Si un sistema es controlable o estable, entonces también es estabilizable. Si un sistema es no controlable o inestable, entonces es estabilizable si sus modos no controlables son estables.*
 
@@ -1723,9 +1726,13 @@ En el Ejemplo 1.10, el primer modo es inestable pero observable. El segundo modo
 
 La controlabilidad y la observabilidad fueron introducidas por Rudolph Kalman en una conferencia de 1959, cuyas actas se publicaron en una revista mexicana poco conocida en 1960 [Kal60b]. El material también se presentó en una conferencia de la IFAC en 1960 [Kal60c], y finalmente se publicó en un formato más ampliamente accesible en 1963 [Kal63].
 
+---
+
 ## 1.8 RESUMEN
 
 En este capítulo repasamos algunos de los conceptos básicos de la teoría de sistemas lineales que resultan fundamentales para muchos de los enfoques de la estimación óptima de estado. Comenzamos con un repaso del álgebra matricial y del cálculo matricial, que resulta indispensable en gran parte de la teoría de las técnicas de estimación de estado. Para obtener información adicional sobre la teoría de matrices, el lector puede consultar varios textos excelentes [Hor85, Gol89, Ber05]. Continuamos este capítulo con un repaso de los sistemas lineales y no lineales, tanto en tiempo continuo como en tiempo discreto. Consideramos el tiempo como continuo para los sistemas físicos, pero nuestros algoritmos de simulación y de estimación operan en tiempo discreto debido a la popularidad de la computación digital. Analizamos la discretización de sistemas en tiempo continuo, que es una manera de obtener una representación matemática en tiempo discreto de un sistema en tiempo continuo. El concepto de estabilidad puede usarse para indicarnos si los estados de un sistema permanecerán siempre acotados. La controlabilidad nos indica si es posible hallar una entrada de control que fuerce a los estados del sistema a alcanzar los valores que deseamos, y la observabilidad nos indica si es posible determinar el estado inicial de un sistema a partir de mediciones de la salida. La teoría del espacio de estados en general, y la teoría de sistemas lineales en particular, es una disciplina de amplio alcance que suele cubrirse en un curso de posgrado de un semestre, aunque hay material más que suficiente para llenar un curso de dos semestres. Se han escrito muchos libros de texto excelentes sobre el tema, entre ellos [Bay99, Che99, Kai00] y otros. Una sólida comprensión de los sistemas lineales brindará una base firme para estudios posteriores en áreas como la teoría de control, la teoría de la estimación, y el procesamiento de señales.
+
+---
 
 ## PROBLEMAS
 

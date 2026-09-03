@@ -505,7 +505,7 @@ De esto concluimos que el filtro de segundo orden tiene un mejor desempeño de e
 
 Estos resultados difieren de los reportados en [Wis69], donde se mostró que el EKF iterado se desempeñaba mejor que el EKF de segundo orden. Las conclusiones distintas entre este libro y [Wis69] muestran que las comparaciones entre distintos algoritmos suelen ser subjetivas. Es posible que las discrepancias se deban a diferencias en las implementaciones de los algoritmos de filtrado, a diferencias en las implementaciones de la dinámica del sistema o de la generación de ruido aleatorio, a diferencias en la manera en que se midieron los errores de estimación, o incluso a diferencias en las plataformas de cómputo que se usaron.
 
-▽▽▽
+
 
 El filtro de segundo orden fue desarrollado inicialmente por Bass [Bas66] y Jazwinski [Jaz66]. Athans [Ath68] y Jazwinski [Jaz70] desarrollaron un filtro gaussiano de segundo orden, en el que se conservan términos de cuarto orden en las aproximaciones por serie de Taylor, y se aproximan suponiendo que las probabilidades subyacentes son gaussianas. Rolf Henriksen reportó una pequeña corrección a las deducciones originales del filtro de segundo orden [Hen82]. Aunque el filtro de segundo orden suele ofrecer un desempeño mejor que el del filtro de Kalman extendido, no puede afirmarse nada definitivo sobre su desempeño, como lo evidencia un ejemplo de un filtro de segundo orden inestable, reportado en [Kus67]. En [Sch68, Wis69, Wis70, Net78] puede encontrarse un análisis y una comparación adicionales de algunos filtros de Kalman no lineales. Una versión simplificada del filtro de segundo orden de tiempo discreto de Henriksen puede resumirse de la siguiente manera.
 
@@ -742,7 +742,7 @@ $$
 
 La figura 13.4 ilustra los resultados de una simulación típica del filtro de Kalman extendido que se usa para estimar $-\omega_n^2$ en este sistema. Los parámetros verdaderos del sistema son $\omega_n=2$ y $\zeta=0.1$, de modo que $-\omega_n^2=-4$. Supongamos que comenzamos estimando $-\omega_n^2$ como $-8$, con una varianza de estimación inicial de 20. La figura 13.4 muestra que el error de nuestra estimación de $-\omega_n^2$ disminuye gradualmente hacia cero, y que la varianza de estimación disminuye gradualmente. En este ejemplo fijamos la varianza del ruido artificial $w_p$ en 0.1. Esto le permite al filtro de Kalman ajustar más fácilmente su estimación de $-\omega_n^2$, pero también puede impedir que el filtro converja al valor verdadero (véase el problema 13.23).
 
-▽▽▽
+
 
 > *[Figura 13.4 — dos paneles frente a los "segundos" (0 a 100): panel superior, "error de estimación" (0 a 4), curva que decrece desde $\approx4$ hacia valores cercanos a 0; panel inferior, "varianza" (0 a 25), curva que decrece desde $\approx20$ hacia valores cercanos a 5.]*
 >

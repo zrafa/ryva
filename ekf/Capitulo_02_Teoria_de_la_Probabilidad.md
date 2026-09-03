@@ -35,6 +35,8 @@ una función a una VA. Analizamos las funciones (transformaciones) de variables 
 
 Concluimos en la Sección 2.7 con un análisis de alto nivel sobre cómo escribir una simulación por computadora de un proceso de ruido. Este capítulo es solo una breve introducción y repaso de la probabilidad y los procesos estocásticos, y puede encontrarse más detalle en muchos otros libros sobre el tema, como [Pap02, Pee01].
 
+---
+
 ## 2.1 PROBABILIDAD
 
 ¿Cómo definiremos el concepto de probabilidad? Supongamos que realizamos un experimento cierta cantidad de veces. A veces ocurre el evento $A$ y a veces no. Por ejemplo, nuestro experimento puede ser tirar un dado de seis caras. El evento $A$ puede definirse como que salga el número 4 en la cara superior del dado después de tirarlo. El sentido común nos dice que la probabilidad de que ocurra el evento $A$ es $1/6$. De igual manera, esperaríamos que, si realizamos nuestro experimento muchas veces, veamos aparecer el número 1 alrededor de $1/6$ de las veces. Esta explicación intuitiva forma la base de nuestra descripción formal del concepto de probabilidad. Definimos la probabilidad del evento $A$ como
@@ -63,7 +65,7 @@ P(A) &= \frac{(13)(48)}{2.598.960} \\
 \tag{2.3}
 $$
 
-▽▽▽
+
 
 La probabilidad condicional del evento $A$ dado el evento $B$ puede definirse si la probabilidad de $B$ es distinta de cero. La probabilidad condicional de $A$ dado $B$ se define como
 
@@ -103,7 +105,7 @@ $$
 
 **Figura 2.1.** Algunas figuras para ilustrar la probabilidad y la regla de Bayes. *(Gráfico no reproducido; muestra ocho figuras —cuadrados y círculos, algunos grises y otros blancos.)*
 
-▽▽▽
+
 
 Nótese que podemos usar la Ecuación (2.4) para escribir $P(B|A)=P(A,B)/P(A)$. Podemos despejar $P(A,B)$ tanto de esta ecuación como de la Ecuación (2.4), e igualar las dos expresiones de $P(A,B)$ para obtener la regla de Bayes.
 
@@ -136,6 +138,8 @@ P(B|A) &= P(B)
 $$
 
 si $A$ y $B$ son independientes. Como ejemplo, recordemos, a partir de la Ecuación (2.5), que si $A$ es la aparición de un 4 en un dado, y $B$ es la aparición de un número par en un dado, entonces $P(A)=1/6$ y $P(A|B)=1/3$. Dado que $P(A|B)\neq P(A)$, vemos que $A$ y $B$ son eventos dependientes.
+
+---
 
 ## 2.2 VARIABLES ALEATORIAS
 
@@ -340,7 +344,7 @@ $$
 \tag{2.32}
 $$
 
-▽▽▽
+
 
 Una VA se llama gaussiana o normal si su fdp está dada por
 
@@ -397,6 +401,8 @@ $$
 $$
 
 Entonces, para $i$ impar, el momento $i$-ésimo de la Ecuación (2.39) es cero. Vemos que todos los momentos impares de una variable aleatoria de media cero con una fdp simétrica son iguales a 0.
+
+---
 
 ## 2.3 TRANSFORMACIONES DE VARIABLES ALEATORIAS
 
@@ -456,7 +462,7 @@ $$
 
 Este importante ejemplo muestra que una transformación lineal de una VA gaussiana da como resultado una nueva VA gaussiana.
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 2.5**
@@ -477,13 +483,15 @@ $$
 
 Vemos que la transformación no lineal $Y=X^3$ convierte una VA gaussiana en una VA no gaussiana. Puede verse que $f_Y(y)$ tiende a $\infty$ a medida que $y\to 0$. Sin embargo, el área bajo la curva de $f_Y(y)$ es igual a 1, ya que se trata de una fdp.
 
-▽▽▽
+
 
 En el caso más general de VA relacionadas por la función $Y=g(X)$, donde $g(\cdot)$ es una función no monótona, la fdp de $Y$ (evaluada en $y$) puede calcularse a partir de la fdp de $X$ como
 
 $$f_Y(y) = \sum_i f_X(x_i)/|g'(x_i)| \tag{2.46}$$
 
 donde los valores $x_i$ son las soluciones de la ecuación $y=g(x)$.
+
+---
 
 ## 2.4 VARIABLES ALEATORIAS MÚLTIPLES
 
@@ -610,7 +618,7 @@ $$
 
 Dado que $E(XY)=E(X)E(Y)$, vemos que $X$ e $Y$ no están correlacionadas. Sin embargo, $R_{XY}\neq 0$, por lo que $X$ e $Y$ no son ortogonales.
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 2.7**
@@ -629,7 +637,7 @@ $$
 
 Vemos que $X$ e $Y$ están correlacionadas porque $E(XY)\neq E(X)E(Y)$. También vemos que $X$ e $Y$ no son ortogonales porque $E(XY)\neq 0$.
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 2.8**
@@ -650,7 +658,7 @@ $$
 
 Vemos que $X$ e $Y$ no están correlacionadas porque $E(XY)=E(X)E(Y)$. También vemos que $X$ e $Y$ son ortogonales porque $E(XY)=0$. Este ejemplo ilustra el hecho de que la ausencia de correlación no implica necesariamente independencia.
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 2.9**
@@ -673,7 +681,7 @@ Como caso particular de este ejemplo, vemos que la media de la suma de dos VA in
 
 $$E(x+y) = E(x)+E(y) \qquad \text{si } x \text{ e } y \text{ son independientes} \tag{2.63}$$
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 2.10**
@@ -689,7 +697,7 @@ E(Z) &= E(X)+E(Y) \\
 \tag{2.64}
 $$
 
-▽▽▽
+
 
 \vspace{\baselineskip}
 **EJEMPLO 2.11**
@@ -719,7 +727,6 @@ Las VA $I_1$ e $I_2$ no son independientes porque están relacionadas entre sí;
 
 **Figura 2.4.** Circuito para el Ejemplo 2.11. *(Diagrama no reproducido: fuente de tensión $V$ conectada a dos ramas en paralelo, cada una con un resistor de $1\,\Omega$ en serie con un diodo, por las que circulan las corrientes $I_1$ e $I_2$ en sentidos opuestos.)*
 
-▽▽▽
 
 ### 2.4.2 Estadística multivariante
 
@@ -838,6 +845,8 @@ Esto muestra que la normalidad se preserva en las transformaciones lineales de v
 
 *³Francis Edgeworth (1845-1926), un economista y matemático irlandés, fue el primero en ofrecer una descripción y un estudio generales de la distribución de probabilidad gaussiana multivariante, en 1892 [Sor80].*
 
+---
+
 ## 2.5 PROCESOS ESTOCÁSTICOS
 
 Un proceso estocástico, también llamado proceso aleatorio, es una generalización muy simple del concepto de VA. Un proceso estocástico $X(t)$ es una VA $X$ que cambia con el tiempo.⁴ Un proceso estocástico puede ser de uno de cuatro tipos.
@@ -932,7 +941,7 @@ $$|R_X(\tau)| \leq R_X(0) \tag{2.87}$$
 
 3. El precio de cierre de mañana del índice industrial Dow Jones podría ser una VA con cierta media y varianza. Sin embargo, hace 100 años, el precio de cierre tenía una media mucho más baja. El precio de cierre del mercado de valores es una VA cuya media, en general, aumenta con el tiempo. Por lo tanto, el precio del mercado de valores es un proceso estocástico no estacionario.
 
-▽▽▽
+
 
 Supongamos que tenemos un proceso estocástico $X(t)$. Supongamos, además, que el proceso tiene una realización $x(t)$. El promedio temporal de $X(t)$ se denota como $A[X(t)]$, y la autocorrelación temporal de $X(t)$ se denota como $R[X(t)]$. Estas cantidades se definen, para procesos aleatorios en tiempo continuo, como
 
@@ -965,7 +974,7 @@ En el mundo real, a menudo estamos limitados a solo unas pocas realizaciones de 
 
 2. Supongamos que cada unidad de un instrumento eléctrico se fabrica de manera idéntica, cada una con ruido gaussiano estacionario de media cero. ¿Es ergódico el ruido? En este caso, podríamos medir la media del proceso midiendo el ruido de muchos instrumentos distintos en un mismo instante, o midiendo el ruido de un solo instrumento durante un período prolongado de tiempo. Cualquiera de los dos experimentos nos informaría correctamente que la media del proceso estocástico es cero. Podríamos hallar las estadísticas del proceso estocástico usando todos los instrumentos en un único instante, o usando un único instrumento en muchos instantes distintos. Por lo tanto, el proceso estocástico es ergódico.
 
-▽▽▽
+
 
 Las definiciones de correlación y covarianza pueden extenderse a dos procesos estocásticos $X(t)$ e $Y(t)$. La correlación cruzada de $X(t)$ e $Y(t)$ se define como
 
@@ -974,6 +983,8 @@ $$R_{XY}(t_1,t_2) = E[X(t_1)Y^T(t_2)] \tag{2.90}$$
 Se dice que dos procesos aleatorios $X(t)$ e $Y(t)$ son no correlacionados si $R_{XY}(t_1,t_2)=E[X(t_1)]E[Y^T(t_2)]$ para todo $t_1$ y $t_2$. La covarianza cruzada de $X(t)$ e $Y(t)$ se define como
 
 $$C_{XY}(t_1,t_2) = E\left\{[X(t_1)-\bar X(t_1)][Y(t_2)-\bar Y(t_2)]^T\right\} \tag{2.91}$$
+
+---
 
 ## 2.6 RUIDO BLANCO Y RUIDO COLOREADO
 
@@ -1075,7 +1086,7 @@ E[X^2(t)] &= \frac{1}{2\pi}\int_{-\infty}^{\infty}\frac{2\sigma^2\beta}{\omega^2
 \tag{2.103}
 $$
 
-▽▽▽
+---
 
 ## 2.7 SIMULACIÓN DE RUIDO CORRELACIONADO
 
@@ -1128,6 +1139,8 @@ $$
 3. Para $i=1,\cdots,n$, calcule la variable aleatoria $v_i=\mu_ir_i$, donde cada $r_i$ es un número aleatorio independiente con varianza 1 (varianza unitaria).
 
 4. Fije $w=Dv$.
+
+---
 
 ## 2.8 RESUMEN
 
