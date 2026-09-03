@@ -18,7 +18,6 @@ En este capítulo analizaremos algunas extensiones no lineales del filtro de Kal
 
 En la Sección 13.1 analizaremos el filtro de Kalman linealizado. Esto implicará hallar un sistema lineal cuyos estados representen las desviaciones respecto de una trayectoria nominal de un sistema no lineal. Luego podremos usar el filtro de Kalman para estimar esas desviaciones respecto de la trayectoria nominal, y así obtener una estimación de los estados del sistema no lineal. En la Sección 13.2 extenderemos el filtro de Kalman linealizado para estimar directamente los estados de un sistema no lineal. Este filtro, denominado filtro de Kalman extendido (EKF), es sin dudas la técnica de estimación de estado no lineal más utilizada en las últimas décadas. En la Sección 13.3 analizaremos enfoques "de orden superior" para el filtrado de Kalman no lineal. Estos enfoques implican algo más que una linealización directa del sistema no lineal, de ahí la expresión "de orden superior". Entre estos métodos se incluyen el filtrado de Kalman de segundo orden, el filtrado de Kalman iterado, el filtrado de Kalman basado en sumas y el filtrado de Kalman basado en cuadrícula. Estos filtros ofrecen formas de reducir los errores de linealización inherentes al EKF. Por lo general, brindan un desempeño de estimación superior al del EKF, pero a costa de una mayor complejidad y un mayor costo computacional.
 
-*(p. 397 del original)*
 
 La Sección 13.4 trata la estimación de parámetros mediante el filtrado de Kalman. En ocasiones, un ingeniero desea estimar los parámetros de un sistema sin que le interese estimar los estados. Esto se convierte en un problema de identificación de sistemas. Las ecuaciones del sistema son, en general, funciones no lineales de los parámetros del sistema. Por lo general, los parámetros del sistema se consideran constantes, o de variación lenta en el tiempo, y un filtro de Kalman no lineal (o cualquier otro estimador de estado no lineal) puede adaptarse para estimar los parámetros del sistema.
 
@@ -54,7 +53,6 @@ $$
 
 Las definiciones de las matrices de derivadas parciales $A$, $B$, $C$, $L$ y $M$ resultan evidentes a partir de las ecuaciones anteriores. El subíndice 0 en las derivadas parciales indica que estas se evalúan en los valores nominales de control, estado, salida y ruido. Las definiciones de las desviaciones $\Delta x$, $\Delta u$, $\Delta w$ y $\Delta v$ también resultan evidentes a partir de las ecuaciones anteriores.
 
-*(p. 398 del original)*
 
 Supongamos que los valores nominales de ruido $w_0(t)$ y $v_0(t)$ son ambos iguales a 0 para todo instante de tiempo. [Si no fueran iguales a 0, deberíamos poder escribirlos como la suma de una parte determinística conocida y una parte de media cero, redefinir las cantidades de ruido, y reescribir la Ecuación (13.1) de modo que los valores nominales de ruido sean iguales a 0. Véase el Problema 13.1]. Dado que $w_0(t)$ y $v_0(t)$ son ambos iguales a 0, vemos que $\Delta w(t) = w(t)$ y $\Delta v(t) = v(t)$. Supongamos además que el control $u(t)$ es perfectamente conocido. En general, esta es una suposición razonable. Después de todo, la entrada de control $u(t)$ está determinada por nuestro sistema de control, por lo que no debería haber incertidumbre en su valor. Esto significa que $u_0(t) = u(t)$ y $\Delta u(t) = 0$. Sin embargo, en la práctica puede haber incertidumbres en las salidas de nuestro sistema de control, ya que estas están conectadas a actuadores que presentan sesgos y ruido. Si este es el caso, podemos expresar el control como $u_0(t) + \Delta u(t)$, donde $u_0(t)$ es conocido y $\Delta u(t)$ es una variable aleatoria de media cero, reescribir las ecuaciones del sistema con una señal de control perfectamente conocida, e incluir $\Delta u(t)$ como parte del ruido de proceso (véase el Problema 13.2). Ahora definimos la trayectoria nominal del sistema como
 
@@ -104,7 +102,6 @@ K &= PC^T\tilde R^{-1} \\
 \tag{13.6}
 $$
 
-*(p. 399 del original)*
 
 En el filtro de Kalman, $P$ es igual a la covarianza del error de estimación. En el filtro de Kalman linealizado, esto ya no es exactamente cierto debido a los errores que se introducen en la linealización de la Ecuación (13.2). Sin embargo, si los errores de linealización son pequeños, $P$ debería ser aproximadamente igual a la covarianza del error de estimación. El filtro de Kalman linealizado puede resumirse de la siguiente manera.
 
@@ -174,7 +171,6 @@ K &= PC^T\tilde R^{-1} \\
 \tag{13.12}
 $$
 
-*(p. 400 del original)*
 
 6. Estime el estado de la siguiente manera:
 
@@ -221,7 +217,6 @@ $$
 
 Esto es equivalente al filtro de Kalman linealizado, salvo que hemos elegido $x_0 = \hat x$, y hemos reordenado las ecuaciones para obtener $\hat x$ directamente. La ganancia de Kalman $K$ es la misma que la presentada en la Ecuación (13.6). Pero esta formulación toma la medición $y$ directamente como entrada, y entrega la estimación del estado $\hat x$ directamente como salida. A esto suele llamárselo filtro de Kalman-Bucy extendido, porque Richard Bucy colaboró con Rudolph Kalman en la primera publicación del filtro de Kalman en tiempo continuo [Kal61]. El EKF en tiempo continuo puede resumirse de la siguiente manera.
 
-*(p. 401 del original)*
 
 **El filtro de Kalman extendido en tiempo continuo**
 
@@ -289,7 +284,6 @@ $$
 \tag{13.21}
 $$
 
-*(p. 402 del original)*
 
 donde $i_a$ e $i_b$ son las corrientes en los dos devanados, $\theta$ y $\omega$ son la posición angular y la velocidad angular del rotor, $R$ y $L$ son la resistencia y la inductancia del devanado, $\lambda$ es la constante de flujo, y $F$ es el coeficiente de fricción viscosa. Las entradas de control $u_a$ y $u_b$ consisten en las tensiones aplicadas a los dos devanados, y $J$ es el momento de inercia del eje del motor y la carga. El estado se define como
 
@@ -335,7 +329,6 @@ Las entradas de control reales son iguales a los valores nominales más $q_1$ y 
 
 La matriz $P$ cuantifica la incertidumbre en las estimaciones de estado. Si las no linealidades del sistema y de la medición no son demasiado severas, la matriz $P$ debería darnos una idea de cuán precisas son nuestras estimaciones. En este ejemplo, las desviaciones estándar de los errores de estimación de estado se obtuvieron a partir de la simulación y luego se compararon con los elementos diagonales de la matriz $P$ en estado estacionario que resultó del filtro de Kalman. La Tabla 13.1 muestra una comparación de los errores de estimación determinados mediante simulación y
 
-*(p. 403 del original)*
 
 **Figura 13.2.** Resultados de la simulación del filtro de Kalman extendido continuo para el motor síncrono de imán permanente bifásico del Ejemplo 13.1. *(Gráfico no reproducido; muestra cuatro paneles — Corriente A, Corriente B, Velocidad y Posición, todos en función del tiempo — con las curvas "Real" y "Estimada" superpuestas.)*
 
@@ -356,7 +349,6 @@ Muchos sistemas de ingeniería reales están gobernados por una dinámica en tie
 
 Supongamos que tenemos un sistema en tiempo continuo con mediciones en tiempo discreto, de la siguiente manera:
 
-*(p. 404 del original)*
 
 $$
 \begin{aligned}
@@ -404,7 +396,6 @@ Nótese que $P_k$ y $K_k$ no pueden calcularse fuera de línea (*offline*), porq
 
 El EKF híbrido puede resumirse de la siguiente manera.
 
-*(p. 405 del original)*
 
 **El filtro de Kalman extendido híbrido**
 
@@ -472,7 +463,6 @@ y &= x_1 + v
 \tag{13.34}
 $$
 
-*(p. 406 del original)*
 
 Como de costumbre, $w_i$ es el ruido que afecta a la $i$-ésima ecuación de proceso, y $v$ es el ruido de medición. $\rho_0$ es la densidad del aire al nivel del mar, $k$ es una constante que define la relación entre la densidad del aire y la altitud, y $g$ es la aceleración debida a la gravedad. Las matrices de derivadas parciales de este sistema están dadas de la siguiente manera:
 
@@ -514,7 +504,6 @@ $$
 
 Utilizamos integración rectangular con un paso de 0,4 ms para simular el sistema, el EKF en tiempo continuo y el EKF híbrido (con un intervalo de medición de 0,5 s). La Figura 13.3 muestra las magnitudes del error de estimación, promediadas sobre 100 simulaciones, para la altitud, la velocidad y el recíproco del coeficiente balístico del cuerpo en caída. Vemos que el EKF en tiempo continuo, en general, parece tener un mejor desempeño que el EKF híbrido. Esto es de esperar, ya que el EKF en tiempo continuo incorpora más mediciones. Los errores de estimación RMS promediados sobre 100 simulaciones fueron de 2,8 pies para el EKF en tiempo continuo y 5,1 pies para el EKF híbrido en la estimación de la altitud; 1,2 pies/s para el EKF en tiempo continuo y 2,0 pies/s para el EKF híbrido en la estimación de la velocidad; y 213 para el EKF en tiempo continuo y 246 para el EKF híbrido
 
-*(p. 407 del original)*
 
 en la estimación del recíproco del coeficiente balístico. Por supuesto, un EKF en tiempo continuo (en hardware analógico) sería más difícil de implementar, ajustar y modificar que un EKF híbrido (en hardware digital).
 
@@ -538,7 +527,6 @@ $$
 
 Realizamos una expansión en serie de Taylor de la ecuación de estado alrededor de $x_{k-1}=\hat x_{k-1}^+$ y $w_{k-1}=0$, para obtener lo siguiente:
 
-*(p. 408 del original)*
 
 $$
 \begin{aligned}
@@ -599,7 +587,6 @@ $$
 
 El EKF en tiempo discreto puede resumirse de la siguiente manera.
 
-*(p. 409 del original)*
 
 **El filtro de Kalman extendido en tiempo discreto**
 
