@@ -656,3 +656,82 @@ P_k^+ &= (I-K_kH_k)P_k^-
 $$
 
 Nótese que pueden usarse otras expresiones equivalentes para $K_k$ y $P_k^+$, como resulta evidente a partir de la Ecuación (5.19).
+
+\vspace{\baselineskip}
+**EJEMPLO 13.3**
+
+En este ejemplo usaremos el EKF en tiempo discreto —el caso que con más frecuencia se implementa en la práctica, ya que casi todo sistema real de estimación de estado corre en una computadora digital— para estimar la pose y la velocidad de un robot móvil terrestre. El estado del robot está compuesto por su posición $(x,y)$, su rumbo $\theta$ (medido respecto del eje $x$), y su velocidad lineal $v$:
+
+$$x = \begin{bmatrix}x_1 & x_2 & x_3 & x_4\end{bmatrix}^T = \begin{bmatrix}x & y & \theta & v\end{bmatrix}^T \tag{13.50}$$
+
+El robot se controla mediante una aceleración comandada $a_k$ y una velocidad angular de giro comandada $\omega_k$. Con un intervalo de muestreo $\Delta t$, un modelo cinemático simple y ampliamente usado (a veces llamado modelo de velocidad y giro constantes) da las siguientes ecuaciones de estado en tiempo discreto:
+
+$$
+\begin{aligned}
+x_{k+1}(1) &= x_k(1)+x_k(4)\,\Delta t\cos x_k(3)+w_k(1) \\
+x_{k+1}(2) &= x_k(2)+x_k(4)\,\Delta t\sin x_k(3)+w_k(2) \\
+x_{k+1}(3) &= x_k(3)+\omega_k\,\Delta t+w_k(3) \\
+x_{k+1}(4) &= x_k(4)+a_k\,\Delta t+w_k(4)
+\end{aligned}
+\tag{13.51}
+$$
+
+Los términos $w_k(i)$ son ruido de proceso debido a la incertidumbre en la ejecución de los comandos de aceleración y de giro (por ejemplo, patinamiento de las ruedas o irregularidades del terreno). Aplicando el procedimiento resumido en las Ecuaciones (13.44)–(13.49) a este sistema, la matriz de derivadas parciales $F_{k-1}$ [véase la Ecuación (13.46)] se obtiene como
+
+$$
+F_{k-1} = \left.\frac{\partial f_{k-1}}{\partial x}\right|_{\hat x_{k-1}^+} =
+\begin{bmatrix}
+1 & 0 & -x_4\Delta t\sin x_3 & \Delta t\cos x_3 \\
+0 & 1 & x_4\Delta t\cos x_3 & \Delta t\sin x_3 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+\tag{13.52}
+$$
+
+donde $x_3$ y $x_4$ son el tercer y el cuarto componente de $\hat x_{k-1}^+$. Dado que el ruido de proceso entra de manera aditiva, $L_{k-1}=I$.
+
+Supongamos que el robot lleva un receptor GPS que mide directamente su posición, de modo que la ecuación de medición es
+
+$$
+\begin{aligned}
+y_k(1) &= x_k(1)+v_k(1) \\
+y_k(2) &= x_k(2)+v_k(2)
+\end{aligned}
+\tag{13.53}
+$$
+
+donde $v_k(1)$ y $v_k(2)$ son procesos de ruido blanco independientes, de media cero, con desviación estándar igual a 1,5 m (un valor típico de un receptor GPS de uso general). Nótese que la ecuación de medición ya es lineal en $x$, por lo que $H_k=\begin{bmatrix}1&0&0&0\\0&1&0&0\end{bmatrix}$ y $M_k=I$ para todo $k$; solamente la dinámica del sistema es no lineal. Esto ilustra un punto importante del EKF: aunque el GPS solo mide la posición, el filtro puede aprovechar el acoplamiento que introduce el modelo cinemático no lineal —a través de $F_{k-1}$— para estimar también el rumbo y la velocidad del robot, que no se miden en forma directa.
+
+Las entradas de control se fijan en $a_k=0{,}5\ \text{m/s}^2$ durante los primeros 2 s de la simulación y $a_k=0$ de ahí en más, mientras que $\omega_k=0{,}3\ \text{rad/s}$ se mantiene constante durante toda la simulación; esto hace que el robot acelere y luego avance a velocidad de crucero describiendo una trayectoria curva. El ruido de proceso en la posición [$w_k(1)$ y $w_k(2)$] tiene una desviación estándar de 0,02 m, el ruido de proceso en el rumbo [$w_k(3)$] tiene una desviación estándar de 0,01 rad, y el ruido de proceso en la velocidad [$w_k(4)$] tiene una desviación estándar de 0,1 m/s. El intervalo de muestreo es $\Delta t=0{,}1$ s.
+
+Las condiciones iniciales del sistema y del estimador se fijan como
+
+$$
+\begin{aligned}
+x_0 &= \begin{bmatrix}0&0&0&0\end{bmatrix}^T \\
+\hat x_0^+ &= \begin{bmatrix}1&-1&0{,}1&0{,}5\end{bmatrix}^T \\
+P_0^+ &= \text{diag}(4,\ 4,\ 0{,}01,\ 1)
+\end{aligned}
+\tag{13.54}
+$$
+
+Es decir, el filtro arranca con un error apreciable en su estimación inicial —1 m en cada eje de posición, 0,1 rad de rumbo y 0,5 m/s de velocidad—, y debe converger a medida que llegan las mediciones del GPS.
+
+Se realizaron 300 simulaciones de Montecarlo de 10 s (100 pasos) cada una. La Figura 13.4 muestra los resultados de una simulación típica. La posición estimada converge rápidamente hacia la trayectoria real: el error de posición, que es de 1,4 m en $k=0$ debido al error en la condición inicial, cae a valores cercanos a su nivel en estado estacionario (alrededor de 0,6 m) en aproximadamente 1 segundo. Las estimaciones de rumbo y de velocidad —que no se miden directamente— también convergen, aunque de manera algo más gradual, a medida que el filtro explota el acoplamiento entre la posición medida y esos estados a través de $F_{k-1}$.
+
+**Figura 13.4.** Resultados de la simulación del EKF en tiempo discreto para el robot móvil del Ejemplo 13.3. *(Gráfico no reproducido; muestra cuatro paneles —posición $x$, posición $y$, rumbo y velocidad, todos en función del tiempo— con las curvas "Real" y "Estimada" superpuestas, además de la trayectoria $(x,y)$ del robot con las mediciones de GPS dispersas alrededor de la trayectoria real.)*
+
+La Tabla 13.2 compara los errores de estimación de una desviación estándar, determinados a partir de las 300 simulaciones de Montecarlo (promediados sobre la segunda mitad de cada simulación, una vez alcanzado el estado estacionario), con los elementos diagonales de la matriz $P$ que entrega el EKF en ese mismo régimen.
+
+**Tabla 13.2.** Resultados del Ejemplo 13.3, que muestran los errores de estimación de estado de una desviación estándar, determinados a partir de 300 simulaciones de Montecarlo y a partir de la matriz $P$ del EKF, ambos en estado estacionario. Estos resultados corresponden a la simulación del robot móvil. Esta tabla muestra que, también en tiempo discreto, la matriz $P$ brinda una buena indicación de la magnitud de los errores de estimación de estado del EKF.
+
+| | Simulación | Matriz $P$ |
+|---|---|---|
+| Posición $x$ | 0,37 m | 0,39 m |
+| Posición $y$ | 0,46 m | 0,46 m |
+| Rumbo | 0,10 rad | 0,08 rad |
+| Velocidad | 0,42 m/s | 0,42 m/s |
+
+Nótese que el error de estimación de la posición en estado estacionario (del orden de 0,4 m) es considerablemente menor que la desviación estándar de la medición de GPS por sí sola (1,5 m). Esto se debe a que el EKF combina la medición de GPS con el modelo de movimiento del robot en cada paso, en lugar de usar el GPS de manera aislada. Esta es, en definitiva, la razón principal por la que el EKF en tiempo discreto es la variante del filtro de Kalman extendido que con más frecuencia se implementa en la práctica: es la que se ejecuta, paso a paso, en el procesador de un robot, un teléfono, o cualquier otro sistema embebido.
+
