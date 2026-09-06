@@ -1,0 +1,37 @@
+\usepackage{amsmath}
+
+
+\usepackage[top=1.5cm, bottom=1.5cm]{geometry}
+
+\usepackage{amssymb}      % Para tener el comando \triangledown
+\usepackage{newunicodechar} % Para capturar caracteres Unicode
+\newunicodechar{▽}{$\triangledown$}
+\makeatletter
+\renewcommand{\tagform@}[1]{\maketag@@@{(\textnormal{#1})}}
+\makeatother
+
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}[FakeBold=0.0005] % 0.1 Ajusta el número a tu gusto
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}[FakeBold=0.0005]
+
+\usepackage{titlesec}
+
+% Ajuste de espacio ANTES de los títulos
+% Formato: \titlespacing*{comando}{izquierda}{espacio_arriba}{espacio_abajo}
+% La unidad \baselineskip equivale a una línea de texto normal.
+
+% Cambia el tamaño de la fuente para \subsection (títulos ##)
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}          % <- \large es un poco más pequeño que el tamaño por defecto
+  {\thesubsection}{1em}{}
+
+% Para títulos ## (subsection)
+\titlespacing*{\subsection}{0pt}{1.8\baselineskip}{0.5\baselineskip}
+
+% Para títulos ### (subsubsection)
+\titlespacing*{\subsubsection}{0pt}{2\baselineskip}{0.5\baselineskip}
+
+% (Opcional) Para títulos # (section) 
+\titlespacing*{\section}{0pt}{1.5\baselineskip}{0.5\baselineskip}

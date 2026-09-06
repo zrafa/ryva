@@ -14,7 +14,7 @@ El modelo cinemático elegido es el **modelo de bicicleta**. La estructura sigue
 
 ## 1. Planteamiento del problema
 
-Tomaremos un sistema de coordenadas planas `(x,y)`. El rumbo del móvil es `ψ` y la velocidad longitudinal es `v`.
+Tomaremos un sistema de coordenadas planas `(x,y)`. El rumbo del móvil es $ψ$ y la velocidad longitudinal es `v`.
 
 Definimos el estado como
 
@@ -34,7 +34,7 @@ $$
 L = 1.50\;\mathrm{m}.
 $$
 
-El sensor de dirección entrega el ángulo de las ruedas delanteras `δ`.
+El sensor de dirección entrega el ángulo de las ruedas delanteras $δ$.
 
 ---
 
@@ -97,7 +97,7 @@ $$
 u_k = \delta_k^{\mathrm{medida}}.
 $$
 
-Su error de medición no se ignora: se introduce en la covarianza del ruido de proceso. Así el EKF sabe que la predicción de `ψ` es incierta porque `δ` no es exacto.
+Su error de medición no se ignora: se introduce en la covarianza del ruido de proceso. Así el EKF sabe que la predicción de $ψ$ es incierta porque $δ$ no es exacto.
 
 ### 3.2 Odometría
 
@@ -136,7 +136,7 @@ $$
 
 Por lo tanto, en este ejemplo el ciclo de cálculo es:
 
-**predicción con `δ` → actualización con odometría → cada 1 s, actualización adicional con GPS.**
+**predicción con $δ$ → actualización con odometría → cada 1 s, actualización adicional con GPS.**
 
 ---
 
@@ -203,7 +203,7 @@ $$
 
 Ahora aparece la segunda utilización de Taylor: no para discretizar en el tiempo, sino para **linealizar la función no lineal respecto del estado**.
 
-Alrededor de la estimación actual `\hat{x}_k^+`:
+Alrededor de la estimación actual $\hat{x}_k^+$:
 
 $$
 f(x_k)\approx
@@ -467,7 +467,7 @@ El capítulo presenta el EKF discreto como un ciclo de **predicción + actualiza
 
 ### Paso 1: calcular `F_k` y `L_k`
 
-Se calculan los Jacobianos usando la estimación anterior `\hat{x}_{k-1}^+`.
+Se calculan los Jacobianos usando la estimación anterior $\hat{x}_{k-1}^+$.
 
 ### Paso 2: predecir el estado
 
@@ -526,7 +526,7 @@ P_k^+
 =(I-K_k^{GPS}H_k^{GPS})P_k.
 $$
 
-Al finalizar el instante `k`, `\hat{x}_k^+` y `P_k^+` son la estimación y la covarianza que pasan al siguiente intervalo.
+Al finalizar el instante `k`, $\hat{x}_k^+$ y `P_k^+` son la estimación y la covarianza que pasan al siguiente intervalo.
 
 ---
 
@@ -780,7 +780,7 @@ $$
 
 Este último resultado muestra claramente qué hace la medición de odometría: reduce mucho la incertidumbre de la velocidad, mientras que las demás variables se modifican indirectamente mediante las correlaciones de la matriz `P`.
 
-A partir de aquí, la siguiente iteración vuelve a comenzar exactamente igual, pero usando `\hat{x}_1^+` y `P_1^+` como entrada. En `t=0.4, 0.6, ..., 4.8 s` sólo habrá predicción + odometría. En `t=1,2,3,4,5 s` habrá además una segunda actualización con GPS.
+A partir de aquí, la siguiente iteración vuelve a comenzar exactamente igual, pero usando $\hat{x}_1^+$ y `P_1^+` como entrada. En `t=0.4, 0.6, ..., 4.8 s` sólo habrá predicción + odometría. En `t=1,2,3,4,5 s` habrá además una segunda actualización con GPS.
 
 ---
 
