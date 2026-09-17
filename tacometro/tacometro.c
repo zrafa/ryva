@@ -1,0 +1,134 @@
+
+#include <stdint.h>
+
+uint16_t media_up;
+uint16_t media_down;
+
+static uint32_t muestras_up = 0;
+static uint32_t muestras_down = 0;
+
+static uint8_t calibracion_lista = 0;
+uint8_t estado = 0;          /* 0 = DOWN, 1 = UP */
+static uint16_t confirmaciones = 0;
+
+
+/*
+ * Llamar una vez por cada muestra.
+ *
+ * Aprende las dos mesetas mediante dos medias adaptativas.
+ * No supone ningún valor concreto del sensor.
+ */
+void calibrar(uint16_t x)
+{
+    uint32_t du, dd;
+
+    /* Primera muestra */
+    if (muestras_up == 0 && muestras_down == 0) {
+        media_down = x;
+        media_up = x;
+        muestras_down = 1;
+        return;
+    }
+
+    /* Todavía no aparecieron dos niveles distintos */
+    if (!calibracion_lista) {
+
+        if (x > media_up) {
+            media_up = x;
+            muestras_up = 1;
+        }
+        else if (x < media_down) {
+            media_down = x;
+            muestras_down = 1;
+        }
+
+        if (media_up != media_down)
+            calibracion_lista = 1;
+
+        return;
+    }
+
+    /* Distancia de la muestra a cada meseta */
+    if (x > media_up)
+        du = x - media_up;
+    else
+        du = media_up - x;
+
+    if (x > media_down)
+        dd = x - media_down;
+    else
+        dd = media_down - x;
+
+    /*
+     * La muestra pertenece a la meseta más cercana.
+     * Se actualiza la media incrementalmente.
+     */
+    if (du < dd) {
+        muestras_up++;
+
+        media_up +=
+            ((int32_t)x - (int32_t)media_up) / muestras_up;
+    }
+    else {
+        muestras_down++;
+
+        media_down +=
+            ((int32_t)x - (int32_t)media_down) / muestras_down;
+    }
+}
+
+
+/*
+ * Devuelve:
+ *
+ *     0 = DOWN
+ *     1 = UP
+ *
+ * 'muestras_necesarias' indica cuántas muestras consecutivas
+ * deben confirmar el cambio.
+ *
+ * No utiliza ningún valor absoluto del sensor.
+ */
+uint8_t detectar_taco(uint16_t x, uint16_t muestras_necesarias)
+{
+    uint16_t limite;
+    uint8_t candidato;
+
+    if (!calibracion_lista)
+        return estado;
+
+    /*
+     * Punto medio entre las dos mesetas.
+     */
+    if (media_up > media_down)
+        limite = media_down + (media_up - media_down) / 2;
+    else
+        limite = media_up + (media_down - media_up) / 2;
+
+    /*
+     * Determinar a qué lado del punto medio está la muestra.
+     */
+    if (media_up > media_down)
+        candidato = (x >= limite) ? 1 : 0;
+    else
+        candidato = (x <= limite) ? 1 : 0;
+
+    /*
+     * Sólo cambiamos de estado después de varias
+     * muestras consecutivas confirmándolo.
+     */
+    if (candidato != estado) {
+
+        confirmaciones++;
+
+        if (confirmaciones >= muestras_necesarias) {
+            estado = candidato;
+            confirmaciones = 0;
+        }
+
+    } else {
+        confirmaciones = 0;
+    }
+
+    return estado;
+}
