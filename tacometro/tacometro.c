@@ -7,7 +7,6 @@
  */
 
 #include <stdint.h>
-#include <stdbool.h>
 
 /* ===================== Configuración ===================== */
 
@@ -31,20 +30,16 @@
 double   media_up   = 0.0;
 double   media_down = 0.0;
 
-bool     inicializado = false;
-bool     calibrada    = false;
+int     inicializado = 0;
+int     calibrada    = 0;
 
 uint8_t         estado = 0;              /* 0 = DOWN, 1 = UP */
 static uint16_t confirmaciones = 0;
 
-/* ===================== Helpers ===================== */
-
-static inline bool x_valido(uint16_t x)
+static inline int x_valido(uint16_t x)
 {
     return (x >= X_MIN_VALIDO) && (x <= X_MAX_VALIDO);
 }
-
-/* ===================== API ===================== */
 
 void calibrar(uint16_t x)
 {
@@ -55,7 +50,7 @@ void calibrar(uint16_t x)
     if (!inicializado) {
         media_up     = (double)x;
         media_down   = (double)x;
-        inicializado = true;
+        inicializado = 1;
         return;
     }
 
@@ -74,7 +69,7 @@ void calibrar(uint16_t x)
         }
 
         if ((media_up - media_down) >= (double)SEP_MINIMA) {
-            calibrada = true;
+            calibrada = 1;
         }
         return;
     }
@@ -117,8 +112,3 @@ uint8_t detectar_taco(uint16_t x, uint16_t muestras_necesarias)
     return estado;
 }
 
-/* ===================== Accesores (para debug / display) ===================== */
-
-double  tacometro_media_up(void)   { return media_up;   }
-double  tacometro_media_down(void) { return media_down; }
-uint8_t tacometro_calibrada(void)  { return calibrada ? 1 : 0; }
