@@ -11,7 +11,7 @@
 
 void main()
 {
-	int val;
+	uint16_t val;
 
 	int estado_anterior = -1;
 
@@ -23,7 +23,7 @@ void main()
 	while (1) {
 		/* obtener una distancia del ultrasound */
 		// serial_put_str("    Ultrasound : \n\r");
- 		val = ultrasound_get(6, 5);	// D3: echo, D2: trigger
+ 		val = (uint16_t) ultrasound_get(6, 5);	// D3: echo, D2: trigger
 		
 		calibrar((uint16_t) val);
 
@@ -38,8 +38,7 @@ void main()
 			serial_put_str("    muestra: ");
 			serial_put_int(val, 4);
 			serial_put_str(" TACO\n\r");
-			_delay_ms(5000);
-		} else if (estado != estado_anterior) {
+		} else if ((estado ==0) && (estado != estado_anterior)) {
 			estado_anterior = estado;
 			serial_put_str("media up: ");
 			serial_put_int(media_up, 4);
@@ -47,14 +46,14 @@ void main()
 			serial_put_int(media_down, 4);
 			serial_put_str("    muestra: ");
 			serial_put_int(val, 4);
-			serial_put_str("NO  TACO \n\r");
-			_delay_ms(5000);
+			serial_put_str("      NO  TACO \n\r");
 		}
 
 		//serial_put_int(val, 4);
 		//serial_put_str("\n\r");
 
-			serial_put_int(val, 4);
+/*
+		serial_put_int(val, 4);
 		serial_put_str("\n\r");
 		n++;
 		if (n==100) {
@@ -67,6 +66,7 @@ void main()
 			serial_put_int(val, 4);
 			_delay_ms(3000);
 		}
+*/
 		_delay_ms(10);
 	}
 }

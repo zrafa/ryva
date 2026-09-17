@@ -4,8 +4,8 @@
 #define TACOMETRO_H
 
 extern uint8_t estado;
-extern uint8_t media_up;
-extern uint8_t media_down;
+extern double media_up;
+extern double media_down;
 
 /*
  * Llamar una vez por cada muestra.
