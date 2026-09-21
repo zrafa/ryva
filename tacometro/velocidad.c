@@ -3,6 +3,7 @@
 #include "timer2.h"
 
 uint16_t cm_x_taco;
+uint16_t sample_n = 0;
 
 /*
  * COMANDOS POSIBLES
@@ -46,7 +47,14 @@ uint16_t velocidad(void)
 void velocidad_print(void)
 {
 	uint16_t vel = velocidad();
-	serial_put_int(vel, 4);
+	uint16_t vel_m_s = vel / 100;
+	uint16_t vel_cm_s = vel % 100;
+	sample_n++;
+	serial_put_int(sample_n, 4);
+	serial_put_char(':');
+	serial_put_int(vel_m_s, 2);
+	serial_put_char('.');
+	serial_put_int(vel_cm_s, 2);
 	serial_put_str("\n\r");
 }
 
