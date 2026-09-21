@@ -15,6 +15,9 @@ char serial_get_str(char * buffer, int max_string_length);
 void serial_put_int (int v, int cant_digitos);
 void serial_put_long_int (long int v, int cant_digitos);
 void serial_put_double (double v, char digitos_enteros, char digitos_fraccionarios);
-char serial_recibido(void);
+
+void serial_cli_rx_data(void);
+int serial_rx_data(void);
+
 
 #endif /* _SERIAL_H */

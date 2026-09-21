@@ -54,6 +54,11 @@
 #define MAX_LONG_DIGITS 10
 #define MAX_DOUBLE_PRECISION 10
 
+#define EN_RX_TX 0x18
+#define UART_RXCIE0 7 
+
+        /* activates transmision and reception */
+        serial_port->status_control_b = (unsigned char)(EN_RX_TX | (1<<UART_RXCIE0));
 #ifndef F_CPU
 #define F_CPU 16000000UL
 #endif
@@ -81,8 +86,8 @@ void serial_init(void)
 	/* Configurar un frame de 8bits, con un bit de paridad y bit de stop */
 	serial_port->status_control_c = CHAR_SIZE | STOP_BITS | PARITY_MODE;
 
-	/* Activar la recepcion y transmicion */
-	serial_port->status_control_b = RX_E | TX_E;
+	/* Activar la recepcion y transmicion - ACTIVA interrupcion en RX */
+	serial_port->status_control_b = (RX_E | TX_E | (1<<UART_RXCIE0));
 }
 
 void serial_put_char(char c)
@@ -94,9 +99,10 @@ void serial_put_char(char c)
 
 char serial_get_char(void)
 {
-	while (!((serial_port->status_control_a) & (READY_TO_READ)))
-		;
-	return (serial_port->data_io);
+	//while (!((serial_port->status_control_a) & (READY_TO_READ)))
+	//	;
+	//return (serial_port->data_io);
+	return rx_char;
 }
 
 void serial_put_str(char *str)
@@ -185,8 +191,23 @@ void serial_put_double (double value, int int_digits, int frac_digits)
 	}
 }
 
-char serial_recibido(void)
-{
-	/* COMPLETAR */
+uint8_t rx_data = 0;
+char rx_char = 0;
+
+/*
+ * RX interrupt service rutine
+ */
+ISR(USART_RX_vect){
+        rx_char = UDR0;             /* read UART register into value */
+	rx_data = 1;
 }
 
+void serial_cli_rx_data(void)
+{
+	rx_data = 0;
+}
+
+int serial_rx_data(void)
+{
+	return rx_data;
+}
