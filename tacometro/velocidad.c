@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include "serial.h"
+#include "timer2.h"
 
 uint16_t cm_x_taco;
 
@@ -15,10 +17,16 @@ uint16_t cm_x_taco;
 
 char mode = -1;
 
-void tacomentro_set_mode(char m)
+void tacometro_set_mode(char m)
 {
 	mode = m;
 }
+
+char tacometro_get_mode(void)
+{
+	return mode;
+}
+
 
 void velocidad_set_cm_x_taco(uint16_t n)
 {
@@ -33,5 +41,12 @@ uint16_t velocidad(void)
 
 	cm_x_seg = (uint16_t) ((1000.0 * (double) cm_x_taco) / (double) elapsed);
 	return cm_x_seg;
+}
+
+void velocidad_print(void)
+{
+	uint16_t vel = velocidad();
+	serial_put_int(vel, 4);
+	serial_put_str("\n\r");
 }
 

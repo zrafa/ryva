@@ -14,7 +14,10 @@
  *                       X * 100 / Y = Z cm recorrido por flanco.
  */
 
+void tacometro_set_mode(char m);
+char tacometro_get_mode(void);
 void velocidad_set_cm_x_taco(uint16_t n);
 uint16_t velocidad(void);
+void velocidad_print(void);
 
 #endif

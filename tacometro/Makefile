@@ -1,6 +1,6 @@
 
 CC=avr-gcc
-OBJETOS=tacometro.o ultrasound.o serial.o gpio.o main.o
+OBJETOS=timer2.o velocidad.o tacometro.o ultrasound.o serial.o gpio.o main.o
 APP=app
 CFLAGS=-Os -DF_CPU=16000000UL -mmcu=atmega328p 
 LDFLAGS=-mmcu=atmega328p

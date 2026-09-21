@@ -8,6 +8,7 @@
  **********************************************************************/
 
 #include <stdint.h>
+#include <avr/interrupt.h>
 
 #define USART_BAUDRATE 9600
 #define BAUD_PRESCALE  (((F_CPU/(USART_BAUDRATE*16UL)))-1)
@@ -57,8 +58,6 @@
 #define EN_RX_TX 0x18
 #define UART_RXCIE0 7 
 
-        /* activates transmision and reception */
-        serial_port->status_control_b = (unsigned char)(EN_RX_TX | (1<<UART_RXCIE0));
 #ifndef F_CPU
 #define F_CPU 16000000UL
 #endif
@@ -77,6 +76,11 @@ typedef struct {
 /* Puntero a la estructura de los registros del periférico */
 uart_t *serial_port = (uart_t*)(0xc0);
 
+
+uint8_t rx_data = 0;
+char rx_char = 0;
+
+
 void serial_init(void)
 {
 	/* Configurar los registros High y Low con BAUD_PRESCALE */
@@ -87,7 +91,7 @@ void serial_init(void)
 	serial_port->status_control_c = CHAR_SIZE | STOP_BITS | PARITY_MODE;
 
 	/* Activar la recepcion y transmicion - ACTIVA interrupcion en RX */
-	serial_port->status_control_b = (RX_E | TX_E | (1<<UART_RXCIE0));
+	serial_port->status_control_b = (RX_E | TX_E | (1 << UART_RXCIE0));
 }
 
 void serial_put_char(char c)
@@ -191,14 +195,12 @@ void serial_put_double (double value, int int_digits, int frac_digits)
 	}
 }
 
-uint8_t rx_data = 0;
-char rx_char = 0;
 
 /*
  * RX interrupt service rutine
  */
 ISR(USART_RX_vect){
-        rx_char = UDR0;             /* read UART register into value */
+        rx_char = serial_port->data_io;
 	rx_data = 1;
 }
 
