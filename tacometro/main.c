@@ -44,12 +44,21 @@ void main()
 	while (1) {
 
 		if (serial_rx_data()) {		// obtuvimos un comando
+			
 			serial_cli_rx_data();
 
 			comando = serial_get_char();
+			serial_put_str("COMANDO \n\r");
+			serial_put_int(comando, 4);
+			serial_put_str(" \n\r");
+			_delay_ms(2000);
 			switch (comando) {
 			case CMD_REPORTAR_DISTANCIA:
 			case CMD_REPORTAR_VELOCIDAD:
+			serial_put_str("COMANDO \n\r");
+			serial_put_int(comando, 4);
+			serial_put_str(" \n\r");
+			_delay_ms(2000);
 				tacometro_set_mode(comando);
 				break;
 			default:
@@ -66,9 +75,11 @@ void main()
 		calibrar((uint16_t) val);
 		estado = detectar_taco((uint16_t) val, 4);
 
-		if ((tacometro_get_mode() == CMD_REPORTAR_VELOCIDAD) &&  (estado != estado_anterior)) {
+		if (tacometro_get_mode() == CMD_REPORTAR_VELOCIDAD) {
+			if (estado != estado_anterior) {
 				velocidad_print();
 				estado_anterior = estado;
+			}
 		} else {
 			serial_put_int(val, 4);
 			serial_put_str(" \n\r");
