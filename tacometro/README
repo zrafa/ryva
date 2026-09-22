@@ -10,6 +10,10 @@ Uso:
  *        cada flanco de taco de la rueda. EN cm/s.
  *        Para calibrar: recorrer con el tractor X mts y contar Y flancos.
  *                       X * 100 / Y = Z cm recorrido por flanco.
+ *
+ * Cada vez que se envía un comando se guarda en la eeprom la configuración.
+ *
+ * En un reset se lee la configuración de la eeprom.
  */
 
 
@@ -18,5 +22,25 @@ Información de Rueda trasera:
 Tractor Deutz posiblemente D40 1970.
 Diámetro 110cm  a 120cm
 20 tacos por vuelta.
+
+Al contar los dos flancos de cada taco obtenemos 40 "ticks o pulsos" por revolución de rueda.
+C = Pi x 115cm = 3,6128 m de recorrido por vuelta completa de rueda.
+3612cm / 40 tacos =  9,02 cm x "tick o pulso"
+11,08 ticks x m recorrido
+
+En 30 m lineales deberían suceder unos 332 "ticks o pulsos".
+
+Calibracion:
+
+Logré medir 30mts lineales.
+
+Avanzaremos con el tractor los 30mts contando tacosl.
+Luego dividimos 3000cm / cant. tacos = cant. cm por taco.
+
+1. Si hay error en la medición que hicimos, con el laser, de +/- 3 metros eso dará +/- 1cm de error final en la calibración.
+   El laser tiene precisión de mm, sólo que puede haber error manual al salir con el tractor de la largada, o manualmente decidir que está en la meta.
+
+2. Si hay un error al contar ticks, durante el experimento, de +/- 30 ticks, eso dará +/- 1cm de error final en la calibración.
+   Este caso es dificil de lograr (esto es, estimamos que no tendremos tanto error al contar ticks/pulsos de tacos).
 
 
