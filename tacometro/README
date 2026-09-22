@@ -2,11 +2,12 @@ Uso:
 
 /*
  * COMANDOS POSIBLES
- * 0x1A : reporta distancia (alta frecuencia > 100hz )
+ * 0x1A : reporta distancia (alta frecuencia > 100hz ). En mm.
  * 0x1B : reporta velocidad (baja frecuencia: aprox entre 4hz a 10hz) 
+ *	  La velocidad es reportada en m/s.
  * 0x0N : establece distancia recorrida por flanco de taco
  *        Este ultimo comando estable cuanta distancia se recorrió por
- *        cada flanco de taco de la rueda. 
+ *        cada flanco de taco de la rueda. EN cm/s.
  *        Para calibrar: recorrer con el tractor X mts y contar Y flancos.
  *                       X * 100 / Y = Z cm recorrido por flanco.
  */
@@ -14,8 +15,8 @@ Uso:
 
 Información de Rueda trasera:
 
-Diámetro 110cm  a 120cm
 Tractor Deutz posiblemente D40 1970.
+Diámetro 110cm  a 120cm
 20 tacos por vuelta.
 
 

@@ -14,6 +14,7 @@
 
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "eeprom.h"
 #include "gpio.h"
 #include "serial.h"
 #include "ultrasound.h"
@@ -28,6 +29,8 @@
 #define CMD_MODE_MASK 0x80
 #define CMD_MODE 0x80
 
+void procesar_comando(uint8_t comando);
+
 void main()
 {
 	uint16_t val;
@@ -41,33 +44,23 @@ void main()
 	timer2_init();
 	sei();
 
+	/* recuperamos el modo de funcionamiento */
+	comando = eeprom_read(0);	
+	if ((comando == 0x1A) || (comando == 0x1B)) {
+		tacometro_set_mode(comando);
+	}
+
+	/* recuperamos la calibracion */
+	comando = eeprom_read(1);	
+	velocidad_set_cm_x_taco(comando);
+
 	while (1) {
 
 		if (serial_rx_data()) {		// obtuvimos un comando
 			
 			serial_cli_rx_data();
-
 			comando = serial_get_char();
-			serial_put_str("COMANDO \n\r");
-			serial_put_int(comando, 4);
-			serial_put_str(" \n\r");
-			_delay_ms(2000);
-			switch (comando) {
-			case CMD_REPORTAR_DISTANCIA:
-			case CMD_REPORTAR_VELOCIDAD:
-			serial_put_str("COMANDO \n\r");
-			serial_put_int(comando, 4);
-			serial_put_str(" \n\r");
-			_delay_ms(2000);
-				tacometro_set_mode(comando);
-				break;
-			default:
-				if ((comando & CMD_MODE_MASK) == 0) {
-					comando = comando & 0x7F;
-					velocidad_set_cm_x_taco(comando);
-				}
-				break;
-			}
+			procesar_comando(comando);
 		}
 
 		/* obtener una distancia del ultrasound, calibramos, detectamos */
@@ -84,28 +77,36 @@ void main()
 			serial_put_int(val, 4);
 			serial_put_str(" \n\r");
 		}
-			/*
-			if ((estado == 1) && (estado != estado_anterior)) {
-				estado_anterior = estado;
-				serial_put_str("media up: ");
-				serial_put_int(media_up, 4);
-				serial_put_str("    media down: ");
-				serial_put_int(media_down, 4);
-				serial_put_str("    muestra: ");
-				serial_put_int(val, 4);
-				serial_put_str(" TACO\n\r");
-			} else if ((estado == 0) && (estado != estado_anterior)) {
-				estado_anterior = estado;
-				serial_put_str("media up: ");
-				serial_put_int(media_up, 4);
-				serial_put_str("    media down: ");
-				serial_put_int(media_down, 4);
-				serial_put_str("    muestra: ");
-				serial_put_int(val, 4);
-				serial_put_str("      NO  TACO \n\r");
-			}
-			*/
 
 		_delay_ms(10);
 	}
 }
+
+
+void procesar_comando(uint8_t comando)
+{
+		serial_put_str("COMANDO \n\r");
+		serial_put_int(comando, 4);
+		serial_put_str(" \n\r");
+		_delay_ms(2000);
+
+		switch (comando) {
+		case CMD_REPORTAR_DISTANCIA:
+		case CMD_REPORTAR_VELOCIDAD:
+			serial_put_str("COMANDO \n\r");
+			serial_put_int(comando, 4);
+			serial_put_str(" \n\r");
+			_delay_ms(2000);
+			tacometro_set_mode(comando);
+			eeprom_write(0, comando);
+			break;
+		default:
+			if ((comando & CMD_MODE_MASK) == 0) {
+				comando = comando & 0x7F;
+				velocidad_set_cm_x_taco(comando);
+				eeprom_write(1, comando);
+			}
+			break;
+		}
+}
+
