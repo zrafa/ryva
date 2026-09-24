@@ -5,11 +5,11 @@
  * COMANDOS POSIBLES por SERIAL
  * 0x1A : reporta distancia (alta frecuencia > 100hz )
  * 0x1B : reporta velocidad (baja frecuencia: aprox entre 4hz a 10hz) 
- * 0x0N : establece distancia recorrida por flanco de taco
- *        Este ultimo comando estable cuanta distancia se recorrió por
- *        cada flanco de taco de la rueda. 
- *        Para calibrar: recorrer con el tractor X mts y contar Y flancos.
- *                       X * 100 / Y = Z cm recorrido por flanco.
+ * 0b0XXXXXXX : establece distancia recorrida por flanco de taco                                                                   
+ *        Este ultimo comando estable cuanta distancia se recorrió por                                                             
+ *        cada flanco de taco de la rueda. EN mm/s.                                                                                
+ *        Para calibrar: recorrer con el tractor X mts y contar Y flancos.                                                         
+ *                       X * 1000 / Y = Z mm recorrido por flanco.   
  */
 
 #include <util/delay.h>
@@ -52,12 +52,11 @@ void main()
 
 	/* recuperamos la calibracion */
 	comando = eeprom_read(1);	
-	velocidad_set_cm_x_taco(comando);
+	velocidad_set_mm_x_taco(comando);
 
 	while (1) {
 
 		if (serial_rx_data()) {		// obtuvimos un comando
-			
 			serial_cli_rx_data();
 			comando = serial_get_char();
 			procesar_comando(comando);
@@ -103,7 +102,7 @@ void procesar_comando(uint8_t comando)
 		default:
 			if ((comando & CMD_MODE_MASK) == 0) {
 				comando = comando & 0x7F;
-				velocidad_set_cm_x_taco(comando);
+				velocidad_set_mm_x_taco(comando);
 				eeprom_write(1, comando);
 			}
 			break;

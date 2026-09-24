@@ -9,7 +9,7 @@ Uso:
  *        Este ultimo comando estable cuanta distancia se recorrió por
  *        cada flanco de taco de la rueda. EN mm/s.
  *        Para calibrar: recorrer con el tractor X mts y contar Y flancos.
- *                       X * 1000 / Y = Z cm recorrido por flanco.
+ *                       X * 1000 / Y = Z mm recorrido por flanco.
  *
  * Cada vez que se envía un comando se guarda en la eeprom la configuración.
  *
