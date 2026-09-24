@@ -1,0 +1,24 @@
+
+
+- usar Varianza de Alan para caracterizar nuestra IMU
+
+- calibrar los acelerometros mejor (CODIGO)
+
+- confeccionar el sensor de rumbo
+
+- calibrar el tacometro
+
+- El sistema de posicionamiento debe chupar datos de tiempo real de :
+    - camara
+    - lidar
+    - magnetometro
+    - gps
+
+
+- GPS: Ajustar en el GPS la frecuencia a 5hz o 10hz
+
+- GPS: Obtener datos de velocidad (se hace en posicionamiento)
+
+- GPS: resetear odometria y leer odometria
+
+- 
