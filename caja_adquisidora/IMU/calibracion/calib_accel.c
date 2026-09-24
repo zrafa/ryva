@@ -67,8 +67,8 @@ void sesgo(const char *f1, const char *f2, int n, double *s, double *fs)
 	//fdown = raw_mean_from_file(f2, n) * gravity / 256.0;
 	fup = raw_mean_from_file(f1, n) / 256.0;
 	fdown = raw_mean_from_file(f2, n) / 256.0;
-	printf("raw mean f1 %f \n", raw_mean_from_file(f1, n));
-	printf("raw mean f2 %f \n", raw_mean_from_file(f2, n));
+	printf("raw mean f1 / 256 %f \n", raw_mean_from_file(f1, n) / 256.0);
+	printf("raw mean f2 / 256 %f \n", raw_mean_from_file(f2, n) / 256.0);
 	/* ecuacion (2.88), pagina 118, NotasCursoPosicion.pdf */
 	/* calculamos sesgo */
 	sesgo_d = (fup + fdown) / 2; 
@@ -85,14 +85,14 @@ void main(void) {
 	double sesgo_d, factor_d;
 
 	sesgo(RAW_FILE_X_UP, RAW_FILE_X_DOWN, 1, &sesgo_d, &factor_d);
-	printf("sesgo de acelerometro en x : %f \n", sesgo_d);
+	printf("sesgo de acelerometro en x : %f  %f \n", sesgo_d, sesgo_d*256.0);
 	printf("factor de escala de acelerometro en x : %f \n\n", factor_d);
 
 	sesgo(RAW_FILE_Y_UP, RAW_FILE_Y_DOWN, 2, &sesgo_d, &factor_d);
-	printf("sesgo de acelerometro en y : %f \n", sesgo_d);
+	printf("sesgo de acelerometro en y : %f  %f \n", sesgo_d, sesgo_d*256.0);
 	printf("factor de escala de acelerometro en y : %f \n\n", factor_d);
 
 	sesgo(RAW_FILE_Z_UP, RAW_FILE_Z_DOWN, 3, &sesgo_d, &factor_d);
-	printf("sesgo de acelerometro en z : %f \n", sesgo_d);
+	printf("sesgo de acelerometro en z : %f  %f \n", sesgo_d, sesgo_d*256.0);
 	printf("factor de escala de acelerometro en z : %f \n\n", factor_d);
 }
