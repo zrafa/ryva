@@ -18,3 +18,26 @@ Si queremos ver en google maps directamente una ubicación sería así:
 - en la ventanita de "busqueda" colocamos (segun dato de ublox anterior):
 
 -38 51.95703, -68 02.21139
+
+
+u-blox-evk-8m
+
+Para 5 Hz (200 ms):
+
+bash
+echo -e  \xB5\x62\x06\x08\x06\x00\xC8\x00\x01\x00\x01\x00\xDE\x6A
+
+Para 10 Hz (100 ms):
+
+bash
+echo -e '\xB5\x62\x06\x08\x06\x00\x64\x00\x01\x00\x01\x00\x7A\x12' > /dev/tu_puerto_usb
+
+Habilitar odometria
+echo -e '\xB5\x62\x06\x1E\x08\x00\x00\x00\x00\x00\x01\x00\x00\x00\x2D\xBA' > /dev/tu_puerto_usb
+Emitir odometria por USB:
+echo -e '\xB5\x62\x06\x01\x08\x00\x01\x09\x00\x00\x00\x01\x00\x00\x1A\x07' > /dev/tu_puerto_usb
+
+Poner en CERO la odometria
+echo -e '\xB5\x62\x01\x10\x00\x00\x11\x34' > /dev/tu_puerto_usb
+
+
