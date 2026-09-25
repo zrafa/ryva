@@ -1,0 +1,36 @@
+
+La referencia más usada para esto — incluso fuera de ROS — es la **REP 103** (Standard Units of Measure and Coordinate Conventions). No hace falta usar ROS para adoptarla, sirve como estándar de facto de todos modos.
+
+**Reglas generales:**
+- Unidades: SI. Se estandariza en unidades SI porque son el estándar internacional más consistente — metros, radianes, segundos, y sus derivadas: m/s, rad/s, m/s², Hz.
+- Tipo de dato: **double** como default seguro (es lo que usa ROS en casi todos sus mensajes, incluidas las covarianzas). float32 alcanza de sobra para casi todo lo que vas a manejar acá — el ruido del sensor es mucho más grueso que el error de redondeo de float32 —, con una excepción dura: **si en algún momento publicás lat/lon de GPS en grados, siempre double** (float32 tiene ~7 dígitos significativos, y ahí eso se traduce en saltos de metros, no de centímetros).
+
+| Dato | Tipo | Unidad | Nota |
+|---|---|---|---|
+| Rumbo (magnetómetro) | float32/double | rad | 1 |
+| Actitud (INS) | double | rad (quaternion o Euler) | 2 |
+| Aceleración por eje | float32/double | m/s² | 3 |
+| Velocidad (GPS) | float32/double | m/s | 4 |
+| Velocidad (tacómetro) | float32/double | m/s | 5 |
+| Rumbo ruedas delanteras | float32/double | rad | 6 |
+| Posición (nro. árbol) | — | — | ver abajo |
+
+**1. Rumbo del magnetómetro.** La salida cruda de un magnetómetro es un *bearing* de brújula: 0°=Norte, crece en sentido horario, referenciado al norte magnético. Por la regla de la mano derecha, el yaw crece en sentido antihorario y es cero apuntando al este — esto difiere de un bearing de brújula tradicional, que es cero apuntando al norte y crece en sentido horario. Si vas a fusionar esto con algo referenciado a norte geográfico (GPS), hacen falta dos correcciones: remapear bearing→yaw, y corregir la declinación magnética de tu zona (se saca de un modelo tipo WMM, o se mide en campo).
+
+**2. Actitud del INS.** El cuaternión es la representación preferida por ser compacta y no tener singularidades; los ángulos de Euler se desaconsejan por tener 24 convenciones distintas "válidas" según el dominio. Dos trampas típicas: muchos INS entregan el cuaternión en orden (w,x,y,z) — el orden estándar tipo ROS es (x,y,z,w), revisá el datasheet. Y si tu INS da roll/pitch/yaw en vez de cuaternión, la secuencia estándar es yaw-pitch-roll sobre Z-Y-X, no siempre coincide con lo que asume tu librería de EKF.
+
+**3. Aceleración por eje.** Con el sensor quieto y nivelado, el eje "arriba" mide +9.81 m/s², no 0 — el acelerómetro mide fuerza específica (reacción al peso), no aceleración inercial pura. Si tu IMU entrega en "g" en vez de m/s², convertí multiplicando por 9.80665.
+
+**4. Velocidad desde GPS.** Acá está el ejemplo perfecto de "dato crudo" del que hablábamos antes: las tramas NMEA (RMC, VTG) reportan velocidad sobre el terreno en **nudos**, no en m/s. Conversión: nudos × 0.514444.
+
+**5. Velocidad desde tacómetro.** La salida cruda suele venir en RPM o pulsos por unidad de tiempo. Se convierte con la circunferencia de la rueda: v = ω·r (ω en rad/s). Si es un sensor de velocidad de origen automotriz, a veces ya viene en km/h — dividir por 3.6.
+
+**6. Rumbo de ruedas delanteras.** Acá no hay un estándar de signo único; definilo vos y documentalo. Sí hay una trampa real si el sensor (o el INS) es de origen automotriz: SAE J670 usa un sistema de ejes con X adelante, Y a la derecha, Z abajo, con yaw positivo en sentido horario — exactamente al revés que la convención ROS/FLU (Y-izquierda, Z-arriba, yaw antihorario) del resto de la tabla. Si tu sensor viene en convención SAE, hay que invertir signo de Y y de la rotación antes de mezclarlo con el resto.
+
+**Posición por número de árbol.** Esto no tiene estándar — es específico de tu dominio, así que van recomendaciones en vez de una convención:
+- Estructura de dos niveles: id de hilera + índice a lo largo de la hilera.
+- Si el fingerprint da resolución sub-árbol (ej: "30% entre el árbol 14 y el 15"), usá float. Si es puramente discreto, es un entero — pero considerá derivar una posición continua igual, combinando el conteo con odometría entre detecciones.
+- Para el EKF convertí esto a metros usando el espaciado conocido entre árboles — no lo dejes en "unidades de árbol", vas a terminar mezclando unidades con las otras fuentes de posición. Si el espaciado real no es uniforme, esa conversión lineal mete error: reflejalo infl ando la covarianza de esta medición, o mejor, releva la posición real de cada árbol una vez y usá una tabla en vez de asumir espaciado constante.
+- Es una medición de tasa irregular (llega cuando pasás al lado de un árbol) y con falsos positivos/negativos posibles en canopia densa — publicá también un indicador de confianza/validez junto con el dato.
+
+Algo que no preguntaste pero pesa tanto como las unidades: cada mensaje debería llevar el timestamp de cuándo se **tomó** la medición, no cuándo llegó al subscriptor — un fix de GPS reporta una posición de varios cientos de ms atrás, el IMU es casi instantáneo, y eso le importa al EKF. Un double en segundos te da resolución de microsegundos, de sobra para esto.
