@@ -21,4 +21,9 @@
 
 - GPS: resetear odometria y leer odometria
 
-- 
+- en posicionamiento hay que poner el subscriptor-publicador
+
+- cada programa en ryva que obtiene un dato tiene que publicar
+
+
+
