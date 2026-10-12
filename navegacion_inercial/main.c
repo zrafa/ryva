@@ -198,12 +198,14 @@ void * actitud(void *arg) {
 		//gps_velocidad(current_timestamp, &vel_gps, &vel_gps_ts);
 		//vel_gps = velocidad_media(vel_gps, vel_gps_ts);
 		//
-		//if (muestra>65000) {
-		//	vel_gps = gps_get_speed(current_timestamp*1000);
+
+		// velocidad de GPS
+		if ((muestra >= 65000) && ((muestra % 100) == 0)) {
+			vel_gps = gps_get_speed(current_timestamp*1000) / 100.0;  // dividimos por 100 porque gps_get_speed devuelve en cm/s
 //
 //			printf("%lli VEL_GPS %f %lli \n", muestra, vel_gps, current_timestamp*1000);
-//		}
-		// M_set(v_body, 1, 0, vel_gps);
+			M_set(v_body, 1, 0, vel_gps);
+		}
 
 		magnetometro_get(current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
 		if ((previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
