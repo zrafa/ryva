@@ -15,7 +15,7 @@ extern double velocidad_x;
 
 // --- Prototipos ---
 void draw_body_frame(const Matrix* C_ib);
-void* actualizar(void* arg);
+//void* actualizar(void* arg);
 void display(void);
 
 void initOpenGL(void)

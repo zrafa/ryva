@@ -61,6 +61,20 @@ std::vector<MagnetometroData> readMagnetometroData(const std::string& filename) 
     return data_magnetometro;
 }
 
+    // From CL
+    double x_offset = -1302.326;   // antes -984.6073
+    double y_offset =   303.606;   // antes  373.9795
+    double z_offset =   313.139;   // sin cambios
+
+    // Matriz de transformación (obtenida de la calibración)
+    cv::Mat transformation = (cv::Mat_<double>(3, 3) <<
+ 0.95534472, -0.02389597,  0.0,        
+ -0.02389597,  1.04829138,  0.0,        
+  0.0,          0.0,          0.99909221);
+
+
+
+/*
     // Aplicar el offset de calibración
     double x_offset = -984.6073282;
     double y_offset =  373.97952865;
@@ -71,6 +85,7 @@ std::vector<MagnetometroData> readMagnetometroData(const std::string& filename) 
  0.95534472, -0.02389597,  0.0,
  -0.02389597,  1.04829138,  0.0,
   0.0,          0.0,          0.99909221);
+*/
 
 extern "C" {
 

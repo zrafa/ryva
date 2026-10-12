@@ -29,6 +29,7 @@ void display_init(int argc, char** argv);
 void display_loop();
 void display_redraw();
 
+/*
 void* actualizar(void* arg)
 {
     double t = 0.0;
@@ -67,6 +68,7 @@ void* actualizar(void* arg)
     }
     return NULL;
 }
+*/
 
 
 void imu_init(double *acelx, double *acely, double *acelz)
@@ -152,6 +154,7 @@ void * actitud(void *arg) {
 	int i;
 
 	double x, y, z, grados;
+	double rumbo_yaw;
 	long magn_timestamp;
 
 	imu_init(&ax, &ay, &az);
@@ -202,8 +205,7 @@ void * actitud(void *arg) {
 //		}
 		// M_set(v_body, 1, 0, vel_gps);
 
-		//magnetometro_get((double) current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
-		/* 
+		magnetometro_get(current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
 		if ((previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
 
 			// IMPORTANTE hago signo menos porque del magnetometro
@@ -223,7 +225,6 @@ void * actitud(void *arg) {
 			C_ib = attitude_matrix_init(phi, theta, psi);
         		pthread_mutex_unlock(&lock);
 		}
-		*/
 
 			/*
 		if ((muestra<65000) && (acceleration_zero(ax, ay, az))) {
@@ -305,7 +306,11 @@ void * actitud(void *arg) {
 			phi = get_roll_from_Cib();
 			theta = get_pitch_from_Cib();
 			psi = get_yaw_from_Cib();
-			printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, psi*180/M_PI);
+			rumbo_yaw = psi*180/M_PI;
+			if (rumbo_yaw < 0)
+				rumbo_yaw += 360;
+			printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, rumbo_yaw);
+			//printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, psi*180/M_PI);
 			printf("%lli VEL_GPS %f \n", muestra, vel_gps);
 		}
 
@@ -349,7 +354,7 @@ int main(int argc, char** argv)
 
 	display_init(argc, argv);
 
-	// leer_magnetometro_data("magnetometro.txt");
+	leer_magnetometro_data("magnetometro.txt");
 
 	// Inicia thread que actualiza C_ib
 	pthread_t th;
