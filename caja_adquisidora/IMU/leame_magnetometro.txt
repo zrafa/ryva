@@ -21,6 +21,21 @@ Calibracion
 
 
 LO MEJOR HASTA AHORA en 2D:
+calibrar_mag.py
+
+Calibrar con el vehículo completo y funcionando. 
+Hacer un giro completo despacio y parejo. 
+Si no, un círculo grande, sin acelerar ni frenar bruscamente, para que las muestras se repartan parejo en todas las direcciones. Dos vueltas, una en cada sentido, mejoran el ajuste.
+Ejecutar script
+Observer el aviso de cobertura y el desvío del radio calibrado (que debería ser de unos pocos por ciento).
+Validá con una dirección conocida. Por ejemplo, una calle o ruta con rumbo que puedas verificar en un mapa.
+
+
+
+
+
+VIEJOS:
+
 calibracion/cal_magnetometro_2d/
 
 python3 get_calibration_ellipsoid.py  # los datos en mag_out.txt
