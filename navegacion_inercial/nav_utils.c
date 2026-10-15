@@ -205,7 +205,8 @@ Matrix* gyro_matrix_build(double wx, double wy, double wz, double dt)
 ----------------------------------------------------------- */
 Matrix* attitude_update(const Matrix* C_prev, const Matrix* Omega_dt)
 {
-    Matrix* C_new = M_mult(Omega_dt, C_prev);
+    // RAFA Matrix* C_new = M_mult(Omega_dt, C_prev);
+    Matrix* C_new = M_mult(C_prev, Omega_dt);
     return C_new;
 }
 

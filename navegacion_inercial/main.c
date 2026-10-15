@@ -1,4 +1,3 @@
-
 /*
  * Implementacion de las ecuaciones de actitud y navegación inercial
  * (attitud and inertial navigation)
@@ -28,48 +27,6 @@ double velocidad_x = 0;
 void display_init(int argc, char** argv);
 void display_loop();
 void display_redraw();
-
-/*
-void* actualizar(void* arg)
-{
-    double t = 0.0;
-
-    while (1) {
-        // Calcula una rotación lenta alrededor del eje Z
-        double phi = 0.0;             // roll
-        double theta = 0.0;           // pitch
-        double psi = t;               // yaw cambia con el tiempo
-
-        double cphi = cos(phi), sphi = sin(phi);
-        double cth = cos(theta), sth = sin(theta);
-        double cpsi = cos(psi), spsi = sin(psi);
-
-        Matrix* nueva = M_create(3,3);
-        // Matriz C_ib (ZYX)
-        M_set(nueva, 0,0, cpsi*cth);
-        M_set(nueva, 0,1, cpsi*sth*sphi - spsi*cphi);
-        M_set(nueva, 0,2, cpsi*sth*cphi + spsi*sphi);
-        M_set(nueva, 1,0, spsi*cth);
-        M_set(nueva, 1,1, spsi*sth*sphi + cpsi*cphi);
-        M_set(nueva, 1,2, spsi*sth*cphi - cpsi*sphi);
-        M_set(nueva, 2,0, -sth);
-        M_set(nueva, 2,1, cth*sphi);
-        M_set(nueva, 2,2, cth*cphi);
-
-        pthread_mutex_lock(&lock);
-        M_free(C_ib);
-        C_ib = nueva;
-        pthread_mutex_unlock(&lock);
-
-        display_redraw();  // glutPostRedisplay();  // pide redibujar
-
-        t += 0.1;  // avanza el ángulo
-        sleep(1);
-    }
-    return NULL;
-}
-*/
-
 
 void imu_init(double *acelx, double *acely, double *acelz)
 {
@@ -131,7 +88,6 @@ void actualizar_yaw_con_magnetometro(double *yaw_ins, double yaw_mag)
     *yaw_ins = wrap_pi(*yaw_ins);
 }
 
-void gps_velocidad(long int ts, double *vel, long int *ts_current);
 double gps_get_speed(long long tiempo_us);
 
 
@@ -178,46 +134,30 @@ void * actitud(void *arg) {
 	while (1) {
 		/* Leer aceleraciones y giros (rad/s) */
 		leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
-		/*
-		if (muestra>65000) {
-			wxx = wx; wyy = wy; wzz = wz; dtt = dt;
-			for (i=0; i<4; i++) {
-				leer_imu(&ax, &ay, &az, &wx, &wy, &wz, &dt);
-				wxx += wx;
-				wyy += wy;
-				wzz += wz;
-				dtt += dt;
-				muestra++;
-			}
-			wx = wxx / 5.0;
-			wy = wyy / 5.0;
-			wz = wzz / 5.0;
-			dt = dtt;
-		}
-		*/
-		//gps_velocidad(current_timestamp, &vel_gps, &vel_gps_ts);
-		//vel_gps = velocidad_media(vel_gps, vel_gps_ts);
-		//
 
-		// velocidad de GPS
-		if ((muestra >= 65000) && ((muestra % 100) == 0)) {
+		// actualizar velocidad de GPS
+		if ((muestra >= 65000) && ((muestra % 50) == 0)) {
 			vel_gps = gps_get_speed(current_timestamp*1000) / 100.0;  // dividimos por 100 porque gps_get_speed devuelve en cm/s
 //
 //			printf("%lli VEL_GPS %f %lli \n", muestra, vel_gps, current_timestamp*1000);
 			M_set(v_body, 1, 0, vel_gps);
 		}
 
+		// actualizar rumbo desde magnetometro
 		magnetometro_get(current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
 		if ((previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
 
+			printf("magnetometro get: %f \n", grados);
 			// IMPORTANTE hago signo menos porque del magnetometro
 			// tengo sentido horario e IMU y ecuaciones sentido
 			// antihorario
+			// double psi_mag = -(grados * M_PI / 180.0);
 			double psi_mag = -(grados * M_PI / 180.0);
 			psi = get_yaw_from_Cib();
 
 			// suavizado para no reemplazar brusco
 			actualizar_yaw_con_magnetometro(&psi, psi_mag);
+			psi = wrap_pi(psi_mag);		// RAFA QUITAR SI NO QUIEREMOS UNA ACTUALIZACION ABUSIVA
 
 			phi = get_roll_from_Cib();
 			theta = get_pitch_from_Cib();
@@ -228,9 +168,7 @@ void * actitud(void *arg) {
         		pthread_mutex_unlock(&lock);
 		}
 
-			/*
-		if ((muestra<65000) && (acceleration_zero(ax, ay, az))) {
-		*/
+		// actualizar theta y phi desde aceleracion cero (quieto)
 		if ((acceleration_zero(ax, ay, az))) {
 			attitud_determination_zero(ax, ay, az, &theta, &phi);
 			psi = get_yaw_from_Cib();
@@ -254,17 +192,17 @@ void * actitud(void *arg) {
 
 		muestra++;
 
-		// Construimo f_b: vector 3x1 medido por el acelerómetro (en marco cuerpo)
+		// Construimos f_b: vector 3x1 medido por el acelerómetro (en marco cuerpo)
 		Matrix* f_b = accel_vector_build(ax, ay, az);
 
 		// Specific-Force Frame Transformation. Groves (20): f_i = C_ib * f_b
 		Matrix* f_i = M_mult(C_ib, f_b);
 		
-		/* a_i = f_i + V_gamma : Groves (21) */
+		/* a_i = f_i + V_gamma. Groves (21) */
 		M_scale(f_i, GRAVEDAD); 	/* pasamos a mts/seg^2 */
 		Matrix* a_i = M_add(f_i, V_gamma); /* quitamos gravedad en la chacra */
 
-		/* calculamos la nueva velocidad: Groves (24) */
+		/* calculamos la nueva velocidad. Groves (24) */
 		M_scale(a_i, dt);	/* mts/seg */
 		Matrix* V_temp = M_add(V_ib, a_i);
 
@@ -283,7 +221,7 @@ void * actitud(void *arg) {
 		Pos_ib = V_temp3;
 		*/
 
-		/* calculamos la nueva posición en usando el HACK de vel CONSTANTE cada eje */
+		/* calculamos la nueva posición en cada eje usando el HACK de vel CONSTANTE (o de gps) */
 		Matrix* v_world = M_mult(C_ib, v_body);
 		M_scale(v_world, dt);
 		Matrix* V_temp3 = M_add(Pos_ib, v_world);
@@ -309,6 +247,7 @@ void * actitud(void *arg) {
 			theta = get_pitch_from_Cib();
 			psi = get_yaw_from_Cib();
 			rumbo_yaw = psi*180/M_PI;
+			printf("psi get2: %f \n", rumbo_yaw);
 			if (rumbo_yaw < 0)
 				rumbo_yaw += 360;
 			printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, rumbo_yaw);
