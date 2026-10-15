@@ -145,13 +145,12 @@ void * actitud(void *arg) {
 
 		// actualizar rumbo desde magnetometro
 		magnetometro_get(current_timestamp, &x, &y, &z, &grados, &magn_timestamp);
-		if ((previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
+		if (0 && (previous_timestamp <= magn_timestamp) && (magn_timestamp <= current_timestamp)) {
 
 			printf("magnetometro get: %f \n", grados);
 			// IMPORTANTE hago signo menos porque del magnetometro
 			// tengo sentido horario e IMU y ecuaciones sentido
 			// antihorario
-			// double psi_mag = -(grados * M_PI / 180.0);
 			double psi_mag = -(grados * M_PI / 180.0);
 			psi = get_yaw_from_Cib();
 
@@ -253,6 +252,9 @@ void * actitud(void *arg) {
 			printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, rumbo_yaw);
 			//printf("GRADOS TODOS roll=%f, pitch=%f, yaw=%f \n", phi*180/M_PI, theta*180/M_PI, psi*180/M_PI);
 			printf("%lli VEL_GPS %f \n", muestra, vel_gps);
+
+
+
 		}
 
 		//if (muestra == 50000) {
